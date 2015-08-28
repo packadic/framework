@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="TypeScriptCompiler">
+    <option name="typeScriptServiceDirectory" value="/usr/local/lib/node_modules/tsc/bin" />
+    <option name="typeScriptCompilerParams" value="--module commonjs --target ES5" />
+    <option name="scopeName" value="Current File" />
+    <option name="generateSourceMap" value="false" />
+    <option name="hasOutDirectory" value="true" />
+    <option name="versionType" value="SERVICE_DIRECTORY" />
+  </component>
+</project>

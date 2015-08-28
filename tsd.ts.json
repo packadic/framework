@@ -1,0 +1,36 @@
+{
+    "version": "v4",
+    "repo": "borisyankov/DefinitelyTyped",
+    "ref": "master",
+    "path": "src/ts/types",
+    "bundle": "src/ts/types/tsd.d.ts",
+    "installed": {
+        "spectrum/spectrum.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "jquery/jquery.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "tinycolor/tinycolor.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "ace/ace.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "async/async.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "jquery.slimScroll/jquery.slimScroll.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "x-editable/x-editable.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "bootstrap/bootstrap.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "requirejs/require.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        }
+    }
+}

@@ -1,0 +1,34 @@
+include ../_base
++sb-item('Home', 'index.html', 'fa fa-certificate').start
++sb-item('Layouts', 'javascript:;', 'fa fa-list-alt', true)
+    +sb-submenu
+        +sb-item('Default', 'layout-default.html')
+        +sb-item('Boxed', 'layout-boxed.html')
+        +sb-item('Sidebar on right', 'layout-sidebar-right.html')
+        +sb-item('Sidebar fixed', 'layout-sidebar-fixed.html')
+        +sb-item('Sidebar Closed', 'layout-sidebar-closed.html')
+
++sb-item('Styler', 'styler.html', 'fa fa-pencil')
+
++sb-item('Script Only', 'script-only.html', 'fa fa-pencil')
+
++sb-item('Pages', 'javascript:;', 'fa fa-puzzle-piece', true)
+    +sb-submenu
+        +sb-item('Document', 'page-document.html')
++sb-item('Contributing', '#', 'fa fa-code').last
+
++sb-item('Multi-level', 'javascript:;', 'fa fa-list-alt', true)
+    +sb-submenu
+        +sb-item('Default', 'layout-default.html')
+        +sb-item('Level 2', 'javascript:;', null, true)
+            +sb-submenu
+                +sb-item('Sidebar on right', 'layout-sidebar-right.html')
+                +sb-item('Level 3', 'javascript:;', null, true)
+                    +sb-submenu
+                        +sb-item('Default', 'layout-default.html')
+                        +sb-item('Boxed', 'layout-boxed.html')
+                        +sb-item('Sidebar on right', 'layout-sidebar-right.html')
+                        +sb-item('Sidebar fixed', 'layout-sidebar-fixed.html')
+                        +sb-item('Sidebar Closed', 'layout-sidebar-closed.html')
+                +sb-item('Sidebar Closed', 'layout-sidebar-closed.html')
+        +sb-item('Boxed', 'layout-boxed.html')

@@ -1,0 +1,12 @@
+extends layouts/default
+block page-title
+    | Default layout
+
+block breadcrumb
+    +breadcrumb('index.html', false) Home
+    +breadcrumb(false, false) Layouts
+    +breadcrumb('layout-default.html', true) Default layout
+
+block content
+    p This is the default layout
+

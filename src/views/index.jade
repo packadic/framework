@@ -1,0 +1,14 @@
+extends layouts/default
+
+block page-title
+    | Home
+
+block breadcrumb
+    +breadcrumb('index.html', true) Home
+
+block content
+    p A falsis, torus teres caesium.
+    include partials/bs-demo
+
+block preferences
+    include partials/preferences

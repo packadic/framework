@@ -1,0 +1,15 @@
+extends layouts/default
+block vars
+    - bodyClass += ' page-sidebar-closed'
+    - sidebarClass += ' page-sidebar-menu-closed'
+block page-title
+    | Sidebar closed layout
+
+block breadcrumb
+    +breadcrumb('index.html', false) Home
+    +breadcrumb(false, false) Layouts
+    +breadcrumb('layout-sidebar-closed.html', true) Sidebar closed layout
+
+block content
+    p This is the Sidebar closed layout
+

@@ -1,0 +1,33 @@
+extends layouts/default
+
+block vars
+    - bodyClass += ' page-boxed'
+
+block page-header
+    .page-header-inner.container
+        include partials/page-header
+
+block page-container
+    .container
+        .page-container
+            .page-sidebar-wrapper
+                .page-sidebar.nav-collapse
+                    block page-sidebar
+                        ul.page-sidebar-menu(class=sidebarClass, data-keep-expanded="false", data-auto-scroll="true", data-slide-speed="200")
+                            include partials/sidebar-items
+            .page-content-wrapper
+                .page-content
+                    block page-content
+                    .page-head
+                        .page-title
+                            h1 Boxed layout
+                    ul.page-breadcrumb.breadcrumb
+                        +breadcrumb('index.html', false) Home
+                        +breadcrumb(false, false) Layouts
+                        +breadcrumb('layout-boxed.html', true) Boxed layout
+                    .row.mt-lg
+                        .col-xs-12
+                            p This is the Boxed layout
+
+        include partials/page-footer
+block page-footer

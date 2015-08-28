@@ -1,0 +1,30 @@
+{
+    "version": "v4",
+    "repo": "borisyankov/DefinitelyTyped",
+    "ref": "master",
+    "path": "src/lib/types",
+    "bundle": "src/lib/types/tsd.d.ts",
+    "installed": {
+        "mime/mime.d.ts": {
+            "commit": "8efeb01304406a7ef0b49e449630e1bfaefe52ba"
+        },
+        "serve-static/serve-static.d.ts": {
+            "commit": "8efeb01304406a7ef0b49e449630e1bfaefe52ba"
+        },
+        "express/express.d.ts": {
+            "commit": "8efeb01304406a7ef0b49e449630e1bfaefe52ba"
+        },
+        "node-sass/node-sass.d.ts": {
+            "commit": "8efeb01304406a7ef0b49e449630e1bfaefe52ba"
+        },
+        "fs-extra/fs-extra.d.ts": {
+            "commit": "8efeb01304406a7ef0b49e449630e1bfaefe52ba"
+        },
+        "body-parser/body-parser.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "multer/multer.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        }
+    }
+}

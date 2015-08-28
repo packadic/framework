@@ -1,0 +1,15 @@
+extends layouts/default
+block vars
+    - bodyClass += ' page-sidebar-reversed'
+    //- sidebarClass += ' page-sidebar-reversed'
+block page-title
+    | Sidebar right layout
+
+block breadcrumb
+    +breadcrumb('index.html', false) Home
+    +breadcrumb(false, false) Layouts
+    +breadcrumb('layout-sidebar-right.html', true) Sidebar right layout
+
+block content
+    p This is the Sidebar right layout
+

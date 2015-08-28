@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+_tsd=/usr/local/bin/tsd
+
+sasdf(){
+    inotifywait -e modify src/lib/styler.js | while read file;
+    do
+        echo "${file} modified"
+        #echo "" > screenlog.0
+        ## kill screen first
+        screen -X -S `screen -list | grep styler_screen | awk '{print $1}'` quit
+        ## start new screen with serveprocesss
+        screen -dmLS styler_screen bash -c 'node src/lib/styler.js'
+        bash testStyler.sh
+    done
+}
+
+# ./run tsd install     # ./run tsd ts install     # ./run tsd lib install
+# ./run tsd ts reinstall -o         # etc.
+tsd(){
+
+    if [ -n "$1" ]; then
+        if [ "$1" == "lib" ]; then
+            shift
+            $_tsd $* --config tsd.lib.json
+        elif [ "$1" == "ts" ]; then
+            shift
+            $_tsd $* --config tsd.ts.json
+        else
+            $_tsd $* --config tsd.json
+        fi
+    fi
+}
+
+$*

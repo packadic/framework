@@ -1,0 +1,15 @@
+extends layouts/default
+block vars
+    - bodyClass += ' page-sidebar-fixed'
+    //- sidebarClass += ' page-sidebar-reversed'
+block page-title
+    | Sidebar fixed layout
+
+block breadcrumb
+    +breadcrumb('index.html', false) Home
+    +breadcrumb(false, false) Layouts
+    +breadcrumb('layout-sidebar-fixed.html', true) Sidebar fixed layout
+
+block content
+    p This is the Sidebar fixed layout
+

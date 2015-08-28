@@ -1,0 +1,86 @@
+extends layouts/default
+
+mixin stylerTable(title)
+    table.table.table-bordered.table-hover.table-codex.table-condensed.styler-table&attributes(attributes)
+        thead
+            tr
+                th(colspan=2)= title
+            tr
+                th Variable
+                th Value
+        tbody
+            block
+
+
+block page-title
+    | Styler
+
+block breadcrumb
+    +breadcrumb('index.html') Home
+    +breadcrumb('styler.html', true) Styler
+
+block content
+    p A falsis, torus teres caesium.
+    .row
+        .col-md-6.col-md-offset-3
+            input(type='text', value="#333")#spectrum-test
+    #styler
+
+
+block preferences
+    include partials/preferences
+
+
+block init-script
+    script.
+        requirejs.config(window['packadicConfig'].requirejs);
+        requirejs(['Packadic'], /** @param {Packadic} Packadic */ function (Packadic) {
+            var packadic = window['packadic'] = Packadic.instance;
+            packadic.DEBUG = true;
+            packadic.init({});
+            packadic.boot();
+            packadic.removePageLoader();
+
+            require(['jquery', 'modules/material', 'spectrum'], function ($, material) {
+                var colorValues = [];
+                var palette = [];
+                $.each(material.colors, function (name, variants) {
+                    var variantValues = [];
+                    $.each(variants, function (variant, colorCode) {
+                        colorValues.push(colorCode);
+                        variantValues.push(colorCode);
+                    })
+                    palette.push(variantValues);
+                })
+                console.log('colorValues', colorValues);
+                $('#spectrum-test').spectrum({
+                    showPalette         : true,
+                    palette             : palette,
+                    containerClassName  : 'sp-packadic-styler',
+                    showSelectionPalette: true, // true by default
+                    //selectionPalette    : colorValues,
+                    showInitial         : true,
+                    showInput           : true,
+                    showAlpha           : false,
+
+                    preferredFormat: "hex",
+
+                    showPaletteOnly      : true,
+                    togglePaletteOnly    : true,
+                    togglePaletteMoreText: 'more',
+                    togglePaletteLessText: 'less',
+                });
+            });
+
+
+            packadic.plugins.load('styler', function () {
+                var m = $('#styler').styler({
+                    port: 3000,
+                    host: 'http://localhost',
+                    files: ['_variables.scss', '_theme-variables.scss']
+                });
+                var i = $('#styler').styler('instance');
+                console.log('styler make', m);
+                console.log('styler instance', i);
+            });
+        });

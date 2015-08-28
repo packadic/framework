@@ -1,0 +1,19 @@
+doctype html
+<!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html lang="en" class="ie9"><![endif]-->
+<!--[if !IE]><!-->
+html(lang="en")
+    <!--<![endif]-->
+    head
+        block head
+            title
+                block title
+                    | Packadic Framework Scripts Only
+            block meta
+                meta(charset="UTF-8")
+                meta(http-equiv="X-UA-Compatible", content="IE=edge")
+            block styles
+    body
+        script(src="assets/scripts/vendor.min.js")
+        script(src="assets/scripts/config.js")
+        script(src="assets/scripts/init.js")
