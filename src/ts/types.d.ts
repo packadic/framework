@@ -1,4 +1,4 @@
-/// <reference path="../types/tsd.d.ts" />
+/// <reference path="../types.d.ts" />
 /// <reference path="./types/tsd.d.ts" />
 /*
 interface WebpackRequireEnsureCallback {

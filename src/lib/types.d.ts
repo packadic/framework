@@ -1,4 +1,4 @@
-/// <reference path="../types/tsd.d.ts" />
+/// <reference path="../types.d.ts" />
 /// <reference path="./types/tsd.d.ts" />
 /// <reference path='./underscore.string.d.ts' />
 /// <reference path='./tmp.d.ts' />

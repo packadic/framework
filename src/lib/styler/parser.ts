@@ -13,22 +13,25 @@ import globule = require('globule');
 import {BaseStylerModule, log, _dd, stringify} from './base';
 
 export class Parser extends BaseStylerModule {
+
     public parseVariableFiles(filePaths) {
         var self:Parser = this;
-        var data:any = {
-            var2file: {},
-            values: {},
-            variables: {}
-        };
+        var data:any = {assoc: {}, detailed: {}, tree: {}};
 
         filePaths.forEach(function (filePath) {
-            log(filePath);
-            self.parseStyleVars(filePath, function(parsed){
-                data.var2file[parsed.name] = filePath;
-                data.variables[parsed.name] = parsed;
-                data.values[parsed.name] = parsed.value;
+            if (typeof data.tree[filePath] === 'undefined') {
+                data.tree[filePath] = {}
+            }
+            log(data.tree);
+            self.parseStyleVars(filePath, function (parsed) {
+                parsed.file = filePath;
+                data.detailed[parsed.name] = parsed;
+                data.assoc[parsed.name] = parsed.value;
+                data.tree[filePath][parsed.name] = parsed;
             });
+            log(data.tree);
         });
+        log(data.tree);
 
         return data;
     }
@@ -69,7 +72,7 @@ export class Parser extends BaseStylerModule {
                 continue;
             }
             var parsed:any = this.parseVarValue(matches[1], matches[2]);
-            if(typeof eachCb === 'function'){
+            if (typeof eachCb === 'function') {
                 eachCb(parsed);
             }
         }

@@ -28,7 +28,7 @@ export function log(...args:any[]) {
     process.stdout.write('\n');
 }
 
-export function _dd() {
+export function _dd(...args:any[]) {
     log.apply(this, arguments);
     process.exit();
 }

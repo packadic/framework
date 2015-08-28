@@ -32,7 +32,7 @@ setPathsRoot();
 export class Styler {
     public config:any = {
         port: 3000,
-        variableFiles: ['_variables.scss', '_theme-variables.scss'],
+        variableFiles: ['_variables.scss', '_theme-variables.scss', '_bootstrap-variables.scss'],
         destDir: 'demo/assets/styles'
     };
 
@@ -68,6 +68,7 @@ export class Styler {
         dir.clean();
         return response;
     }
+
 
 
     protected createTmpDir() {

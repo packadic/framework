@@ -2,19 +2,22 @@
     .col-md-12
         .tabbable
             ul.nav.nav-tabs
-                li.active: a(data-toggle='tab', href='#light1', aria-expanded='true')
-                    i.text-green.tab-icon.fa.fa-pencil-square-o
-                    |  Basic Info
-                li: a(data-toggle='tab', href='#light2', aria-expanded='false')
-                    i.text-purple.tab-icon.fa.fa-cog
-                    |  Settings
-                li: a(data-toggle='tab', href='#light3', aria-expanded='false')
-                    i.text-blue.tab-icon.fa.fa-key
-                    |  Password
-            .tab-content
-                #light1.tab-pane.active.fade.in
-                    p Cum eleates crescere, omnes lixaes vitare alter, camerarius fluctuses.
-                #light2.tab-pane.fade
-                    p Sagas mori, tanquam varius fluctui. Cum eleates crescere, omnes lixaes vitare alter, camerarius fluctuses.
-                #light3.tab-pane.fade
-                    p Raptus lubas ducunt ad habitio. Cum eleates crescere, omnes lixaes vitare alter, camerarius fluctuses.
+                each file, i in files
+                    - var liClass = (i === 0 ? 'active' : '');
+                    li(class=liClass): a(data-toggle='tab', href='#styler_file_tab_' + i, aria-expanded='true')
+                        i.color-green-500.tab-icon.fa.fa-pencil-square-o
+                        |  #{file}
+            .tab-content.p-n
+                each file, iFile in files
+                    div.tab-pane.fade(id='styler_file_tab_' + iFile, class=(iFile === 0 ? 'active in':''))
+                        table.table.table-hover.table-condensed.table-striped.table-codex.styler-table
+                            thead: tr
+                                th Variable
+                                th Value
+                            tbody
+                                each variable in vars.tree[file]
+                                    tr
+                                        td: span.scss-variable-name= variable.name
+                                        td: a(id=variable.name, data-type=variable.type, data-scss-file-name=file).scss-variable-value= variable.value
+
+

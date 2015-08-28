@@ -25,6 +25,9 @@
         },
         "multer/multer.d.ts": {
             "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "node/node.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
         }
     }
 }

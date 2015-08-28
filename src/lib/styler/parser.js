@@ -14,19 +14,21 @@ var Parser = (function (_super) {
     }
     Parser.prototype.parseVariableFiles = function (filePaths) {
         var self = this;
-        var data = {
-            var2file: {},
-            values: {},
-            variables: {}
-        };
+        var data = { assoc: {}, detailed: {}, tree: {} };
         filePaths.forEach(function (filePath) {
-            base_1.log(filePath);
+            if (typeof data.tree[filePath] === 'undefined') {
+                data.tree[filePath] = {};
+            }
+            base_1.log(data.tree);
             self.parseStyleVars(filePath, function (parsed) {
-                data.var2file[parsed.name] = filePath;
-                data.variables[parsed.name] = parsed;
-                data.values[parsed.name] = parsed.value;
+                parsed.file = filePath;
+                data.detailed[parsed.name] = parsed;
+                data.assoc[parsed.name] = parsed.value;
+                data.tree[filePath][parsed.name] = parsed;
             });
+            base_1.log(data.tree);
         });
+        base_1.log(data.tree);
         return data;
     };
     Parser.prototype.readStyle = function (filePath) {

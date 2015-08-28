@@ -31,11 +31,13 @@ export class Server extends BaseStylerModule {
         this.app = express();
     }
 
+    protected createResponse(data:any, code:number=200, message:string="ok"):StylerResponse{
+        return { code: code, message: message, data: data }
+    }
+
     public start(){
         this.app.use(allowCrossDomain);
-        //this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
-
         this.app.all('/*', function(req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -43,9 +45,6 @@ export class Server extends BaseStylerModule {
         });
         this.app.get('/', this.appGet.bind(this));
         this.app.post('/', this.appPost.bind(this));
-        log(this.styler);
-        log(this.styler.config);
-
         this.app.listen(this.styler.config.port);
     }
 
@@ -53,11 +52,10 @@ export class Server extends BaseStylerModule {
     public appGet(req:express.Request, res:express.Response) {
         res.set('Access-Control-Allow-Origin', '*');
         res.set('Content-Type', 'application/json');
-
-        var files:string[] = req.query.files;
+        var files:string[] = this.styler.config.variableFiles;
         var vars:any = this.styler.parser.parseVariableFiles(files);
-
-        res.send(stringify({vars:vars}));
+        var response:any = { vars: vars, files: files };
+        res.json(this.createResponse(response));
     }
 
 
@@ -71,7 +69,7 @@ export class Server extends BaseStylerModule {
         var origVars:any = this.styler.parser.parseVariableFiles([fileName]);
         var fileContent:string = fs.readFileSync(this.styler.stylePath(fileName), 'UTF-8');
         var exp:RegExp = new RegExp('(\\$' + varName + ':[\\s\\t]*)(.*?);');
-        var isDef:boolean = origVars.variables[varName].default;
+        var isDef:boolean = origVars.detailed[varName].default;
         var replaceStr:string = '$1' + varVal + (isDef ? ' !default' : '') + ';';
         var replacedContent:string = fileContent.replace(exp, replaceStr);
 

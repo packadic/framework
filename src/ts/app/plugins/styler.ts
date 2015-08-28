@@ -57,11 +57,11 @@ class StylerPlugin extends plugins.BasePlugin {
 
     public refresh(){
         var self:StylerPlugin = this;
-        self._getVariables().done(function (res) {
-
-
-            self.$element.html(template(res));
-            self._bindXEditable(self.$element.find('a.scss-variable-value'));
+        self._getVariables().done(function (res:StylerResponse) {
+            if(res.code === 200) {
+                self.$element.html(template(res.data));
+                self._bindXEditable(self.$element.find('a.scss-variable-value'));
+            }
         });
     }
 
@@ -71,16 +71,6 @@ class StylerPlugin extends plugins.BasePlugin {
         self.refresh();
     }
 
-    protected _addRow(variable:any) {
-        var $tr:JQuery = $('<tr>'),
-            $tdName:JQuery = $('<td>'),
-            $span:JQuery = $('<span>').addClass('scss-variable-name').text(variable.name),
-            $tdVal:JQuery = $('<td>'),
-            $a:JQuery = $('<a>').addClass('scss-variable-value').text(variable.value).attr('id', variable.name);
-
-        $a.attr('data-scss-file-name', this.options.file).attr('data-type', variable.type);
-        //$tr.append($tdName.append($span), $tdVal.append($a)).appendTo(this.$tbody);
-    }
 
     protected _bindXEditable($el:JQuery) {
         var self:StylerPlugin = this;
@@ -98,7 +88,7 @@ class StylerPlugin extends plugins.BasePlugin {
         $el.on('shown', function (event, editable:any) {
             console.log(arguments);
             if (editable.input.type === 'color') {
-                //editable.input.$input.parent().colorpicker('setValue', editable.value);
+                editable.input.$input.parent().spectrum('set', editable.value);
 
             }
         });
@@ -145,10 +135,10 @@ class StylerPlugin extends plugins.BasePlugin {
 
                     preferredFormat: "hex",
 
-                    showPaletteOnly      : true,
+                    /*showPaletteOnly      : true,
                     togglePaletteOnly    : true,
                     togglePaletteMoreText: 'more',
-                    togglePaletteLessText: 'less',
+                    togglePaletteLessText: 'less',*/
                 });
             },
             autosubmit: function () {

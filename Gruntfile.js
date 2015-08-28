@@ -70,8 +70,8 @@ module.exports = function (_grunt) {
         },
         typescript    : {
             options   : {target: 'es5', rootDir: 'src/ts', module: 'amd', sourceMap: false, declaration: false},
-            lib       : {src: ['src/lib/**/*.ts', '!src/ts/**/*.d.ts'], dest: 'src/lib', options: {rootDir: 'src/lib', module: 'commonjs', sourceMap: true}},
-            watch_lib : {src: ['src/lib/**/*.ts', '!src/ts/**/*.d.ts'], dest: 'src/lib', options: {rootDir: 'src/lib', module: 'commonjs', sourceMap: true, watch: {path: 'src/lib'}}},
+            lib       : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src/lib', options: {rootDir: 'src/lib', module: 'commonjs', sourceMap: true}},
+            watch_lib : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src/lib', options: {rootDir: 'src/lib', module: 'commonjs', sourceMap: true, watch: {path: 'src/lib'}}},
             base      : {src: ['src/ts/*.ts', '!src/ts/**/*.d.ts'], dest: '<%= target.dest %>/assets/scripts'},
             watch_base: {src: ['src/ts/*.ts', '!src/ts/**/*.d.ts'], dest: '<%= target.dest %>/assets/scripts', options: {watch: {path: 'src/ts'}}},
             tasks     : {src: ['src/tasks/*.ts', '!src/tasks/**/*.d.ts'], dest: 'src/tasks'}
@@ -79,11 +79,11 @@ module.exports = function (_grunt) {
         availabletasks: {
             tasks: {
                 options: {
-                    filter: 'include', tasks: ['styles', 'scripts', 'images', 'bower', 'views', 'demo', 'dist', 'serve', 'watch'],
+                    filter: 'include', tasks: ['styles', 'scripts', 'images', 'bower', 'views', 'demo', 'dist', 'serve', 'watch', 'lib'],
                     groups: {
                         'Build'      : ['demo', 'dist'],
                         'Partials'   : ['styles', 'scripts', 'images', 'bower', 'views'],
-                        'Development': ['serve', 'watch']
+                        'Development': ['serve', 'watch', 'lib']
 
                     }
                 }
@@ -135,6 +135,7 @@ module.exports = function (_grunt) {
     grunt.registerTask('dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'styles', 'scripts', 'images', 'views']);
 
     // dev
+    grunt.registerTask('lib', 'Compile typescript files in lib for node.', ['typescript:lib']);
     grunt.registerTask('watch', 'Watch for file changes and fire tasks.', ['concurrent:watch']);
     var stylerTaskDone;
     grunt.registerTask('styler', 'DevTest.', function (tar) {

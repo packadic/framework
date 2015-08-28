@@ -22,7 +22,7 @@ var Styler = (function () {
     function Styler() {
         this.config = {
             port: 3000,
-            variableFiles: ['_variables.scss', '_theme-variables.scss'],
+            variableFiles: ['_variables.scss', '_theme-variables.scss', '_bootstrap-variables.scss'],
             destDir: 'demo/assets/styles'
         };
         this._compiler = new compiler_1.Compiler(this);

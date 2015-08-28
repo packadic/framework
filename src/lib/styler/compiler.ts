@@ -35,6 +35,7 @@ export class Compiler extends BaseStylerModule {
         return destPath;
     }
 
+
     /**
      * Relative filepath to src/styles
      * @param filePath

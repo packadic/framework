@@ -22,9 +22,13 @@ var Server = (function (_super) {
         _super.call(this, styler);
         this.app = express();
     }
+    Server.prototype.createResponse = function (data, code, message) {
+        if (code === void 0) { code = 200; }
+        if (message === void 0) { message = "ok"; }
+        return { code: code, message: message, data: data };
+    };
     Server.prototype.start = function () {
         this.app.use(allowCrossDomain);
-        //this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.all('/*', function (req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
@@ -33,16 +37,15 @@ var Server = (function (_super) {
         });
         this.app.get('/', this.appGet.bind(this));
         this.app.post('/', this.appPost.bind(this));
-        base_1.log(this.styler);
-        base_1.log(this.styler.config);
         this.app.listen(this.styler.config.port);
     };
     Server.prototype.appGet = function (req, res) {
         res.set('Access-Control-Allow-Origin', '*');
         res.set('Content-Type', 'application/json');
-        var files = req.query.files;
+        var files = this.styler.config.variableFiles;
         var vars = this.styler.parser.parseVariableFiles(files);
-        res.send(base_1.stringify({ vars: vars }));
+        var response = { vars: vars, files: files };
+        res.json(this.createResponse(response));
     };
     Server.prototype.appPost = function (req, res) {
         res.set('Content-Type', 'application/json');
@@ -52,7 +55,7 @@ var Server = (function (_super) {
         var origVars = this.styler.parser.parseVariableFiles([fileName]);
         var fileContent = fs.readFileSync(this.styler.stylePath(fileName), 'UTF-8');
         var exp = new RegExp('(\\$' + varName + ':[\\s\\t]*)(.*?);');
-        var isDef = origVars.variables[varName].default;
+        var isDef = origVars.detailed[varName].default;
         var replaceStr = '$1' + varVal + (isDef ? ' !default' : '') + ';';
         var replacedContent = fileContent.replace(exp, replaceStr);
         var backupPath = this.styler.stylePath('.backup');

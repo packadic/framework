@@ -20,10 +20,6 @@ block breadcrumb
     +breadcrumb('styler.html', true) Styler
 
 block content
-    p A falsis, torus teres caesium.
-    .row
-        .col-md-6.col-md-offset-3
-            input(type='text', value="#333")#spectrum-test
     #styler
 
 
@@ -76,7 +72,7 @@ block init-script
             packadic.plugins.load('styler', function () {
                 var m = $('#styler').styler({
                     port: 3000,
-                    host: 'http://localhost',
+                    host: 'http://dev7.radic.nl',
                     files: ['_variables.scss', '_theme-variables.scss']
                 });
                 var i = $('#styler').styler('instance');

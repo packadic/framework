@@ -5,3 +5,4 @@
 /// <reference path="multer/multer.d.ts" />
 /// <reference path="node-sass/node-sass.d.ts" />
 /// <reference path="serve-static/serve-static.d.ts" />
+/// <reference path="node/node.d.ts" />

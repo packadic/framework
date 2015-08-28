@@ -2,16 +2,17 @@
 
 _tsd=/usr/local/bin/tsd
 
-sasdf(){
-    inotifywait -e modify src/lib/styler.js | while read file;
+styler(){
+    screen -dmLS styler_screen bash -c 'node app.js'
+
+    inotifywait -e modify src/lib/styler/*.js | while read file;
     do
         echo "${file} modified"
         #echo "" > screenlog.0
         ## kill screen first
         screen -X -S `screen -list | grep styler_screen | awk '{print $1}'` quit
         ## start new screen with serveprocesss
-        screen -dmLS styler_screen bash -c 'node src/lib/styler.js'
-        bash testStyler.sh
+        bash run styler
     done
 }
 
