@@ -67,6 +67,22 @@ var Server = (function (_super) {
         var result = this.styler.createStyles(['stylesheet.scss', 'themes/theme-default.scss']);
         res.send(base_1.stringify({ status: 'ok', result: result, req: req, exp: exp, replaceStr: replaceStr, varName: varName, varVal: varVal, orig: fileContent, replaced: replacedContent, isValDef: isDef }));
     };
+    Server.prototype.apost = function () {
+        var self = this;
+        var dir = this.styler.createTmpDir();
+        this.styler.setPathsRoot(dir.path);
+        var compileResults = this.styler.compiler.styles(this.config.variableFiles);
+        compileResults.forEach(function (res) {
+            var relPath = path.join(res.dirName, res.name);
+            var destPath = path.join(self.styler.getDefaultRootPath(), '', relPath);
+            fse.copySync(res.out, destPath);
+            //response.files.push(_.merge(res, { relPath: relPath }));
+            base_1.log('Moved ', res.out, destPath);
+        });
+        this.styler.setPathsRoot(self.styler.getDefaultRootPath());
+        dir.clean();
+        return {};
+    };
     return Server;
 })(base_1.BaseStylerModule);
 exports.Server = Server;

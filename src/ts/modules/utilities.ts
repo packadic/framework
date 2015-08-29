@@ -1,12 +1,32 @@
 /// <reference path="../types.d.ts" />
 import $ = require('jquery');
 
+var kindsOf:any = {};
+'Number String Boolean Function RegExp Array Date Error'.split(' ').forEach(function (k) {
+    kindsOf['[object ' + k + ']'] = k.toLowerCase();
+});
+var nativeTrim = String.prototype.trim;
+
+var entityMap = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': '&quot;',
+    "'": '&#39;',
+    "/": '&#x2F;'
+};
+
 module utilities {
-    var kindsOf:any = {};
-    'Number String Boolean Function RegExp Array Date Error'.split(' ').forEach(function (k) {
-        kindsOf['[object ' + k + ']'] = k.toLowerCase();
-    });
-    var nativeTrim = String.prototype.trim;
+
+    export function kindOf(value:any):any {
+        // Null or undefined.
+        if (value == null) {
+            return String(value);
+        }
+        // Everything else.
+        return kindsOf[kindsOf.toString.call(value)] || 'object';
+    }
+
     export function round(value, places) {
         var multiplier = Math.pow(10, places);
         return (Math.round(value * multiplier) / multiplier);
@@ -105,15 +125,6 @@ module utilities {
         return typeof obj === 'object' && obj && prop in obj;
     }
 
-    export function kindOf(value:any):any {
-        // Null or undefined.
-        if (value == null) {
-            return String(value);
-        }
-        // Everything else.
-        return kindsOf[kindsOf.toString.call(value)] || 'object';
-    }
-
     export function recurse(value:Object, fn:Function, fnContinue?:Function):any {
         function recurse(value, fn, fnContinue, state) {
             var error;
@@ -209,7 +220,6 @@ module utilities {
         });
     }
 
-
     export function addJqueryUtils() {
         if (kindOf($.fn.prefixedData) === 'function') {
             return;
@@ -251,6 +261,65 @@ module utilities {
         };
     }
 
+    export function dotize(obj:any, prefix?:any) {
+        if (!obj || typeof obj != "object") {
+            if (prefix) {
+                var newObj = {};
+                newObj[prefix] = obj;
+                return newObj;
+            }
+            else
+                return obj;
+        }
+
+        var newObj = {};
+
+        function recurse(o:any, p:any, isArrayItem?:any) {
+            for (var f in o) {
+                if (o[f] && typeof o[f] === "object") {
+                    if (Array.isArray(o[f]))
+                        newObj = recurse(o[f], (p ? p : "") + (isNumber(f) ? "[" + f + "]" : "." + f), true); // array
+                    else {
+                        if (isArrayItem)
+                            newObj = recurse(o[f], (p ? p : "") + "[" + f + "]"); // array item object
+                        else
+                            newObj = recurse(o[f], (p ? p + "." : "") + f); // object
+                    }
+                } else {
+                    if (isArrayItem || isNumber(f))
+                        newObj[p + "[" + f + "]"] = o[f]; // array item primitive
+                    else
+                        newObj[(p ? p + "." : "") + f] = o[f]; // primitive
+                }
+            }
+
+            if (isEmptyObj(newObj))
+                return obj;
+
+            return newObj;
+        }
+
+        function isNumber(f) {
+            return !isNaN(parseInt(f));
+        }
+
+        function isEmptyObj(obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop))
+                    return false;
+            }
+
+            return true;
+        }
+
+        return recurse(obj, prefix);
+    }
+
+    export function escapeHtml(string:string):string {
+        return String(string).replace(/[&<>"'\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
 }
 
 export = utilities;

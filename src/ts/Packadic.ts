@@ -7,6 +7,7 @@
 import ExamplePlugin = require('app/plugins/example');
 import SidebarPlugin = require('app/plugins/sidebar');
 import StylerPlugin = require('app/plugins/styler');
+import CustomizerPlugin = require('app/plugins/customizer');
 import material = require('./modules/material');
 // end delete later
 
@@ -16,7 +17,8 @@ import EventEmitter2 = require('eventemitter2');
 import util = require('./modules/utilities');
 
 import {Plugins} from 'app/plugins';
-import {Layout} from 'app/layout';
+import {Layout,Preferences} from 'app/layout';
+
 
 import Loader = require('./classes/Loader');
 
@@ -55,9 +57,11 @@ class Packadic extends EventEmitter2 {
     public booted:boolean;
     public timers:any = {construct: null, init: null, boot: null};
     protected browser:any = {ie8: false, ie9: false, ie10: false};
+    public util:any = util;
 
     public layout:Layout;
     public plugins:Plugins;
+    public preferences:Preferences;
 
     constructor() {
         super({
@@ -108,6 +112,7 @@ class Packadic extends EventEmitter2 {
             this.initialised = true;
         }
         this.timers.init = new Date;
+
         if (this.DEBUG) {
             debug.enable();
             debug.setStartDate(this.timers.construct);
@@ -139,7 +144,7 @@ class Packadic extends EventEmitter2 {
 
 
     public el(selectorName:string):JQuery{
-        var selector:string = this.config('selectors.' + selectorName);
+        var selector:string = this.config('app.selectors.' + selectorName);
         return $(selector);
     }
 
@@ -209,7 +214,7 @@ class Packadic extends EventEmitter2 {
     }
 
     public getBreakpoint(which:string) {
-        return parseInt(this.config.get('breakpoints.screen-' + which + '-min').replace('px', ''));
+        return parseInt(this.config.get('app.breakpoints.screen-' + which + '-min').replace('px', ''));
     }
 
     public promise<T>():DeferredInterface<T> {
@@ -311,7 +316,7 @@ class Packadic extends EventEmitter2 {
                     return; // exit
                 }
                 var height = $(this).attr("data-height") ? $(this).attr("data-height") : $(this).css('height');
-                var data = _.merge(self.config('slimscroll'), $(this).data(), {height: height});
+                var data = _.merge(self.config('vendor.slimscroll'), $(this).data(), {height: height});
                 $(this).slimScroll($.extend(true, data, opts));
                 $(this).attr("data-initialized", "1");
             });

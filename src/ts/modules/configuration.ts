@@ -26,6 +26,7 @@ export interface IConfig {
     merge(obj:Object): IConfig;
     raw(prop?:any): any;
     process(raw:any): any;
+    unset(prop:any): any;
 }
 
 export interface IConfigProperty extends IConfig {
@@ -50,6 +51,7 @@ export class ConfigObject implements IConfig {
         };
         cf.get = config.get.bind(config);
         cf.set = config.set.bind(config);
+        cf.unset = config.unset.bind(config);
         cf.merge = config.merge.bind(config);
         cf.raw = config.raw.bind(config);
         cf.process = config.process.bind(config);
@@ -57,6 +59,12 @@ export class ConfigObject implements IConfig {
         return cf;
     }
 
+    public unset(prop:any):any {
+        prop = prop.split('.');
+        var key = prop.pop();
+        var obj = objectGet(this.data, ConfigObject.getPropString(prop.join('.')));
+        delete obj[key];
+    }
     public static getPropString(prop:any):string {
         return Array.isArray(prop) ? prop.map(this.escape).join('.') : prop;
     }

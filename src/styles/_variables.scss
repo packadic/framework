@@ -30,7 +30,7 @@ $page-loader-speed:                 2.0s !default;
 $color-primary:         		 	#426DB0 !default;
 
 // positioning
-$header-height:             				            				100px !default; // header height on table and desktop view. default: 42px
+$header-height:             				            				75px  !default; // header height on table and desktop view. default: 42px
 $header-height-xs:             											($header-height * 2) !default; // header height on mobile view
 $header-height-mobile:                                                  46px  !default;
 
@@ -115,3 +115,6 @@ $general-border-radius:             0px !default;
 $border-radius-base: 0px;
 $border-radius-large:       0px;
 $border-radius-small:       0px;
+
+
+$bootstrap-switch-base: "bootstrap-switch";

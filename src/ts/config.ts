@@ -19,6 +19,7 @@ var packadicConfig = (function () {
             'x-editable': bowerDir + 'x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min',
             'colorpicker': bowerDir + 'mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min',
             'spectrum': bowerDir + 'spectrum/spectrum',
+            'bootstrap-switch': bowerDir + 'bootstrap-switch/dist/js/bootstrap-switch.min',
 
             'highlightjs-css': bowerDir + 'highlightjs/styles',
             'jstree-css': bowerDir + 'jstree/dist/themes/default/style.min'
@@ -30,7 +31,7 @@ var packadicConfig = (function () {
         },
         shim: {
             'app': ['jquery', 'bootstrap', 'material'],
-            'jade': { exports: 'jade' },
+            'jade': {exports: 'jade'},
             'jquery': {
                 exports: '$', init: function () {
                     this.jquery.noConflict();
@@ -43,7 +44,8 @@ var packadicConfig = (function () {
             'slimscroll': ['jquery'],
             'jstree': ['jquery'],
             'x-editable': ['jquery', 'bootstrap'],
-            'spectrum': ['jquery']
+            'spectrum': ['jquery'],
+            'bootstrap-switch': ['jquery', 'bootstrap']
         },
         waitSeconds: 5,
         config: {
@@ -57,38 +59,72 @@ var packadicConfig = (function () {
         },
         requirejs: requireJs,
         app: {
-            plugins: ['example', 'sidebar', 'styler']
-        },
-        selectors: {
-            'search': '.sidebar-search',
-            'header': '.page-header',
-            'header-inner': '<%= selectors.header %> .page-header-inner',
+            plugins: ['example', 'sidebar', 'styler', 'customizer'],
+            selectors: {
+                'search': '.sidebar-search',
+                'header': '.page-header',
+                'header-inner': '<%= selectors.header %> .page-header-inner',
 
-            'container': '.page-container',
-            'sidebar-wrapper': '.page-sidebar-wrapper',
-            'sidebar': '.page-sidebar',
-            'sidebar-menu': '.page-sidebar-menu',
-            'content-wrapper': '.page-content-wrapper',
-            'content': '.page-content',
+                'container': '.page-container',
+                'sidebar-wrapper': '.page-sidebar-wrapper',
+                'sidebar': '.page-sidebar',
+                'sidebar-menu': '.page-sidebar-menu',
+                'content-wrapper': '.page-content-wrapper',
+                'content': '.page-content',
 
-            'content-head': '<%= selectors.content %> .page-head',
-            'content-breadcrumbs': '<%= selectors.content %> .page-breadcrumbs',
-            'content-inner': '<%= selectors.content %> .page-content-inner',
+                'content-head': '<%= selectors.content %> .page-head',
+                'content-breadcrumbs': '<%= selectors.content %> .page-breadcrumbs',
+                'content-inner': '<%= selectors.content %> .page-content-inner',
 
-            'footer': '.page-footer',
-            'footer-inner': '.page-footer-inner',
+                'footer': '.page-footer',
+                'footer-inner': '.page-footer-inner',
+            },
+            breakpoints: {
+                'screen-lg-med': "1260px",
+                'screen-lg-min': "1200px",
+                'screen-md-max': "1199px",
+                'screen-md-min': "992px",
+                'screen-sm-max': "991px",
+                'screen-sm-min': "768px",
+                'screen-xs-max': "767px",
+                'screen-xs-min': "480px"
+            },
+            preferences: {
+                sidebar: {
+                    hidden: false,
+                    closed: false,
+                    resolveActive: true,
+                    reversed: false,
+                    fixed: false,
+                    compact: false,
+                },
+                header: {
+                    fixed: true
+                },
+                footer: {
+                    fixed: false
+                },
+                page: {
+                    boxed: false
+                }
+            },
+            customizer: {
+                definitions: [
+                    {name: '', title: 'Layout', type: 'header' },
+                    {name: 'header.fixed', title: 'Header fixed', type: 'boolean'},
+                    {name: 'footer.fixed', title: 'Footer fixed', type: 'boolean'},
+                    {name: 'page.boxed', title: 'Page boxed', type: 'boolean'},
+                    {name: '', title: 'Sidebar', type: 'header' },
+                    {name: 'sidebar.hidden', title: 'Hidden', type: 'boolean'},
+                    {name: 'sidebar.closed', title: 'Closed', type: 'boolean'},
+                    {name: 'sidebar.resolveActive', title: 'Autoresolve active', type: 'boolean'},
+                    {name: 'sidebar.reversed', title: 'Switch sides', type: 'boolean'},
+                    {name: 'sidebar.compact', title: 'Compact', type: 'boolean'},
+                    {name: 'sidebar.fixed', title: 'Fixed', type: 'boolean'},
+                ]
+            }
         },
-        breakpoints: {
-            'screen-lg-med': "1260px",
-            'screen-lg-min': "1200px",
-            'screen-md-max': "1199px",
-            'screen-md-min': "992px",
-            'screen-sm-max': "991px",
-            'screen-sm-min': "768px",
-            'screen-xs-max': "767px",
-            'screen-xs-min': "480px"
-        },
-        plugins: ['example'],
+
         vendor: {
             material: {
                 input: true,

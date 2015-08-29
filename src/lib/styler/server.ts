@@ -11,7 +11,8 @@ import tmp = require('tmp');
 import globule = require('globule');
 import bodyParser = require('body-parser');
 
-import {Styler} from './index';
+import {Styler,StylerTmpDirResponse} from './index';
+import {ICompilerResult} from './compiler';
 import {BaseStylerModule, log, _dd, stringify } from './base';
 
 var allowCrossDomain = function(req, res, next) {
@@ -46,6 +47,8 @@ export class Server extends BaseStylerModule {
         this.app.get('/', this.appGet.bind(this));
         this.app.post('/', this.appPost.bind(this));
         this.app.listen(this.styler.config.port);
+
+
     }
 
 
@@ -83,6 +86,25 @@ export class Server extends BaseStylerModule {
         var result:any = this.styler.createStyles(['stylesheet.scss', 'themes/theme-default.scss']);
 
         res.send(stringify({status: 'ok', result: result, req: req, exp:exp, replaceStr:replaceStr, varName: varName, varVal:varVal, orig: fileContent, replaced: replacedContent, isValDef: isDef }));
+    }
+
+    public apost(){
+        var self:Server = this;
+        var dir:StylerTmpDirResponse = this.styler.createTmpDir();
+        this.styler.setPathsRoot(dir.path);
+        var compileResults:ICompilerResult[] = this.styler.compiler.styles(this.config.variableFiles);
+
+        compileResults.forEach(function(res:ICompilerResult){
+            var relPath:string = path.join(res.dirName, res.name);
+            var destPath:string = path.join(self.styler.getDefaultRootPath(), '', relPath);
+            fse.copySync(res.out, destPath);
+            //response.files.push(_.merge(res, { relPath: relPath }));
+            log('Moved ', res.out, destPath);
+        });
+
+        this.styler.setPathsRoot(self.styler.getDefaultRootPath());
+        dir.clean();
+        return {};
     }
 }
 

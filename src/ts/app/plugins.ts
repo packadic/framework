@@ -4,6 +4,10 @@ import Packadic = require('Packadic');
 import BaseApp = require('app/BaseApp');
 import {kindOf,defined,ucfirst} from 'modules/utilities';
 
+import {debug} from './../modules/debug';
+var log:any = debug.log;
+
+
 export interface IPluginRegisterOptions {
     'namespace'?:string;
     'class'?:any;
@@ -20,7 +24,7 @@ export class Plugins extends BaseApp {
         callback: $.noop()
     };
 
-    public boot() {
+    protected boot() {
         var self:Plugins = this;
         var plugins:string[] = this.config('app.plugins');
     }
@@ -180,7 +184,7 @@ export class BasePlugin {
     public _on(name:string, sel?:string, cb?:any):BasePlugin;
     public _on(...args:any[]):any {
         args[0] = args[0] + '.' + this.NAMESPACE;
-        console.log('plugin _on ', this, args);
+        debug.log('plugin _on ', this, args);
         this.$element.on.apply(this.$element, args);
         return this;
     }

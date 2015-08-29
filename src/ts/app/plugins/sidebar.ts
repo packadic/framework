@@ -3,12 +3,15 @@ import $ = require('jquery');
 import plugins = require('app/plugins');
 import async = require('async');
 
+import {debug} from './../../modules/debug';
+var log:any = debug.log;
+
+
 class SidebarPlugin extends plugins.BasePlugin {
-    public static defaults:any = {
+    public static defaults:any = { // @todo: move to config
         autoScroll: true,
         keepExpanded: true,
         slideSpeed: 200,
-
         togglerSelector: '.sidebar-toggler',
         openCloseDuration: 600,
         openedWidth: 235,
@@ -18,26 +21,21 @@ class SidebarPlugin extends plugins.BasePlugin {
     public openCloseInProgress:boolean = false;
     public closing:boolean = false;
 
-    protected _calculateViewportHeight(){
-        return this.packadic.layout.calculateViewportHeight();
-    }
-    public _create() {
-        console.log('Creating new sidevar');
-        console.log(this.$element.data());
 
+    //
+    // INIT
+    //
+
+    public _create() {
         var self:SidebarPlugin = this;
         self.$parent = self.$element.parent();
 
         self._initFixed();
-        self._initMain();
+        self._initSubmenus();
         self._initToggleButton();
-
-        // handle scrolling to top on responsive menu toggler click when header is fixed for mobile view
-        self.$document.on('click', '.page-header-fixed-mobile .responsive-toggler', function () {
-            self.packadic.scrollTop();
-        });
     }
-    protected _initFixed(){
+
+    protected _initFixed() {
         this.packadic.destroySlimScroll(this.$element);
         this.$element.parent().find('.slimScrollDiv, .slimScrollBar, .slimScrollRail').remove();
         if (!this.isFixed()) {
@@ -49,7 +47,8 @@ class SidebarPlugin extends plugins.BasePlugin {
             $('.page-content').css('min-height', this._calculateViewportHeight() + 'px');
         }
     }
-    protected _initMain(){
+
+    protected _initSubmenus() {
         var self:SidebarPlugin = this;
         self._on('click', 'li > a', function (e) {
             var $this = $(this);
@@ -114,6 +113,7 @@ class SidebarPlugin extends plugins.BasePlugin {
             e.preventDefault();
         });
     }
+
     protected _initToggleButton() {
         var self:SidebarPlugin = this;
         self.$body.on('click', self.options.togglerSelector, function (e) {
@@ -126,23 +126,35 @@ class SidebarPlugin extends plugins.BasePlugin {
         self._initFixedHovered();
     }
 
-
     protected _initFixedHovered() {
         var self:SidebarPlugin = this;
         if (self.isFixed()) {
             self._on('mouseenter', function () {
-                if (this.isClosed()) {
-                    this.$parent.removeClass('page-sidebar-menu-closed');
+                if (self.isClosed()) {
+                    self.$parent.removeClass('page-sidebar-menu-closed');
                 }
             })._on('mouseleave', function () {
-                if (this.isClosed()) {
-                    this.$parent.addClass('page-sidebar-menu-closed');
+                if (self.isClosed()) {
+                    self.$parent.addClass('page-sidebar-menu-closed');
                 }
             });
         }
     }
 
-    protected _setClosed(closed:boolean=true){
+
+    //
+    // HELPERS
+    //
+
+    protected _calculateViewportHeight() {
+        return this.packadic.layout.calculateViewportHeight();
+    }
+
+
+    //
+    // STATE MODIFIERS
+    //
+    protected _setClosed(closed:boolean = true) {
         this.$body.ensureClass("page-sidebar-closed", closed);
         this.$element.ensureClass("page-sidebar-menu-closed", closed);
         if (this.isClosed() && this.isFixed()) {
@@ -151,7 +163,7 @@ class SidebarPlugin extends plugins.BasePlugin {
         this.$window.trigger('resize');
     }
 
-    public closeSubmenus(){
+    public closeSubmenus() {
         var self:SidebarPlugin = this;
         self.$element.find('ul.sub-menu').each(function () {
             var $ul:JQuery = $(this);
@@ -162,6 +174,7 @@ class SidebarPlugin extends plugins.BasePlugin {
             }
         });
     }
+
     public close(callback?:any):JQueryPromise<any> {
         var self:SidebarPlugin = this;
         var $main = $('main');
@@ -184,7 +197,7 @@ class SidebarPlugin extends plugins.BasePlugin {
                 $content.animate({
                     'margin-left': self.options.closedWidth
                 }, self.options.openCloseDuration, function () {
-                    console.log('closed $main');
+                    debug.log('closed $main');
                     cb();
                 })
             },
@@ -192,7 +205,7 @@ class SidebarPlugin extends plugins.BasePlugin {
                 self.$parent.animate({
                     width: self.options.closedWidth
                 }, self.options.openCloseDuration, function () {
-                    console.log('closed $sidbenav');
+                    debug.log('closed $sidbenav');
                     cb();
                 })
             },
@@ -244,18 +257,18 @@ class SidebarPlugin extends plugins.BasePlugin {
             function (cb:any) {
                 $content.css('margin-left', self.options.closedWidth)
                     .animate({
-                        'margin-left': self.options.openedWidth
-                    }, self.options.openCloseDuration, function () {
-                        cb();
-                    })
+                    'margin-left': self.options.openedWidth
+                }, self.options.openCloseDuration, function () {
+                    cb();
+                })
             },
             function (cb:any) {
                 self.$parent.css('width', self.options.closedWidth)
                     .animate({
-                        width: self.options.openedWidth
-                    }, self.options.openCloseDuration, function () {
-                        cb();
-                    })
+                    width: self.options.openedWidth
+                }, self.options.openCloseDuration, function () {
+                    cb();
+                })
             },
             function (cb:any) {
                 var opened = 0;
@@ -292,36 +305,65 @@ class SidebarPlugin extends plugins.BasePlugin {
         return defer.promise();
     }
 
-    /*
-
     public hide() {
         if (this.options.hidden) {
             return;
         }
         this.options.hidden = true;
-        if (!$body.hasClass('sidebar-nav-closed')) {
-            $body.addClass('sidebar-nav-closed');
+        if (!this.$body.hasClass('page-sidebar-closed')) {
+            this.$body.addClass('page-sidebar-closed');
         }
-        if (!$body.hasClass('sidebar-nav-hide')) {
-            $body.addClass('sidebar-nav-hide');
+        if (!this.$body.hasClass('page-sidebar-hide')) {
+            this.$body.addClass('page-sidebar-hide');
         }
         $('header.top .sidebar-toggler').hide();
     }
 
     public show() {
         this.options.hidden = false;
-        $body.removeClass('sidebar-nav-closed')
-            .removeClass('sidebar-nav-hide');
+        this.$body.removeClass('page-sidebar-closed')
+            .removeClass('page-sidebar-hide');
         $('header.top .sidebar-toggler').show();
     }
-     */
 
-    public hide(){}
-    public show(){}
-    public isClosed(){
+    public setFixed(fixed:boolean) {
+        this.$body.ensureClass("page-sidebar-fixed", fixed);
+
+        this.$element.ensureClass("page-sidebar-menu-fixed", fixed);
+        this.$element.ensureClass("page-sidebar-menu-default", !fixed);
+        if (!fixed) {
+            this.$element.unbind('mouseenter').unbind('mouseleave');
+        } else {
+            this._initFixedHovered();
+        }
+        this._initFixed();
+    }
+
+    public setCompact(compact:boolean) {
+        this.$element.ensureClass("page-sidebar-menu-compact", compact);
+    }
+
+    public setHover(hover:boolean) {
+        this.$element.ensureClass("page-sidebar-menu-hover-submenu", hover && !this.isFixed());
+    }
+
+    public setReversed(reversed:boolean) {
+        this.$body.ensureClass("page-sidebar-reversed", reversed);
+    }
+
+
+    //
+    // STATE CHECKERS
+    //
+
+    public isClosed() {
         return this.$body.hasClass('page-sidebar-closed')
     }
-    public isHidden(){}
+
+    public isHidden() {
+        return this.$body.hasClass('page-sidebar-hide');
+    }
+
     public isFixed():boolean {
         return $('.page-sidebar-fixed').size() !== 0;
     }

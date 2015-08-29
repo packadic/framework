@@ -105,6 +105,9 @@ var Styler = (function () {
     Styler.prototype.srcPath = function (relPath) {
         return typeof relPath === 'string' ? path.join(paths.src, relPath) : paths.src;
     };
+    Styler.prototype.getDefaultRootPath = function () {
+        return _rootPath;
+    };
     return Styler;
 })();
 exports.Styler = Styler;

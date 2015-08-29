@@ -28,6 +28,11 @@ function setPathsRoot(rootPath?:string) {
 }
 setPathsRoot();
 
+export interface StylerTmpDirResponse {
+    path:string;
+    dir:tmp.ISyncTMP;
+    clean:Function;
+}
 
 export class Styler {
     public config:any = {
@@ -71,7 +76,7 @@ export class Styler {
 
 
 
-    protected createTmpDir() {
+    public createTmpDir():StylerTmpDirResponse {
         var self:Styler = this;
         tmp.setGracefulCleanup();
         var dir:tmp.ISyncTMP = tmp.dirSync();
@@ -126,6 +131,9 @@ export class Styler {
         return typeof relPath === 'string' ? path.join(paths.src, relPath) : paths.src;
     }
 
+    public getDefaultRootPath():string {
+        return _rootPath;
+    }
 
 }
 

@@ -86,9 +86,11 @@ interface JQuery {
     removeAttributes(...args:any[]):JQuery ;
     ensureClass(...args:any[]):JQuery ;
     prefixedData(prefix:string):{};
-    example(...args:any[]):JQuery ;
-    sidebar(...args:any[]):JQuery ;
-    styler(...args:any[]):JQuery ;
+    example(...args:any[]):JQuery;
+    sidebar(...args:any[]):JQuery;
+    styler(...args:any[]):JQuery;
+    customizer(...args:any[]):JQuery;
+    bootstrapSwitch(...args:any[]):JQuery;
 }
 
 declare module "eventemitter2" {
@@ -131,5 +133,8 @@ declare module "sass" {
 declare function jadeTemplate(locals:any):string;
 
 declare module 'templates/styler' {
+    export = jadeTemplate;
+}
+declare module 'templates/customizer' {
     export = jadeTemplate;
 }

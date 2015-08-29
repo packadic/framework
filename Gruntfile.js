@@ -5,15 +5,14 @@ var fs = require('fs-extra');
 var _        = require('lodash'),
     exec     = require('child_process').execSync,
     grunt    = require('grunt'),
-    globule  = require('globule'),
-    packadic = require('./src/lib');
+    globule  = require('globule');
 
 
 module.exports = function (_grunt) {
     grunt = _grunt;
     var target = grunt.option('target') || 'demo';
     var vendorScripts = ['lodash/lodash.js', 'requirejs/require.js'];
-    grunt.log.subhead('Packadic Builder for Packadic ' + packadic.VERSION);
+    grunt.log.subhead('Packadic Builder for Packadic ' + require('./bower.json').version);
 
     var config = {
         target        : {name: '', dest: ''},
@@ -69,11 +68,11 @@ module.exports = function (_grunt) {
             }
         },
         typescript    : {
-            options   : {target: 'es5', rootDir: 'src/ts', module: 'amd', sourceMap: false, declaration: false},
-            lib       : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src/lib', options: {rootDir: 'src/lib', module: 'commonjs', sourceMap: true}},
-            watch_lib : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src/lib', options: {rootDir: 'src/lib', module: 'commonjs', sourceMap: true, watch: {path: 'src/lib'}}},
-            base      : {src: ['src/ts/*.ts', '!src/ts/**/*.d.ts'], dest: '<%= target.dest %>/assets/scripts'},
-            watch_base: {src: ['src/ts/*.ts', '!src/ts/**/*.d.ts'], dest: '<%= target.dest %>/assets/scripts', options: {watch: {path: 'src/ts'}}},
+            options   : {target: 'es5', rootDir: 'src', module: 'amd', sourceMap: false, declaration: false},
+            lib       : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src', options: {module: 'commonjs', sourceMap: true}},
+            watch_lib : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src', options: {module: 'commonjs', sourceMap: true, watch: {path: 'src/lib'}}},
+            base      : {src: ['src/ts/*.ts', '!src/ts/**/*.d.ts'], dest: '<%= target.dest %>/assets/scripts', options: {rootDir: 'src/ts'}},
+            watch_base: {src: ['src/ts/*.ts', '!src/ts/**/*.d.ts'], dest: '<%= target.dest %>/assets/scripts', options: {rootDir: 'src/ts', watch: {path: 'src/ts'}}},
             tasks     : {src: ['src/tasks/*.ts', '!src/tasks/**/*.d.ts'], dest: 'src/tasks'}
         },
         availabletasks: {
@@ -91,7 +90,7 @@ module.exports = function (_grunt) {
         },
         concurrent    : {
             options: {logConcurrentOutput: true},
-            watch  : ['typescript:watch_lib', 'typescript:watch_base', 'default_watch']
+            watch  : ['typescript:watch_lib', 'typescript:watch_base', 'default_watch', 'styler']
         },
         default_watch : {
             options   : {livereload: true},
@@ -137,14 +136,10 @@ module.exports = function (_grunt) {
     // dev
     grunt.registerTask('lib', 'Compile typescript files in lib for node.', ['typescript:lib']);
     grunt.registerTask('watch', 'Watch for file changes and fire tasks.', ['concurrent:watch']);
-    var stylerTaskDone;
+
     grunt.registerTask('styler', 'DevTest.', function (tar) {
-        if ( tar === 'start' ) {
-            stylerTaskDone = this.async();
-            packadic.styler.start();
-        } else if ( tar === 'stop' ) {
-            stylerTaskDone();
-        }
+        var out = require('child_process').execSync('bash run styler');
+        log(out);
     });
 
     grunt.registerTask('serve', 'Create a local server. Builds & hosts the demo and watches for changes. Use serve:fast to skip demo build task.', function (opt) {

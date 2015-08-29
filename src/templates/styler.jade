@@ -12,11 +12,20 @@
                     div.tab-pane.fade(id='styler_file_tab_' + iFile, class=(iFile === 0 ? 'active in':''))
                         table.table.table-hover.table-condensed.table-striped.table-codex.styler-table
                             thead: tr
+                                th(width="50").text-center D
                                 th Variable
                                 th Value
                             tbody
                                 each variable in vars.tree[file]
-                                    tr
+                                    tr(data-styler-var=variable)
+                                        td.text-center
+                                            if variable.default
+                                                a.styler-var-default.mr-sm(href='javascript:;'): i.fa.fa-check.color-green-500
+                                            if variable.overides
+                                                a.styler-var-overides.mr-sm(href='javascript:;'): i.fa.fa-floppy-o.color-orange-500
+                                            if variable.overriden
+                                                a.styler-var-overriden.mr-sm(href='javascript:;'): i.fa.fa-cross.color-red-400
+
                                         td: span.scss-variable-name= variable.name
                                         td: a(id=variable.name, data-type=variable.type, data-scss-file-name=file).scss-variable-value= variable.value
 

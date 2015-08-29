@@ -5,6 +5,13 @@ var BaseStylerModule = (function () {
     function BaseStylerModule(styler) {
         this.styler = styler;
     }
+    Object.defineProperty(BaseStylerModule.prototype, "config", {
+        get: function () {
+            return this.styler.config;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return BaseStylerModule;
 })();
 exports.BaseStylerModule = BaseStylerModule;
@@ -14,7 +21,7 @@ function log() {
         args[_i - 0] = arguments[_i];
     }
     var args = _.toArray(arguments);
-    process.stdout.write(util.inspect(args.length === 1 ? args[0] : args, { colors: true }));
+    process.stdout.write(util.inspect(args.length === 1 ? args[0] : args, { colors: true, depth: 7 }));
     process.stdout.write('\n');
 }
 exports.log = log;

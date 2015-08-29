@@ -19,12 +19,16 @@ export class BaseStylerModule {
         this.styler = styler;
     }
 
+    public get config(){
+        return this.styler.config;
+    }
+
 }
 
 
 export function log(...args:any[]) {
     var args = _.toArray(arguments);
-    process.stdout.write(util.inspect(args.length === 1 ? args[0] : args, {colors: true}));
+    process.stdout.write(util.inspect(args.length === 1 ? args[0] : args, {colors: true, depth: 7 }));
     process.stdout.write('\n');
 }
 

@@ -7,3 +7,7 @@ declare module "globule" {
     export function find(...args:any[]): string[];
 }
 
+declare module "gonzales-pe"{
+    export function cssToAST(...args:any[]):any;
+    export function astToTree(...args:any[]):any;
+}

@@ -13,7 +13,11 @@ import globule = require('globule');
 import {Styler} from './styler/index';
 import {log} from './styler/base';
 
+
+
+
 export var VERSION:string = require('./../../bower.json').version;
+
 export var styler:Styler = new Styler();
 
 export function test(){

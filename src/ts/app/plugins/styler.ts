@@ -7,6 +7,11 @@ import material = require('modules/material');
 import template = require('templates/styler');
 
 
+import {debug} from './../../modules/debug';
+var log:any = debug.log;
+
+
+
 var colorValues = [];
 var palette = [];
 $.each(material.colors, function (name, variants) {
@@ -59,7 +64,7 @@ class StylerPlugin extends plugins.BasePlugin {
         var self:StylerPlugin = this;
         self._getVariables().done(function (res:StylerResponse) {
             if(res.code === 200) {
-                self.$element.html(template(res.data));
+                self._bindTemplate(res.data);
                 self._bindXEditable(self.$element.find('a.scss-variable-value'));
             }
         });
@@ -71,6 +76,13 @@ class StylerPlugin extends plugins.BasePlugin {
         self.refresh();
     }
 
+    protected _bindTemplate(data:any){
+        var self:StylerPlugin = this;
+        self.$element.html(template(data));
+        self.$element.find('a.styler-var-default').tooltip({ title: 'Marked as default', container: 'body' });
+        self.$element.find('a.styler-var-overides').tooltip({ title: 'Overides a value', container: 'body' });
+        self.$element.find('a.styler-var-overriden').tooltip({ title: 'Overriden by ..', container: 'body' });
+    }
 
     protected _bindXEditable($el:JQuery) {
         var self:StylerPlugin = this;
@@ -86,7 +98,7 @@ class StylerPlugin extends plugins.BasePlugin {
             editable.options.title = varName;
         });
         $el.on('shown', function (event, editable:any) {
-            console.log(arguments);
+            debug.log(arguments);
             if (editable.input.type === 'color') {
                 editable.input.$input.parent().spectrum('set', editable.value);
 
@@ -95,11 +107,11 @@ class StylerPlugin extends plugins.BasePlugin {
         $el.editable({
             url: this.options.host + ':' + this.options.port.toString(),
             success: function(response, newValue) {
-                console.log('editable resp', response, newValue);
+                debug.log('editable resp', response, newValue);
 
                 response.result.files.forEach(function(file:any){
                     var $el:JQuery = $('link[data-styler="' + file.baseName + '"]').first();
-                    console.log('$el link editing: ', $el);
+                    debug.log('$el link editing: ', $el);
                     $el.attr('href', self.packadic.config('paths.assets') + '/styles/' + file.relPath);
 
                 });
@@ -157,7 +169,7 @@ class StylerPlugin extends plugins.BasePlugin {
     }
 
     public echo() {
-        console.log('ECHOING', arguments);
+        debug.log('ECHOING', arguments);
     }
 }
 export = StylerPlugin;

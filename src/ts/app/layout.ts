@@ -3,11 +3,21 @@ import Packadic = require('./../Packadic');
 import $ = require('jquery');
 import BaseApp = require('./BaseApp');
 import util  = require('./../modules/utilities');
+import {DeferredInterface} from './../modules/promise';
+import {ConfigObject,IConfig,IConfigProperty} from './../modules/configuration';
+import storage  = require('./../modules/storage');
+import SidebarPlugin = require("./plugins/sidebar");
+
+import {debug} from './../modules/debug';
+var log:any = debug.log;
+
+
 
 var $window:JQuery = $(<any> window),
     $document:JQuery = $(<any> document),
     $body:JQuery = $('body'),
     $header:JQuery = $.noop(),
+    $headerInner:JQuery = $.noop(),
     $container:JQuery = $.noop(),
     $content:JQuery = $.noop(),
     $sidebar:JQuery = $.noop(),
@@ -16,25 +26,33 @@ var $window:JQuery = $(<any> window),
     $footer:JQuery = $.noop();
 
 export class Layout extends BaseApp {
+    protected _preferences:Preferences;
 
-    public boot(){
+    public boot() {
         this.assignElements();
-        //this.initFixedSidebar();
-        //this.initSidebarMenu();
-        //this.initSidebarToggler();
-        //this.p.on('resize', this.initFixedSidebar.bind(this));
-        //this.initSidebarMenuActiveLink();
         this.initHeader();
         this.initGoTop();
-        this.p.plugins.load('sidebar', function(){
-            $sidebarMenu.sidebar({
-
-            });
+        this.initPreferences();
+        this.p.plugins.load('sidebar', function () {
+            $sidebarMenu.sidebar({});
         });
     }
 
-    protected assignElements (){
+    public get preferences():Preferences {
+        return this._preferences;
+    }
+
+    protected get sidebar() {
+        var defer:DeferredInterface<any> = this.p.promise();
+        this.p.plugins.load('sidebar', function () {
+            defer.resolve($sidebarMenu.sidebar('instance'));
+        });
+        return defer.promise;
+    }
+
+    protected assignElements() {
         $header = this.$e('header');
+        $headerInner = this.$e('header-inner');
         $container = this.$e('container');
         $content = this.$e('content');
         $sidebar = this.$e('sidebar');
@@ -43,236 +61,22 @@ export class Layout extends BaseApp {
         $search = this.$e('search');
     }
 
-    protected $e(selectorName:string):JQuery{
-        var selector:string = this.config('selectors.' + selectorName);
+    protected $e(selectorName:string):JQuery {
+        var selector:string = this.config('app.selectors.' + selectorName);
         return $(selector);
     }
 
-    initSidebarMenuActiveLink() {
-
-        var self:Layout = this;
-        if (this.config.get('sidebar.resolveActive') !== true) return;
-        var currentPath = util.trim(location.pathname.toLowerCase(), '/');
-        var md = this.p.getBreakpoint('md');
-        if (util.getViewPort().width < md) {
-            return; // not gonna do this for small devices
-        }
-
-        $sidebarMenu.find('li > a').each(function () {
-            var href:string = $(this).attr('href');
-            if (!_.isString(href)) {
-                return;
-            }
-            href = util.trim(href).replace(location['origin'], '');
-            var path = util.trim(href, '/');
-            if (path == currentPath) {
-                console.log('found result', this);
-                var $el = $(this);
-                $el.parent('li').not('.active').addClass('active');
-                var $parentsLi = $el.parents('li').addClass('open');
-                $parentsLi.find('.arrow').addClass('open');
-                $parentsLi.has('ul').children('ul').show();
-                return false;
-            }
-        })
-    }
-
-    initSidebarMenu() {
-        var self:Layout = this;
-        $sidebar.on('click', 'li > a', function (e) {
-
-            if (util.getViewPort().width >= self.p.getBreakpoint('md') && $(this).parents('.page-sidebar-menu-hover-submenu').size() === 1) { // exit of hover sidebar menu
-                return;
-            }
-
-            if ($(this).next().hasClass('sub-menu') === false) {
-                if (util.getViewPort().width < self.p.getBreakpoint('md') && $sidebar.hasClass("in")) { // close the menu on mobile view while laoding a page
-                    $('.page-header .responsive-toggler').click();
-                }
-                return;
-            }
-
-            if ($(this).next().hasClass('sub-menu always-open')) {
-                return;
-            }
-
-            var parent = $(this).parent().parent();
-            var the = $(this);
-            var menu = $sidebarMenu;
-            var sub = $(this).next();
-
-            var autoScroll = menu.data("auto-scroll");
-            var slideSpeed = parseInt(menu.data("slide-speed"));
-            var keepExpand = menu.data("keep-expanded");
-
-            if (keepExpand !== true) {
-                parent.children('li.open').children('a').children('.arrow').removeClass('open');
-                parent.children('li.open').children('.sub-menu:not(.always-open)').slideUp(slideSpeed);
-                parent.children('li.open').removeClass('open');
-            }
-
-            var slideOffeset = -200;
-
-            if (sub.is(":visible")) {
-                $(this).find('.arrow').removeClass("open");
-                $(this).parent().removeClass("open");
-                sub.slideUp(slideSpeed, function () {
-                    if (autoScroll === true && $body.hasClass('page-sidebar-closed') === false) {
-                        if ($body.hasClass('page-sidebar-fixed')) {
-                            menu.slimScroll({
-                                'scrollTo': (the.position()).top
-                            });
-                        } else {
-                            self.scrollTo(the, slideOffeset);
-                        }
-                    }
-                });
-            } else {
-                $(this).find('.arrow').addClass("open");
-                $(this).parent().addClass("open");
-                sub.slideDown(slideSpeed, function () {
-                    if (autoScroll === true && $body.hasClass('page-sidebar-closed') === false) {
-                        if ($body.hasClass('page-sidebar-fixed')) {
-                            menu.slimScroll({
-                                'scrollTo': (the.position()).top
-                            });
-                        } else {
-                            self.scrollTo(the, slideOffeset);
-                        }
-                    }
-                });
-            }
-
-            e.preventDefault();
-        });
-
-
-
-
-        // handle scrolling to top on responsive menu toggler click when header is fixed for mobile view
-        $(<any> document).on('click', '.page-header-fixed-mobile .responsive-toggler', function () {
-            self.scrollTop();
-        });
-    }
 
     public calculateViewportHeight() {
         var self:Layout = this;
         var sidebarHeight = util.getViewPort().height - $('.page-header').outerHeight() - 30;
         if ($body.hasClass("page-footer-fixed")) {
-            sidebarHeight = sidebarHeight - $('.page-footer').outerHeight();
+            sidebarHeight = sidebarHeight - $footer.outerHeight();
         }
 
         return sidebarHeight;
     }
 
-    initFixedSidebar() {
-        var self:Layout = this;
-        this.p.destroySlimScroll($sidebarMenu);
-        $sidebarMenu.parent().find('.slimScrollDiv, .slimScrollBar, .slimScrollRail').remove();
-
-        if ($('.page-sidebar-fixed').size() === 0) {
-            return;
-        }
-
-        if (util.getViewPort().width >= this.p.getBreakpoint('md')) {
-            $sidebarMenu.attr("data-height", this.calculateViewportHeight());
-            self.p.makeSlimScroll($sidebarMenu);
-            $('.page-content').css('min-height', this.calculateViewportHeight() + 'px');
-        }
-    }
-
-    initFixedSidebarHoverEffect() {
-        var self:Layout = this;
-        if ($body.hasClass('page-sidebar-fixed')) {
-            $sidebar.on('mouseenter', function () {
-                if ($body.hasClass('page-sidebar-closed')) {
-                    $(this).find('.page-sidebar-menu').removeClass('page-sidebar-menu-closed');
-                }
-            }).on('mouseleave', function () {
-                if ($body.hasClass('page-sidebar-closed')) {
-                    $(this).find('.page-sidebar-menu').addClass('page-sidebar-menu-closed');
-                }
-            });
-        }
-    }
-
-    initSidebarToggler() {
-        var self:Layout = this;
-
-        if ($.cookie && $.cookie('sidebar_closed') === '1' && util.getViewPort().width >= this.p.getBreakpoint('md')) {
-            $body.addClass('page-sidebar-closed');
-            $sidebarMenu.addClass('page-sidebar-menu-closed');
-        }
-
-        $body.on('click', '.sidebar-toggler', function (e) {
-            $sidebar.find(".sidebar-search").removeClass("open");
-
-            if ($body.hasClass("page-sidebar-closed")) {
-                $body.removeClass("page-sidebar-closed");
-                $sidebarMenu.removeClass("page-sidebar-menu-closed");
-                if ($.cookie) {
-                    $.cookie('sidebar_closed', '0');
-                }
-            } else {
-                $body.addClass("page-sidebar-closed");
-                $sidebarMenu.addClass("page-sidebar-menu-closed");
-                if ($body.hasClass("page-sidebar-fixed")) {
-                    $sidebarMenu.trigger("mouseleave");
-                }
-                if ($.cookie) {
-                    $.cookie('sidebar_closed', '1');
-                }
-            }
-
-            $window.trigger('resize');
-        });
-
-        self.initFixedSidebarHoverEffect();
-
-        // handle the search bar close
-        $document.on('click', '.sidebar-search .remove', function (e) {
-            e.preventDefault();
-            $search.removeClass("open");
-        });
-
-        // handle the search query submit on enter press
-        $('.page-sidebar .sidebar-search').on('keypress', 'input.form-control', function (e) {
-            if (e.which == 13) {
-                $search.submit();
-                return false; //<---- Add this line
-            }
-        });
-
-        // handle the search submit(for sidebar search and responsive mode of the header search)
-        $('.sidebar-search .submit').on('click', function (e) {
-            e.preventDefault();
-            if ($body.hasClass("page-sidebar-closed")) {
-                if ($search.hasClass('open') === false) {
-                    if ($('.page-sidebar-fixed').size() === 1) {
-                        $('.page-sidebar .sidebar-toggler').click(); //trigger sidebar toggle button
-                    }
-                    $search.addClass("open");
-                } else {
-                    $search.submit();
-                }
-            } else {
-                $search.submit();
-            }
-        });
-
-        // handle close on body click
-        if ($search.size() !== 0) {
-            $('.sidebar-search .input-group').on('click', function (e) {
-                e.stopPropagation();
-            });
-
-            $body.on('click', function () {
-                if ($search.hasClass('open')) {
-                    $search.removeClass("open");
-                }
-            });
-        }
-    }
 
     initHeader() {
         var self:Layout = this;
@@ -302,7 +106,6 @@ export class Layout extends BaseApp {
             $(this).closest('.search-form').submit();
         });
     }
-
 
     initGoTop() {
         var self:Layout = this;
@@ -346,6 +149,182 @@ export class Layout extends BaseApp {
     }
 
 
+    initPreferences() {
+        var self:Layout = this;
+        var prefs:Preferences = this._preferences = new Preferences(this);
+
+        prefs.bind('header.fixed', 'set', this._setHeader);
+        prefs.bind('footer.fixed', 'set', this._setFooterFixed);
+        prefs.bind('page.boxed', 'set', this._setBoxed);
+
+        prefs.bind('sidebar.hidden', 'set', () => this.sidebar.then(function (sidebar:SidebarPlugin) {
+            prefs.get('sidebar.hidden') ? sidebar.hide() : sidebar.show();
+        }));
+        prefs.bind('sidebar.closed', 'set', () => this.sidebar.then(function (sidebar:SidebarPlugin) {
+            prefs.get('sidebar.closed') ? sidebar.close() : sidebar.open();
+        }));
+        prefs.bind('sidebar.fixed', 'set', () => this.sidebar.then(function (sidebar:SidebarPlugin) {
+            sidebar.setFixed(prefs.get('sidebar.fixed'))
+        }));
+        prefs.bind('sidebar.compact', 'set', () => this.sidebar.then(function (sidebar:SidebarPlugin) {
+            sidebar.setCompact(prefs.get('sidebar.compact'))
+        }));
+        prefs.bind('sidebar.hover', 'set', () => this.sidebar.then(function (sidebar:SidebarPlugin) {
+            sidebar.setHover(prefs.get('sidebar.hover'))
+        }));
+        prefs.bind('sidebar.reversed', 'set', () => this.sidebar.then(function (sidebar:SidebarPlugin) {
+            sidebar.setReversed(prefs.get('sidebar.reversed'))
+        }));
+    }
+
+    public _setHeader(val:any) {
+        if (val === true) {
+            $body.addClass("page-header-fixed");
+            $header.removeClass("navbar-static-top").addClass("navbar-fixed-top");
+        } else {
+            $body.removeClass("page-header-fixed");
+            $header.removeClass("navbar-fixed-top").addClass("navbar-static-top");
+        }
+    }
+
+    public _setFooterFixed(val:any) {
+        if (val === true) {
+            $body.addClass("page-footer-fixed");
+        } else {
+            $body.removeClass("page-footer-fixed");
+        }
+    }
+
+    public _setBoxed(val:any) {
+        if (val === true) {
+            $body.addClass("page-boxed");
+            $headerInner.addClass("container");
+            var cont = $('body > .clearfix').after('<div class="container"></div>');
+            $container.appendTo('body > .container');
+            if (this.preferences.get('footer.fixed')) {
+                $footer.html('<div class="container">' + $footer.html() + '</div>');
+            } else {
+                $footer.appendTo('body > .container');
+            }
+            this.p.emit('resize');
+        }
+    }
+
+    public reset() {
+        $body.
+            removeClass("page-boxed").
+            removeClass("page-footer-fixed").
+            removeClass("page-sidebar-fixed").
+            removeClass("page-header-fixed").
+            removeClass("page-sidebar-reversed");
+
+        $header.removeClass('navbar-fixed-top');
+        $headerInner.removeClass("container");
+
+        if ($container.parent(".container").size() === 1) {
+            $container.insertAfter('body > .clearfix');
+        }
+
+        if ($('.page-footer > .container').size() === 1) {
+            $footer.html($('.page-footer > .container').html());
+        } else if ($footer.parent(".container").size() === 1) {
+            $footer.insertAfter($container);
+            $('.scroll-to-top').insertAfter($footer);
+        }
+
+        $('body > .container').remove();
+
+    }
 
 }
 
+
+export class Preferences {
+
+    protected layout:Layout;
+    protected p:Packadic;
+
+    constructor(layout:Layout) {
+        this.layout = layout;
+        this.p = layout.p;
+
+        this.bindings = new ConfigObject();
+        this.defaultPreferences = util.dotize(this.config('app.preferences'));
+        this.preferencesKeys = Object.keys(this.defaultPreferences);
+    }
+
+    protected get config():IConfigProperty {
+        return this.p.config;
+    }
+
+    protected bindings:IConfig;
+    protected preferencesKeys:string[];
+    protected defaultPreferences:any;
+
+    public save(key:string, val?:any):Preferences {
+        val = util.def(val, this.config('app.preferences.' + key));
+        storage.set('packadic.preference.' + key, val);
+        this.set(key, val);
+        return this;
+    }
+
+    public set(key:string, val?:any):Preferences {
+        this.config.set('app.preferences.' + key, val);
+        this.callBindings(key);
+        return this;
+    }
+
+    public get(key:string) {
+        return storage.get('packadic.preference.' + key, {
+            def: this.config('app.preferences.' + key)
+        });
+    }
+
+    public has(key:string):boolean {
+        return this.preferencesKeys.indexOf(key) !== -1;
+    }
+
+    public all():any {
+        var self:Preferences = this;
+        var all:any = {};
+        this.preferencesKeys.forEach(function (key) {
+            all[key] = self.get(key);
+        });
+        return all;
+    }
+
+
+    public bind(key:string, name:string, callback:any):Preferences {
+        this.bindings.set(key + '.' + name, callback);
+        return this;
+    }
+
+    public hasBindings(key:string):boolean {
+        return typeof this.bindings.get(key) === 'object' && Object.keys(this.bindings.get(key)).length > 0;
+    }
+
+    public bound(key:string, name:string):boolean {
+        return typeof this.bindings.get(key + '.' + name) === 'function';
+    }
+
+    public unbind(key:string, name:string):Preferences {
+        this.bindings.unset(key + '.' + name);
+        return this;
+    }
+
+    public callBindings(key:string):Preferences {
+        var self:Preferences = this;
+        if (this.hasBindings(key)) {
+            var val:any = self.get(key);
+            Object.keys(this.bindings.get(key)).forEach(function (name:any) {
+                var binding:any = self.bindings.get(key + '.' + name);
+                binding.call(self, val);
+            })
+        }
+        return this;
+    }
+
+    public getBindings() {
+        return this.bindings.get();
+    }
+}
