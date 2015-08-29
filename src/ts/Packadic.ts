@@ -137,6 +137,7 @@ class Packadic extends EventEmitter2 {
         $('*[data-toggle="tooltip"]').tooltip();
         $.material.options = this.config.get('vendor.material');
         $.material.init();
+        this.initHighlight();
         this.emit('booted');
         debug.log('Booted Packadic');
         return this;
@@ -301,7 +302,7 @@ class Packadic extends EventEmitter2 {
     }
 
     initHighlight() {
-        require(['highlightjs', 'css!highlightjs-css/' + this.config('highlightjs.theme')], function (hljs:HighlightJS) {
+        require(['highlightjs', 'css!highlightjs-css/' + this.config('vendor.highlightjs.theme')], function (hljs:HighlightJS) {
             hljs.initHighlighting();
         });
     }

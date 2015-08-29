@@ -67,6 +67,9 @@ module.exports = function (_grunt) {
                 }
             }
         },
+        typedoc: {
+            ts: { src: 'src/ts/**/*.ts', options: { module: 'amd', out: '<%= target.dest %>/docs', name: 'Packadic Framework', target: 'es5', mode: 'file' } }
+        },
         typescript    : {
             options   : {target: 'es5', rootDir: 'src', module: 'amd', sourceMap: false, declaration: false},
             lib       : {src: ['src/lib/**/*.ts', '!src/lib/**/*.d.ts'], dest: 'src', options: {module: 'commonjs', sourceMap: true}},
@@ -83,7 +86,6 @@ module.exports = function (_grunt) {
                         'Build'      : ['demo', 'dist'],
                         'Partials'   : ['styles', 'scripts', 'images', 'bower', 'views'],
                         'Development': ['serve', 'watch', 'lib']
-
                     }
                 }
             }
@@ -94,7 +96,6 @@ module.exports = function (_grunt) {
         },
         default_watch : {
             options   : {livereload: true},
-            //ts        : {files: ['src/ts/**/*.ts', '!src/ts/**/*.d.ts'], tasks: ['clean:scripts_no_vendor', 'typescript:base']},
             tasks     : {files: ['src/tasks/**/*.ts', '!src/tasks/**/*.d.ts'], tasks: ['typescript:tasks']},
             templates : {files: ['src/templates/**/*.jade'], tasks: ['jade:templates']},
             newerViews: {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:demo']},
@@ -126,11 +127,11 @@ module.exports = function (_grunt) {
 
     // compile
     grunt.registerTask('styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles']);
-    grunt.registerTask('scripts', 'Concat & uglify vendor scripts and compile typescript files', ['clean:scripts', 'uglify:vendor', 'typescript:base']);
+    grunt.registerTask('scripts', 'Concat & uglify vendor scripts and compile typescript files', ['clean:scripts', 'uglify:vendor', 'jade:templates', 'typescript:base']);
     grunt.registerTask('views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]);
 
     // build
-    grunt.registerTask('demo', 'Build the theme', ['clean:all', 'bower', 'images', 'styles', 'scripts', 'views']);
+    grunt.registerTask('demo', 'Build the theme', ['clean:all', 'bower', 'images', 'styles', 'scripts', 'views', 'typedoc']);
     grunt.registerTask('dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'styles', 'scripts', 'images', 'views']);
 
     // dev
@@ -139,7 +140,7 @@ module.exports = function (_grunt) {
 
     grunt.registerTask('styler', 'DevTest.', function (tar) {
         var out = require('child_process').execSync('bash run styler');
-        log(out);
+        grunt.log.writeflags(out);
     });
 
     grunt.registerTask('serve', 'Create a local server. Builds & hosts the demo and watches for changes. Use serve:fast to skip demo build task.', function (opt) {

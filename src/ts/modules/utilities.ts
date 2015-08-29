@@ -18,6 +18,12 @@ var entityMap = {
 
 module utilities {
 
+    /**
+     * Returns the type of a variablse
+     *
+     * @param value
+     * @returns {any}
+     */
     export function kindOf(value:any):any {
         // Null or undefined.
         if (value == null) {
@@ -27,20 +33,42 @@ module utilities {
         return kindsOf[kindsOf.toString.call(value)] || 'object';
     }
 
+    /**
+     * Round a value to a precision
+     * @param value
+     * @param places
+     * @returns {number}
+     */
     export function round(value, places) {
         var multiplier = Math.pow(10, places);
         return (Math.round(value * multiplier) / multiplier);
     }
 
+    /**
+     * Uppercase the first character of a string
+     * @param str
+     * @returns {string}
+     */
     export function ucfirst(str:string):string {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    /**
+     * Create a string from an object
+     *
+     * @param object
+     * @returns {any}
+     */
     export function makeString(object) {
         if (object == null) return '';
         return '' + object;
     }
 
+    /**
+     * Escape a regexp str
+     * @param str
+     * @returns {*|any|string|void}
+     */
     export function escapeRegExp(str) {
         return makeString(str).replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
     }
@@ -54,6 +82,13 @@ module utilities {
             return '[' + escapeRegExp(characters) + ']';
     }
 
+    /**
+     * Trim a string
+     *
+     * @param str
+     * @param characters
+     * @returns {string}
+     */
     export function trim(str:string, characters?:any):string {
         str = makeString(str);
         if (!characters && nativeTrim) return nativeTrim.call(str);
@@ -61,21 +96,44 @@ module utilities {
         return str.replace(new RegExp('^' + characters + '+|' + characters + '+$', 'g'), '');
     }
 
-    export function unquote(str, quoteChar) {
-        quoteChar = quoteChar || '"';
+    /**
+     * Remove quotes from a string
+     * @param str
+     * @param quoteChar
+     * @returns {string}
+     */
+    export function unquote(str:string, quoteChar:string='"') {
+        //quoteChar = quoteChar || '"';
         if (str[0] === quoteChar && str[str.length - 1] === quoteChar)
             return str.slice(1, str.length - 1);
         else return str;
     }
 
+    /**
+     * If val is not defined, return def as default
+     * @param val
+     * @param def
+     * @returns {any}
+     */
     export function def(val, def) {
         return defined(val) ? val : def;
     }
 
+    /**
+     * Checks wether the passed variable is defined
+     *
+     * @param obj
+     * @returns {boolean}
+     */
     export function defined(obj?:any) {
         return !_.isUndefined(obj);
     }
 
+    /**
+     * Create a element wrapped in jQuery
+     * @param name
+     * @returns {JQuery}
+     */
     export function cre(name?:string) {
         if (!defined(name)) {
             name = 'div';
@@ -89,6 +147,13 @@ module utilities {
         });
     }
 
+    /**
+     * Get a child of the object using dot notation
+     * @param obj
+     * @param parts
+     * @param create
+     * @returns {any}
+     */
     export function objectGet(obj?:any, parts?:any, create?:any):any {
         if (typeof parts === 'string') {
             parts = getParts(parts);
@@ -106,6 +171,13 @@ module utilities {
         return obj;
     }
 
+    /**
+     * Set a value of a child of the object using dot notation
+     * @param obj
+     * @param parts
+     * @param value
+     * @returns {any}
+     */
     export function objectSet(obj, parts, value) {
         parts = getParts(parts);
 
@@ -116,6 +188,12 @@ module utilities {
         }
     }
 
+    /**
+     * Check if a child of the object exists using dot notation
+     * @param obj
+     * @param parts
+     * @returns {boolean|any}
+     */
     export function objectExists(obj, parts) {
         parts = getParts(parts);
 
@@ -165,6 +243,11 @@ module utilities {
         return recurse(value, fn, fnContinue, {objs: [], path: ''});
     }
 
+    /**
+     * Copy an object, creating a new object and leaving the old intact
+     * @param object
+     * @returns {T}
+     */
     export function copyObject<T> (object:T):T {
         var objectCopy = <T>{};
 
@@ -177,6 +260,10 @@ module utilities {
         return objectCopy;
     }
 
+    /**
+     * Get the current viewport
+     * @returns {{width: *, height: *}}
+     */
     export function getViewPort():any {
         var e:any = window,
             a:any = 'inner';
@@ -191,6 +278,10 @@ module utilities {
         };
     }
 
+    /**
+     * Checks if the device currently used is a touch device
+     * @returns {boolean}
+     */
     export function isTouchDevice():boolean {
         try {
             document.createEvent("TouchEvent");
@@ -200,6 +291,12 @@ module utilities {
         }
     }
 
+    /**
+     * Get a random generated id string
+     *
+     * @param length
+     * @returns {string}
+     */
     export function getRandomId(length?:number):string {
         if (!_.isNumber(length)) {
             length = 15;
@@ -261,6 +358,12 @@ module utilities {
         };
     }
 
+    /**
+     * Flatten an object to a dot notated associative array
+     * @param obj
+     * @param prefix
+     * @returns {any}
+     */
     export function dotize(obj:any, prefix?:any) {
         if (!obj || typeof obj != "object") {
             if (prefix) {

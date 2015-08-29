@@ -15,6 +15,7 @@ block content
     - var used = ['Jade', 'Grunt', 'Typescript']
 
     .row
+
         .col-md-4
             ul
                 +used('Views', 'Jade')
@@ -22,6 +23,7 @@ block content
                 +used('Styles', 'SCSSc 3.x')
                 +used('Build', 'Grunt, tsd, bower, mversion')
                 +used('Vcs', 'git')
+
         .col-md-4
             ul
                 +used('Framework', 'Boostrap 3.3')
@@ -30,4 +32,44 @@ block content
                 +used('license', 'MIT')
                 +used('Author', 'Robin Radic')
 
-    include partials/bs-demo
+    .row
+        .col-md-12
+            pre: code.hljs.lang-cmake.
+                npm install
+                bower install
+                bash run tsd install
+                bash run tsd lib install
+                bash run tsd ts install
+                grunt serve
+
+            pre: code.hljs.lang-javascript.
+                require(['Packadic'], function(Packadic){
+                    var packadic = Packadic.instance;
+                    packadic.init({ config: 'val' });   // inits packadic
+                    packadic.boot();                    // boot packadic
+                    packadic.getRandomId();             // > "KP2vuOJNfcLNwWn"
+                    packadic.getViewPort();             // > Object {width: 1564, height: 669}
+                    packadic.getBreakpoint('xs')        // > 480
+                    packadic.isTouchDevice();           // returns boolean
+                    packadic.scrollTop();               // scrolls to top
+                    packadic.scrollTo(el);              // scroll to $element top
+                    packadic.promise();                 // > DeferredInterface<T>
+                    packadic.highlight();               // returns highlightjs string
+                    packadic.makeSlimScroll($el);
+                    packadic.createLoader(name, el);
+
+                    packadic.config                     // ||
+                    config('dot.notation')              // get config value
+                    config.set('dot.notation', 'val')
+                    config.unset('dot.nation')
+
+                    packadic.DEBUG                      // > boolean
+                    packadic.debug                      // ||
+                    debug.log(...args);
+                    debug.out(str);
+                    debug.enable();
+                    debug.isEnabled();
+                    packadic.layout                     // ||
+
+                    console.log(packadic);
+                }

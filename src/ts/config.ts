@@ -158,6 +158,9 @@ var packadicConfig = (function () {
                 alwaysVisible: false,
                 railVisible: true,
                 disableFadeOut: true
+            },
+            highlightjs: {
+                theme: 'tomorrow'
             }
         }
     };
