@@ -1,5 +1,10 @@
 extends layouts/default
 
+mixin used(pre, name)
+    li
+        strong(style="width: 100px; display:inline-block")= pre
+        | : #{name}
+
 block page-title
     | Home
 
@@ -7,5 +12,22 @@ block breadcrumb
     +breadcrumb('index.html', true) Home
 
 block content
-    p A falsis, torus teres caesium.
+    - var used = ['Jade', 'Grunt', 'Typescript']
+
+    .row
+        .col-md-4
+            ul
+                +used('Views', 'Jade')
+                +used('Scripts', 'Typescript 1.5.3')
+                +used('Styles', 'SCSSc 3.x')
+                +used('Build', 'Grunt, tsd, bower, mversion')
+                +used('Vcs', 'git')
+        .col-md-4
+            ul
+                +used('Framework', 'Boostrap 3.3')
+                +used('Loader', 'RequireJS')
+                +used('Testing', 'QUnit, karma, mocha')
+                +used('license', 'MIT')
+                +used('Author', 'Robin Radic')
+
     include partials/bs-demo
