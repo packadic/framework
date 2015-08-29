@@ -28,13 +28,18 @@ var $window:JQuery = $(<any> window),
 export class Layout extends BaseApp {
     protected _preferences:Preferences;
 
+
     public boot() {
+        var self:Layout = this;
         this.assignElements();
         this.initHeader();
         this.initGoTop();
         this.initPreferences();
         this.p.plugins.load('sidebar', function () {
             $sidebarMenu.sidebar({});
+            if(self.p.DEBUG){
+                window['sidebar'] = <any> $sidebarMenu.sidebar('instance');
+            }
         });
     }
 

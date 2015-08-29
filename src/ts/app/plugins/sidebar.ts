@@ -173,6 +173,7 @@ class SidebarPlugin extends plugins.BasePlugin {
                 $ul.slideUp(self.options.slideSpeed);
             }
         });
+        this._trigger('close-submenus');
     }
 
     public close(callback?:any):JQueryPromise<any> {
@@ -186,8 +187,8 @@ class SidebarPlugin extends plugins.BasePlugin {
         self.closing = true;
         var defer:any = $.Deferred();
 
+        this._trigger('close');
         self.closeSubmenus();
-        //self.$body.addClass('sidebar-nav-closing');
 
         var $title = self.$element.find('li a span.title, li a span.arrow');
         var $content = self.packadic.el('content');
@@ -235,6 +236,7 @@ class SidebarPlugin extends plugins.BasePlugin {
                 callback();
             }
             defer.resolve();
+            this._trigger('closed');
         });
         return defer.promise();
     }
@@ -250,9 +252,8 @@ class SidebarPlugin extends plugins.BasePlugin {
         var $title:JQuery = self.$element.find('li a span.title, li a span.arrow');
         var $content = self.packadic.el('content');
         self._setClosed(false);
-        //$body.removeClass("sidebar-nav-closed");
-        //self.element.removeClass("sidebar-nav-menu-closed");
 
+        this._trigger('open');
         async.parallel([
             function (cb:any) {
                 $content.css('margin-left', self.options.closedWidth)
@@ -301,6 +302,8 @@ class SidebarPlugin extends plugins.BasePlugin {
                 callback();
             }
             defer.resolve();
+
+            this._trigger('opened');
         });
         return defer.promise();
     }
@@ -317,6 +320,7 @@ class SidebarPlugin extends plugins.BasePlugin {
             this.$body.addClass('page-sidebar-hide');
         }
         $('header.top .sidebar-toggler').hide();
+        this._trigger('hide');
     }
 
     public show() {
@@ -324,6 +328,7 @@ class SidebarPlugin extends plugins.BasePlugin {
         this.$body.removeClass('page-sidebar-closed')
             .removeClass('page-sidebar-hide');
         $('header.top .sidebar-toggler').show();
+        this._trigger('show');
     }
 
     public setFixed(fixed:boolean) {
@@ -337,18 +342,22 @@ class SidebarPlugin extends plugins.BasePlugin {
             this._initFixedHovered();
         }
         this._initFixed();
+        this._trigger(fixed ? 'fix' : 'unfix');
     }
 
     public setCompact(compact:boolean) {
         this.$element.ensureClass("page-sidebar-menu-compact", compact);
+        this._trigger(compact ? 'compact' : 'decompact');
     }
 
     public setHover(hover:boolean) {
         this.$element.ensureClass("page-sidebar-menu-hover-submenu", hover && !this.isFixed());
+        this._trigger(hover ? 'hover' : 'dehover');
     }
 
     public setReversed(reversed:boolean) {
         this.$body.ensureClass("page-sidebar-reversed", reversed);
+        this._trigger(reversed ? 'set-right' : 'set-left');
     }
 
 
