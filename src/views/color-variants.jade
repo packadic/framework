@@ -1,0 +1,38 @@
+extends layouts/default
+
+block page-title
+    | Color variants
+
+
+block breadcrumb
+    +breadcrumb('index.html') Home
+    +breadcrumb('color-variants.html', true) Color variants
+
+
+block content
+    .row
+        .col-md-12
+            each color in Object.keys(material.colors)
+                .row
+                    each variant in ['-light', '', '-dark']
+                        .col-md-4
+                            +alert(color + variant, false, true).pt-sm.pb-sm.fs-11
+                                strong= 'alert-' + color + variant
+                                |  Also using .pt-sm .pb-sm .fs-11
+
+    .row
+        .col-md-12
+            each color in Object.keys(material.colors)
+                .row
+                    each variant in ['-light', '', '-dark']
+                        .col-md-4
+                            span(class='text-' + color + variant)='alert-' + color + variant
+
+    .row
+        .col-md-12
+            each color in Object.keys(material.colors)
+                .row
+                    each variant in ['-light', '', '-dark']
+                        .col-md-4(class='bg-' + color + variant): span='bg-' + color + variant
+
+

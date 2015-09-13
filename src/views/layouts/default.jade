@@ -22,8 +22,8 @@ html(lang="en")
                 meta(charset="UTF-8")
                 meta(http-equiv="X-UA-Compatible", content="IE=edge")
             block styles
-                link(href=assetPath + "styles/stylesheet.css", type="text/css", rel="stylesheet", data-styler="stylesheet")
-                link(href=assetPath + "styles/themes/theme-"+themeStyle+".css", type="text/css", rel="stylesheet", data-styler="theme-default")
+                link(href=assetPath + "styles/stylesheet.css", type="text/css", rel="stylesheet")
+                link(href=assetPath + "styles/themes/theme-"+themeStyle+".css", type="text/css", rel="stylesheet")
     body.page-loading(class=bodyClass)
         #page-loader
             .loader.loader-page
@@ -90,6 +90,9 @@ html(lang="en")
         block scripts
             script(src=assetPath + 'scripts/vendor.min.js')
             script(src=assetPath + 'scripts/packadic.js')
+            script(src=assetPath + 'scripts/components/layout.js')
+            script(src=assetPath + 'scripts/plugins/testPlugin.js')
+            script(src=assetPath + 'scripts/plugins/testWidget.js')
 
         block init-script
             script.

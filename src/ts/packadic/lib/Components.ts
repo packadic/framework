@@ -42,7 +42,7 @@ module packadic.components {
                 throw new Error("Error - use Singleton.getInstance()");
             }
             this.app = app || packadic.app;
-            if(!defined(this.app)){
+            if (!defined(this.app)) {
                 packadic.ready(() => {
                     this.app = packadic.Application.instance;
                 })
@@ -92,13 +92,19 @@ module packadic.components {
                 return this.get(name);
             }
 
-            if (kindOf(cb) === 'function') {
-                cb.apply(this, arguments)
+
+            if (typeof Components.COMPONENTS === 'undefined') {
+                Components.COMPONENTS = {};
             }
 
             this.components[name] = new Components.COMPONENTS[name](name, this, this.app);
             this.app.emit('component:loaded', name, this.components[name]);
             debug.log('Components', ' loaded: ', name, this.components[name]);
+
+            if (kindOf(cb) === 'function') {
+                cb.apply(this, arguments)
+            }
+
             return this.components[name];
         }
 
@@ -114,7 +120,7 @@ module packadic.components {
             return Object.keys(this.getRegistered());
         }
 
-        public getRegistered():{[name:string]:IExtensionClass<Component>}{
+        public getRegistered():{[name:string]:IExtensionClass<Component>} {
             return Components.COMPONENTS;
         }
 
@@ -123,6 +129,11 @@ module packadic.components {
          * @returns {packadic.components.Components}
          */
         public loadAll():Components {
+
+            if (typeof Components.COMPONENTS === 'undefined') {
+                Components.COMPONENTS = {};
+            }
+
             Object.keys(Components.COMPONENTS).forEach((name:string) => {
                 if (!this.has(name)) {
                     this.load(name);
@@ -148,7 +159,7 @@ module packadic.components {
          * @param configToMergeIntoDefaults
          */
         public static register<T extends IExtension>(name:string, componentClass:IExtensionClass<Component>, configToMergeIntoDefaults?:any) {
-            if(typeof Components.COMPONENTS === 'undefined'){
+            if (typeof Components.COMPONENTS === 'undefined') {
                 Components.COMPONENTS = {};
             }
             if (typeof Components.COMPONENTS[name] !== 'undefined') {
@@ -158,7 +169,7 @@ module packadic.components {
             Components.COMPONENTS[name] = componentClass;
 
             // merge config if needed
-            if(typeof configToMergeIntoDefaults !== "undefined") {
+            if (typeof configToMergeIntoDefaults !== "undefined") {
                 var configMerger:any = {};
                 configMerger[name] = configToMergeIntoDefaults;
                 mergeIntoDefaultConfig(configMerger);

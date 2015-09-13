@@ -1,5 +1,5 @@
 module packadic {
-    class StyleStuff {
+    export class StyleStuff {
 
         protected _styles:{[key: string]: string};
 

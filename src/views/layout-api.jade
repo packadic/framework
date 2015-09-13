@@ -1,0 +1,71 @@
+extends layouts/default
+
+mixin layout-action(id, name, js)
+    tr
+        td: +abtn(id='layout-' + id, primary, sm, block).layout-action-button=name
+        td: pre.m-n: code.lang-javascript.bg-color-grey-50=js
+
+
+append styles
+    link(href=assetPath + 'bower_components/highlightjs/styles/tomorrow.css', type="text/css", rel="stylesheet")
+
+block page-title
+    | Layout API
+
+
+block breadcrumb
+    +breadcrumb('index.html') Home
+    +breadcrumb('layout-api.html', true) Layout API
+
+
+block content
+    .row
+        .col-md-6
+            table.table.table-packadic.table-bordered.table-sm
+                thead: tr
+                    th Action
+                    th Desc
+                tbody
+                    +layout-action('page-boxed', 'Page boxed', 'app.layout.setBoxed(true || false)')
+                    +layout-action('header-fixed', 'Header fixed', 'app.layout.setHeaderFixed(true || false)')
+                    +layout-action('footer-fixed', 'Footer fixed', 'app.layout.setFooterFixed(true || false)')
+                    +layout-action('sidebar-fixed', 'Sidebar fixed', 'app.layout.setSidebarFixed(true || false)')
+                    +layout-action('close-submenus', 'Close submenus', 'app.layout.closeSubmenus()')
+                    +layout-action('close-sidebar', 'Close sidebar', 'app.layout.closeSidebar()')
+                    +layout-action('open-sidebar', 'Open sidebar', 'app.layout.openSidebar()')
+                    +layout-action('hide-sidebar', 'Hide sidebar', 'app.layout.hideSidebar()')
+                    +layout-action('show-sidebar', 'Show sidebar', 'app.layout.showSidebar()')
+
+
+
+append scripts
+    script(src=assetPath + 'bower_components/highlightjs/highlight.pack.min.js')
+
+append init-script
+    script.
+        packadic.Application.instance.booted(function(app){
+
+            hljs.initHighlighting();
+
+            $('.layout-action-button').on('click', function(e){
+                e.preventDefault();
+                var $this = $(this);
+                /** @var {LayoutComponent} layout */
+                var layout = app[0].layout;
+                switch($this.attr('id').replace('layout-', '')){
+                    case 'page-boxed': layout.setBoxed(layout.isBoxed() ? false : true ); break;
+                    case 'header-fixed': layout.setHeaderFixed(layout.isHeaderFixed() ? false : true ); break;
+                    case 'footer-fixed': layout.setFooterFixed(layout.isFooterFixed() ? false : true ); break;
+                    case 'sidebar-fixed':
+                        layout.setSidebarFixed(layout.isSidebarFixed() ? false : true);
+                        break;
+                    case 'close-submenus': layout.closeSubmenus(); break;
+                    case 'close-sidebar': layout.closeSidebar(); break;
+                    case 'open-sidebar': layout.openSidebar(); break;
+                    case 'hide-sidebar': layout.hideSidebar(); break;
+                    case 'show-sidebar': layout.showSidebar(); break;
+
+                }
+                console.log('clicked layout header fixed');
+            });
+        });

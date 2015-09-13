@@ -1,3 +1,5 @@
+/// <reference path="./../types.d.ts" />
+/// <reference path="./../packadic.d.ts" />
 module packadic.plugins {
     export class TestPlugin extends Plugin {
 

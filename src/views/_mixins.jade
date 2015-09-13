@@ -27,6 +27,14 @@ mixin sb-recurse(items, level)
                     +sb-submenu
                         +sb-recurse(item.children, level++)
 
+mixin alert(type, dismissible, fade)
+    - var cls='alert-' + type + (dismissible ? ' alert-dismissible' : '') + (fade ? ' fade in' : '')
+    .alert(role='alert', class=cls)&attributes(attributes)
+        if dismissible
+            button.close(type='button', data-dismiss='alert', aria-label='Close')
+                span(aria-hidden='true') ×
+                span.sr-only Close
+        block
 
 
 mixin lia(href)

@@ -6,6 +6,7 @@ var _       = require('lodash'),
     exec    = require('child_process').execSync,
     grunt   = require('grunt'),
     globule = require('globule');
+
 var docs = {};
 //docs    = require('./src/lib/grunt/docs'),
 //inspect = require('./src/lib/grunt').inspect;
@@ -68,7 +69,8 @@ module.exports = function (_grunt) {
             options  : {
                 pretty: true, data: function () {
                     return _.merge({}, {
-                        _inspect: util.inspect
+                        _inspect: util.inspect,
+                        material: require('./src/grunt/material-colors')
                     });
                 }.call()
             },
@@ -121,19 +123,15 @@ module.exports = function (_grunt) {
             }
         },
         ts        : {
-            options : {
-                compiler: 'node_modules/typescript/bin/tsc'
-            },
-            packadic: {
-                options: {
-                    target   : 'ES5',
-                    out      : 'packadic.js',
-                    outDir   : 'out',
-                    emitError: true
-                },
+            options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true},
+            packadic  : {
+                options: {declaration: true},
                 src    : ['src/ts/packadic/**/*.ts'],
-                out    : '<%= target.dest %>/assets/scripts/packadic.js'
-            }
+                out    : 'src/ts/packadic.js'
+            },
+            components: {files: [{src: ['src/ts/components/**/*.ts']}], options: {declaration: false}},
+            plugins   : {files: [{src: ['src/ts/plugins/**/*.ts']}], options: {declaration: false}},
+            //widgets   : {files: [{src: ['src/ts/widgets/**/*.ts']}], options: {declaration: false}}
         },
 
         /**/
@@ -141,12 +139,8 @@ module.exports = function (_grunt) {
         /**/
         sassdoc: {styles: {src: 'src/styles', options: {dest: '<%= target.dest %>/docs/scss'}}},
         typedoc: {
-            ts: {
-                src: ['src/ts/**/*.ts'], options: {
-                    out          : '<%= target.dest %>/docs/ts', name: 'Packadic API Documentation', target: 'es5', mode: 'file',
-                    hideGenerator: '', experimentalDecorators: '', readme: 'README.md', includeDeclarations: ''
-                }
-            },
+            options : {target: 'es5', mode: 'file', hideGenerator: '', experimentalDecorators: '', includeDeclarations: ''},
+            packadic: {src: ['!src/ts/packadic.d.ts', 'src/ts/packadic/**/*.ts'], options: {out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'README.md'}}
         },
 
         /**/
@@ -173,19 +167,22 @@ module.exports = function (_grunt) {
             watch  : ['default_watch']
         },
         default_watch : {
-            options       : {livereload: true},
+            options: {livereload: true},
             //tasks       : {files: ['src/tasks/**/*.ts', '!src/tasks/**/*.d.ts'], tasks: ['typescript:tasks']},
             //templates   : {files: ['src/templates/**/*.jade'], tasks: ['jade:templates']},
             //newerViews      : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:demo']},
             //views           : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:demo']},
-
             //grunt_typescript: {files: ['src/clones/grunt-typescript/src/**/*.ts'], tasks: ['subgrunt:typescript']},
             //js          : {files: ['src/js/**/*.js'], tasks: ['copy:js']},
-            styles          : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
-            ts            : {files: ['src/ts/**/*.ts'], tasks: ['ts:packadic', 'uglify:ts_packadic']},
+            styles        : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
+            views           : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
+            newerViews      : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
+            ts_packadic   : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:components', 'uglify:ts_packadic', 'copy_ts_scripts']},
+            ts_components : {files: ['src/ts/components/**/*.ts'], tasks: ['ts:components', 'copy_ts_scripts']},
+            ts_plugins    : {files: ['src/ts/plugins/**/*.ts'], tasks: ['ts:plugins', 'copy_ts_scripts']},
+
             jade_test_page: {files: ['src/views/test.jade'], tasks: ['jade:test_page']},
             bower         : {files: ['bower.json'], tasks: ['bower']},
-            //shebangify  : {files: ['lib/bin/docgen.js'], tasks: ['shebangify']},
             livereload    : {
                 options: {livereload: 35729},
                 files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/bower_components/**/*']
@@ -211,14 +208,14 @@ module.exports = function (_grunt) {
         // compile
         ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles']],
         ['scripts', 'Concat & uglify vendor scripts and compile typescript files',
-            ['clean:scripts', 'uglify:vendor', 'jade:templates', 'ts:packadic', 'uglify:ts_packadic', 'copy:js']
+            ['clean:scripts', 'uglify:vendor', 'jade:templates', 'ts:packadic', 'uglify:ts_packadic', 'ts:components', 'ts:plugins', 'copy_ts_scripts', 'copy:js']
         ],
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build
         ['docs', 'Generate the docs', ['clean:docs', 'typedoc:ts']],
         ['demo', 'Build the theme', ['clean:all', 'bower', 'images', 'styles', 'scripts', 'views', 'docs']],
         ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'styles', 'scripts', 'images']],
-        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'styles', 'scripts', 'images', 'jade:test_page','jade:views']],
+        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'styles', 'scripts', 'images', 'jade:test_page', 'jade:views']],
         // dev
         ['lib', 'Compile typescript files in lib for node.', ['typescript:lib']],
         ['watch', 'Watch for file changes and fire tasks.', ['concurrent:watch']],
@@ -230,13 +227,10 @@ module.exports = function (_grunt) {
                 grunt.task.run([target.name, 'connect:' + target.name, 'watch'])
             }
         }],
-        ['shebangify', 'Shebang bang bang', function () {
-            shebangFile = path.join(__dirname, 'lib/bin/docgen.js');
-            var data = fs.readFileSync(shebangFile, 'utf-8');
-            var exp = /^#!\/usr\/bin\/env\snode$/m;
-            if ( ! exp.test(data) ) {
-                fs.writeFileSync(shebangFile, "#!/usr/bin/env node\n\n" + data);
-            }
+        ['copy_ts_scripts', 'Copy declarations to other paths', function () {
+            globule.find('src/ts/**/*.{js,js.map}').forEach(function (file) {
+                fs.copySync(file, path.join(target.dest, 'assets/scripts', path.relative(path.join(__dirname, 'src/ts'), file)));
+            })
         }],
         ['junk', '', function () {
             globule.find('src/tscripts/**/*.{js,js.map}').forEach(function (file) {

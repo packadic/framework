@@ -32,13 +32,9 @@
 
 .page-content-inner {
     @include make-row();
-    margin-top: 8px !important;
-    margin-right: 0 !important;
-    margin-left: -20px !important;
-    padding-top: 10px;
-    padding-left: 20px !important;
-    padding-bottom: 20px !important;
-    @include make-xs-column(12);
+    margin: 8px 0 0 -20px !important;
+    padding: 10px 20px 20px 20px !important;
+    @include make-col-span(12);
     float: none !important;
     width: auto !important;
 }

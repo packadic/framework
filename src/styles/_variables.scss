@@ -105,10 +105,9 @@ $general-border-radius:             0px !default;
 
 
 // bootstrap overrides
-$border-radius-base: 0px;
-$border-radius-large:       0px;
-$border-radius-small:       0px;
-
+$border-radius:          0px;
+$border-radius-lg:       0px;
+$border-radius-sm:       0px;
 
 $btn-default-color:              #333 !default;
 $btn-default-bg:                 #fff !default;

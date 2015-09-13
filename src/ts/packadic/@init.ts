@@ -1,8 +1,7 @@
 /// <reference path="./../types.d.ts" />
 
 
-module packadic
-{
+module packadic {
     export var app:Application;
     export var debug:Debug;
 
@@ -34,15 +33,27 @@ module packadic
                 "checkboxElements": ".checkbox > label > input[type=checkbox]",
                 "togglebuttonElements": ".togglebutton > label > input[type=checkbox]",
                 "radioElements": ".radio > label > input[type=radio]"
+            },
+            slimscroll: {
+                allowPageScroll: false,
+                size: '6px',
+                color: '#37474f', //util.material.color('blue-grey', 800),
+                wrapperClass: 'slimScrollDiv',
+                railColor: '#607d8b', //util.material.color('blue-grey', 500),
+                position: 'right',
+                height: '200px',
+                alwaysVisible: false,
+                railVisible: true,
+                disableFadeOut: true
             }
         }
     };
 
-    export function getConfigDefaults():any{
+    export function getConfigDefaults():any {
         return configDefaults;
     }
 
-    export function mergeIntoDefaultConfig(obj:any = {}){
+    export function mergeIntoDefaultConfig(obj:any = {}) {
         configDefaults = _.merge(configDefaults, obj)
     }
 
@@ -58,8 +69,8 @@ module packadic
      */
     export var _readyCallbacks:Function[] = [];
 
-    export function ready(fn:Function){
-        if(isReady){
+    export function ready(fn:Function) {
+        if (isReady) {
             fn.call(app);
         } else {
             _readyCallbacks.push(fn);
@@ -69,8 +80,8 @@ module packadic
     /**
      * @private
      */
-    export function callReadyCallbacks(){
-        if(isReady){
+    export function callReadyCallbacks() {
+        if (isReady) {
             return;
         }
         _readyCallbacks.forEach((fn:Function) => {
@@ -78,7 +89,6 @@ module packadic
         });
         isReady = true;
     }
-
 
 
 }

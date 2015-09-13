@@ -121,18 +121,21 @@ module packadic {
 
             callReadyCallbacks();
 
-            this.emit('init');
+            this.emit('init', this);
             return this;
         }
 
         public boot():PromiseInterface<Application> {
-            if (this.isBooted) {
-                return;
-            }
             var defer:DeferredInterface<Application> = util.promise.create();
+            if (this.isBooted) {
+                setTimeout(() => {
+                    defer.resolve(this);
+                }, 100);
+                return defer.promise;
+            }
 
             $(() => {
-                this.emit('boot');
+                this.emit('boot', this);
                 this.timers.boot = new Date;
                 $('*[data-toggle="popover"]').popover();
                 $('*[data-toggle="tooltip"]').tooltip();
@@ -140,7 +143,7 @@ module packadic {
                 $.material.init();
                 //this.initHighlight();
                 this.isBooted = true;
-                this.emit('booted');
+                this.emit('booted', this);
                 defer.resolve(this);
             });
             return defer.promise;
@@ -176,6 +179,14 @@ module packadic {
             }
             this._events.emit(event, args);
             return this;
+        }
+
+        public booted(fn:Function){
+            if(this.isBooted){
+                fn([this]);
+            } else {
+                this.once('booted', fn);
+            }
         }
     }
 
