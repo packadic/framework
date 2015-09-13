@@ -39,7 +39,9 @@
             img {
                 height: $header-logo-height;
             }
+
 		}
+
 
 		.logo-mini {
 			display: none;
@@ -53,6 +55,11 @@
 			padding-left: 20px;
 			padding-top: 12px;
 		}
+        .logo-packadic {
+            @extend .logo-default;
+            font-family: $font-family-code;
+            font-size: 25px;
+        }
 	}
 
 	.page-top {

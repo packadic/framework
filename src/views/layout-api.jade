@@ -2,7 +2,7 @@ extends layouts/default
 
 mixin layout-action(id, name, js)
     tr
-        td.pl.pr: +abtn(id='layout-' + id, primary, xs, block).layout-action-button=name
+        td.pl.pr: +abtn(id='layout-' + id, data-layout-api=id, primary, xs, block).layout-action-button=name
         td.pl.pr: pre.m-n.p-n: code.lang-javascript.bg-color-grey-50=js
         td.pl.pr: pre.m-n.p-n: code.lang-html.bg-color-grey-50='<a href="#" data-toggle="' + id + '"></a>'
 
@@ -52,26 +52,4 @@ append init-script
 
             hljs.initHighlighting();
 
-            $('.layout-action-button').on('click', function(e){
-                e.preventDefault();
-                var $this = $(this);
-                /** @var {LayoutComponent} layout */
-                var layout = app[0].layout;
-                switch($this.attr('id').replace('layout-', '')){
-                    case 'page-boxed': layout.setBoxed(layout.isBoxed() ? false : true ); break;
-                    case 'header-fixed': layout.setHeaderFixed(layout.isHeaderFixed() ? false : true ); break;
-                    case 'footer-fixed': layout.setFooterFixed(layout.isFooterFixed() ? false : true ); break;
-                    case 'sidebar-fixed': layout.setSidebarFixed(layout.isSidebarFixed() ? false : true); break;
-                    case 'close-submenus': layout.closeSubmenus(); break;
-                    case 'close-sidebar': layout.closeSidebar(); break;
-                    case 'open-sidebar': layout.openSidebar(); break;
-                    case 'hide-sidebar': layout.hideSidebar(); break;
-                    case 'show-sidebar': layout.showSidebar(); break;
-                    case 'compact-sidebar': layout.setSidebarCompact(layout.isSidebarCompact() ? false : true); break;
-                    case 'hover-sidebar': layout.setSidebarHover(layout.isSidebarHover() ? false : true); break;
-                    case 'reversed-sidebar': layout.setSidebarReversed(layout.isSidebarReversed() ? false : true); break;
-
-                }
-                console.log('clicked layout header fixed');
-            });
         });

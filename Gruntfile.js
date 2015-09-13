@@ -8,29 +8,22 @@ var _       = require('lodash'),
     globule = require('globule');
 
 var docs = {};
-//docs    = require('./src/lib/grunt/docs'),
-//inspect = require('./src/lib/grunt').inspect;
 
+function getVendorScripts(vendorScripts){
+    var scripts = [];
+    for (var k in vendorScripts) {
+        scripts.push('bower_components/' + vendorScripts[k]);
+    }
+    return scripts;
+}
 
-//var lib = require('./src/lib/grunt');
-/*
-
- <script src="bower_components/lodash/lodash.js"></script>
- <script src="bower_components/jquery/dist/jquery.js"></script>
- <script src="bower_components/jquery-migrate/jquery-migrate.js"></script>
- <script src="bower_components/eventemitter2/lib/eventemitter2.js"></script>
- <script src="bower_components/underscore.string/dist/underscore.string.js"></script>
- <script src="bower_components/async/dist/async.js"></script>
- <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-
- */
 module.exports = function (_grunt) {
     grunt = _grunt;
     var target = grunt.option('target') || 'dev';
     var vendorScripts = [
         'lodash/lodash.js', 'eventemitter2/lib/eventemitter2.js', 'async/dist/async.js', 'underscore.string/dist/underscore.string.js', 'jade/runtime.js',
         'jquery/dist/jquery.js', 'jquery-migrate/jquery-migrate.js', 'jquery-ui/ui/widget.js', 'jquery-slimscroll/jquery.slimscroll.js',
-        'bootstrap/dist/js/bootstrap.js', 'bootstrap-material-design/dist/js/material.js'
+        'tether/dist/js/tether.js', 'bootstrap/dist/js/bootstrap.js', 'bootstrap-material-design/dist/js/material.js'
     ];
     grunt.log.subhead('Packadic Builder for Packadic ' + require('./bower.json').version);
     //inspect(docs);
@@ -58,6 +51,12 @@ module.exports = function (_grunt) {
             images           : {src: '<%= target.dest %>/assets/images'},
             bower            : {src: '<%= target.dest %>/assets/bower_components'},
             views            : {src: '<%= target.dest %>/**/*.html'}
+        },
+        concat: {
+            vendor: {
+                src: getVendorScripts(vendorScripts),
+                dest: '<%= target.dest %>/assets/scripts/vendor.js'
+            }
         },
         copy : {
             images: {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
@@ -100,11 +99,7 @@ module.exports = function (_grunt) {
             vendor     : {
                 files: {
                     '<%= target.dest %>/assets/scripts/vendor.min.js': (function () {
-                        var scripts = [];
-                        for (var k in vendorScripts) {
-                            scripts.push('bower_components/' + vendorScripts[k]);
-                        }
-                        return scripts;
+                        return getVendorScripts(vendorScripts);
                     }.call())
                 }
             },
@@ -208,7 +203,7 @@ module.exports = function (_grunt) {
         // compile
         ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles']],
         ['scripts', 'Concat & uglify vendor scripts and compile typescript files',
-            ['clean:scripts', 'uglify:vendor', 'jade:templates', 'ts:packadic', 'uglify:ts_packadic', 'ts:components', 'ts:plugins', 'copy_ts_scripts', 'copy:js']
+            ['clean:scripts', 'uglify:vendor', 'concat:vendor', 'jade:templates', 'ts:packadic', 'uglify:ts_packadic', 'ts:components', 'ts:plugins', 'copy_ts_scripts', 'copy:js']
         ],
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build

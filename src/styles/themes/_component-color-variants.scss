@@ -6,7 +6,6 @@ $component-color-variants: (
     button: true,
     button-outline: true,
     progress: true,
-
 );
 
 @mixin make-color-variant($color-name) {
@@ -14,8 +13,7 @@ $component-color-variants: (
     $normal: material-color($color-name, '500');
     $dark: material-color($color-name, '900');
 
-    // alert-variant($background, $border, $text-color)
-    @if(map_get($component-color-variants, 'alert')) {
+    @if (map_get($component-color-variants, 'alert')) {
         .alert {
             &.#{$color-name}-light {
                 @include alert-variant($light, darken(adjust-hue($light, -10), 5%), $dark);
@@ -29,19 +27,19 @@ $component-color-variants: (
         }
     }
 
-    @if(map_get($component-color-variants, 'text')) {
+    @if (map_get($component-color-variants, 'text')) {
         @include text-emphasis-variant('.text-' + $color-name + '-light', $light);
         @include text-emphasis-variant('.text-' + $color-name, $normal);
         @include text-emphasis-variant('.text-' + $color-name + '-dark', $dark);
     }
 
-    @if(map_get($component-color-variants, 'bg')) {
+    @if (map_get($component-color-variants, 'bg')) {
         @include bg-variant('.bg-' + $color-name + '-light', $light);
         @include bg-variant('.bg-' + $color-name, $normal);
         @include bg-variant('.bg-' + $color-name + '-dark', $dark);
     }
 
-    @if(map_get($component-color-variants, 'label')) {
+    @if (map_get($component-color-variants, 'label')) {
         .label {
             &.#{$color-name}-light {
                 @include label-variant($light);
@@ -54,26 +52,49 @@ $component-color-variants: (
             }
         }
     }
-    //make-general-color-variant($class-name, $background-color, $border-color, $text-color)
-    //@include make-general-color-variant($color-name + '-light', $light, darken($light, 5%), $dark);
-    //@include make-general-color-variant($color-name,            $normal, darken($normal, 5%), #fff);
-    //@include make-general-color-variant($color-name + '-dark',  $dark, darken($dark, 5%), #fff);
-    @if(map_get($component-color-variants, 'button')) {
+
+    @if (map_get($component-color-variants, 'button')) {
         .btn {
             //button-variant($text-color, $background-color, $border-color)
             &.#{$color-name}-light {
                 @include button-variant($dark, $light, darken(adjust-hue($light, -10), 5%));
             }
             &.#{$color-name} {
-                @include button-variant(#fff, $normal, darken(adjust-hue($normal, -10), 5%));
+                @include button-variant(#ffffff, $normal, darken(adjust-hue($normal, -10), 5%));
             }
             &.#{$color-name}-dark {
-                @include button-variant(#fff, $dark, darken(adjust-hue($dark, -10), 5%));
+                @include button-variant(#ffffff, $dark, darken(adjust-hue($dark, -10), 5%));
             }
         }
     }
-    // text-emphasis-variant($parent, $color)
 
+    @if (map_get($component-color-variants, 'button-outline')) {
+        .btn-#{$color-name}-light-outline {
+            @include button-outline-variant($light);
+        }
+        .btn-#{$color-name}-outline {
+            @include button-outline-variant($normal);
+        }
+        .btn-#{$color-name}-dark-outline {
+            @include button-outline-variant($dark);
+        }
+    }
+
+    @if (map_get($component-color-variants, 'progress')) {
+        .progress {
+            &.#{$color-name}-light {
+                @include progress-variant($light);
+            }
+            &.#{$color-name} {
+                @include progress-variant($normal);
+            }
+            &.#{$color-name}-dark {
+                @include progress-variant($dark);
+            }
+        }
+    }
+
+    // text-emphasis-variant($parent, $color)
 
     /*
         @include text-emphasis-variant('.text-' + $color-name + '-light', $light);

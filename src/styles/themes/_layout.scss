@@ -3,8 +3,13 @@ body {
 }
 .page-header {
     background: $header-bg;
-    .page-logo > .logo-default {
-        margin: 19px 10px 0 10px;
+
+    .page-logo {
+        > .logo-packadic,
+        > .logo-default,
+        > .logo-text {
+            color: $header-logo-color;
+        }
     }
     .page-actions .btn {
         color: $header-action-button-color !important;

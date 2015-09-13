@@ -14,7 +14,7 @@ block content
         .col-md-12
             .tabbable
                 ul.nav.nav-tabs
-                    each component, i in ['Alert', 'Text', 'BG', 'Label', 'Button']
+                    each component, i in ['Alert', 'Text', 'BG', 'Label', 'Button', 'Button-outline', 'Progress']
                         - var liClass = (i === 0 ? 'active' : '');
                         li.nav-item(class=liClass)
                             a.nav-link(data-toggle='tab', href='#variant_' + component.toLowerCase(), aria-expanded='true')
@@ -58,6 +58,25 @@ block content
                                 each variant in ['-light', '', '-dark']
                                     .col-md-4
                                         a.btn.btn-sm.btn-block(class=color + variant)='.' + color + variant
+
+                    #variant_button-outline.tab-pane.fade
+                        each color in Object.keys(material.colors)
+                            .row.pl.pr.mb-xs
+                                each variant in ['-light', '', '-dark']
+                                    .col-md-4
+                                        //btn-#{$color-name}-dark-outline
+                                        a.btn.btn-sm.btn-block(class='btn-' + color + variant + '-outline')='btn-' + color + variant + '-outline'
+
+                    #variant_progress.tab-pane.fade
+                        each color in Object.keys(material.colors)
+                            .row.pl.pr.mb-xs
+                                each variant in ['-light', '', '-dark']
+                                    .col-md-4
+                                        - var val = Math.random() * 100;
+                                        progress.progress(class=color + variant, value=val, max="100")
+                                            div.progress(class=color + variant)
+                                                span.progress-bar(style='width: ' + val + '%;')= val + '%'
+
 
 
 

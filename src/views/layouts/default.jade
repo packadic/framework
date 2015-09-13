@@ -33,9 +33,9 @@ html(lang="en")
             block page-header
                 // .header-inner (#header > .header-inner)
                 .page-header-inner
-                    .page-logo.pl.pr-n
-                        .logo-default.logo-image!= logoSvg
-                        .menu-toggler.sidebar-toggler
+                    .page-logo
+                        .logo-packadic.pull-left Packadic
+                        .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Open/close the sidebar menu', data-layout-api='toggle-sidebar', data-placement='bottom')
 
                     a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
 
@@ -88,7 +88,7 @@ html(lang="en")
 
 
         block scripts
-            script(src=assetPath + 'scripts/vendor.min.js')
+            script(src=assetPath + 'scripts/vendor.js')
             script(src=assetPath + 'scripts/packadic.js')
             script(src=assetPath + 'scripts/components/layout.js')
             script(src=assetPath + 'scripts/plugins/testPlugin.js')

@@ -158,6 +158,51 @@ var layout;
             this.fixBreadcrumb();
             this._initResizeEvent();
             this._initSidebarResizeListener();
+            var self = this;
+            $('body').on('click', '[data-layout-api]', function (e) {
+                var action = $(this).attr('data-layout-api');
+                switch (action) {
+                    case 'toggle-sidebar':
+                        self.isSidebarClosed() ? self.openSidebar() : self.closeSidebar();
+                        break;
+                    case 'page-boxed':
+                        self.setBoxed(!self.isBoxed());
+                        break;
+                    case 'header-fixed':
+                        self.setHeaderFixed(!self.isHeaderFixed());
+                        break;
+                    case 'footer-fixed':
+                        self.setFooterFixed(!self.isFooterFixed());
+                        break;
+                    case 'sidebar-fixed':
+                        self.setSidebarFixed(!self.isSidebarFixed());
+                        break;
+                    case 'close-submenus':
+                        self.closeSubmenus();
+                        break;
+                    case 'close-sidebar':
+                        self.closeSidebar();
+                        break;
+                    case 'open-sidebar':
+                        self.openSidebar();
+                        break;
+                    case 'hide-sidebar':
+                        self.hideSidebar();
+                        break;
+                    case 'show-sidebar':
+                        self.showSidebar();
+                        break;
+                    case 'compact-sidebar':
+                        self.setSidebarCompact(!self.isSidebarCompact());
+                        break;
+                    case 'hover-sidebar':
+                        self.setSidebarHover(!self.isSidebarHover());
+                        break;
+                    case 'reversed-sidebar':
+                        self.setSidebarReversed(!self.isSidebarReversed());
+                        break;
+                }
+            });
         };
         LayoutComponent.prototype.removePageLoader = function () {
             $body.removeClass('page-loading');
@@ -294,6 +339,7 @@ var layout;
             });
         };
         LayoutComponent.prototype._initToggleButton = function () {
+            return;
             var self = this;
             $body.on('click', self.config('layout.sidebar.togglerSelector'), function (e) {
                 if (self.isSidebarClosed()) {
