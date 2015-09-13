@@ -5,6 +5,7 @@
 	&.navbar-collapse {
 		padding: 0;
 		box-shadow: none;
+
 	}
 
 
@@ -197,6 +198,10 @@
 
 		&.navbar-collapse {
 			max-height: none !important;
+
+            &.collapse {
+                display: block;
+            }
 		}
 
 		.page-sidebar-menu {
@@ -537,7 +542,8 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
+// @media (max-width: $screen-sm-max)
+@include media-breakpoint-down(sm) {
 
 	.page-sidebar {
 		border-top: 0 !important;

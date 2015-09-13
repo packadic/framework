@@ -2,9 +2,9 @@ extends layouts/default
 
 mixin layout-action(id, name, js)
     tr
-        td: +abtn(id='layout-' + id, primary, sm, block).layout-action-button=name
-        td: pre.m-n: code.lang-javascript.bg-color-grey-50=js
-
+        td.pl.pr: +abtn(id='layout-' + id, primary, xs, block).layout-action-button=name
+        td.pl.pr: pre.m-n.p-n: code.lang-javascript.bg-color-grey-50=js
+        td.pl.pr: pre.m-n.p-n: code.lang-html.bg-color-grey-50='<a href="#" data-toggle="' + id + '"></a>'
 
 append styles
     link(href=assetPath + 'bower_components/highlightjs/styles/tomorrow.css', type="text/css", rel="stylesheet")
@@ -20,21 +20,26 @@ block breadcrumb
 
 block content
     .row
-        .col-md-6
-            table.table.table-packadic.table-bordered.table-sm
+        .col-md-12
+            table.table.table-bordered.table-striped.table-hover.table-xs.thead-inverse
                 thead: tr
-                    th Action
-                    th Desc
+                    th.pl Try it
+                    th.pl Javascript API
+                    th.pl HTML5 data-toggle
                 tbody
                     +layout-action('page-boxed', 'Page boxed', 'app.layout.setBoxed(true || false)')
                     +layout-action('header-fixed', 'Header fixed', 'app.layout.setHeaderFixed(true || false)')
                     +layout-action('footer-fixed', 'Footer fixed', 'app.layout.setFooterFixed(true || false)')
                     +layout-action('sidebar-fixed', 'Sidebar fixed', 'app.layout.setSidebarFixed(true || false)')
+                    +layout-action('compact-sidebar', 'Compact sidebar', 'app.layout.setSidebarCompact(true || false)')
+                    +layout-action('hover-sidebar', 'Hover sidebar', 'app.layout.setSidebarHover(true || false)')
+                    +layout-action('reversed-sidebar', 'Reversed sidebar', 'app.layout.setSidebarReversed(true || false)')
                     +layout-action('close-submenus', 'Close submenus', 'app.layout.closeSubmenus()')
                     +layout-action('close-sidebar', 'Close sidebar', 'app.layout.closeSidebar()')
                     +layout-action('open-sidebar', 'Open sidebar', 'app.layout.openSidebar()')
                     +layout-action('hide-sidebar', 'Hide sidebar', 'app.layout.hideSidebar()')
                     +layout-action('show-sidebar', 'Show sidebar', 'app.layout.showSidebar()')
+
 
 
 
@@ -56,14 +61,15 @@ append init-script
                     case 'page-boxed': layout.setBoxed(layout.isBoxed() ? false : true ); break;
                     case 'header-fixed': layout.setHeaderFixed(layout.isHeaderFixed() ? false : true ); break;
                     case 'footer-fixed': layout.setFooterFixed(layout.isFooterFixed() ? false : true ); break;
-                    case 'sidebar-fixed':
-                        layout.setSidebarFixed(layout.isSidebarFixed() ? false : true);
-                        break;
+                    case 'sidebar-fixed': layout.setSidebarFixed(layout.isSidebarFixed() ? false : true); break;
                     case 'close-submenus': layout.closeSubmenus(); break;
                     case 'close-sidebar': layout.closeSidebar(); break;
                     case 'open-sidebar': layout.openSidebar(); break;
                     case 'hide-sidebar': layout.hideSidebar(); break;
                     case 'show-sidebar': layout.showSidebar(); break;
+                    case 'compact-sidebar': layout.setSidebarCompact(layout.isSidebarCompact() ? false : true); break;
+                    case 'hover-sidebar': layout.setSidebarHover(layout.isSidebarHover() ? false : true); break;
+                    case 'reversed-sidebar': layout.setSidebarReversed(layout.isSidebarReversed() ? false : true); break;
 
                 }
                 console.log('clicked layout header fixed');

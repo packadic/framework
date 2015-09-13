@@ -1,18 +1,18 @@
 .table {
 
-	&.table-bordered {
-    thead > tr > th {
-  	  border-bottom: 0;
-	  }
-  }
+    &.table-bordered {
+        thead > tr > th {
+            border-bottom: 0;
+        }
+    }
 
-	tr.heading > th {
-  		background-color: #eee !important;
-	}
+    tr.heading > th {
+        background-color: #eeeeee !important;
+    }
 
-	td .img-responsive  {
-		width:100%;
-	}
+    td .img-responsive {
+        width: 100%;
+    }
 }
 
 .table-toolbar {
@@ -36,19 +36,32 @@
     font-weight: 600;
 }
 
+
+.table-xs {
+    th,
+    td {
+        padding: $table-xs-cell-padding;
+    }
+}
+
+
+
+
+// Table packadic
+//
 .table-packadic {
     margin-bottom: 10px !important;
 }
 
 .table-packadic thead {
-    color: #999;
+    color: #999999;
 }
 
-.table-packadic thead tr th{
-    background-color: #DDD;
+.table-packadic thead tr th {
+    background-color: #dddddd;
     font-size: 14px;
     font-weight: 400;
-    color: #666;
+    color: #666666;
 }
 
 .table-packadic div.success,
@@ -57,7 +70,7 @@
 .table-packadic div.warning,
 .table-packadic div.danger {
     position: absolute;
-    margin-top:-5px;
+    margin-top: -5px;
     float: left;
     width: 2px;
     height: 30px;
@@ -75,7 +88,6 @@
 .table-packadic tr td.highlight:first-child a {
     margin-left: 15px;
 }
-
 
 @media (max-width: $screen-xs-max) { /* 767px */
     .table-packadic {
@@ -106,9 +118,9 @@
                 font-weight: 400;
                 font-family: $font-family-sub-heading;
                 font-size: 13px;
-                color: darken(#B5BFC4, 5%);
+                color: darken(#b5bfc4, 5%);
                 border: 0;
-                border-bottom:1px solid #F2F5F8;
+                border-bottom: 1px solid #f2f5f8;
             }
         }
     }
@@ -123,8 +135,8 @@
 
             > td {
                 border: 0;
-                border-bottom:1px solid #F2F5F8;
-                color: darken(#AAB4BB, 5%);
+                border-bottom: 1px solid #f2f5f8;
+                color: darken(#aab4bb, 5%);
                 vertical-align: middle;
 
                 &.fit {
@@ -147,7 +159,7 @@
         > th:hover,
         &:hover > td,
         &:hover > th {
-            background: lighten(#94A0B2, 34%);
+            background: lighten(#94a0b2, 34%);
         }
     }
 }

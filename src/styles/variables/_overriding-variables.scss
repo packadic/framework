@@ -1,0 +1,17 @@
+
+
+// bootstrap overrides
+$border-radius:                     0px;
+$border-radius-lg:                  0px;
+$border-radius-sm:                  0px;
+
+$font-family-default:  	  		 	$font-family-primary;
+$font-family-base:                  $font-family-primary;
+$font-family-monospace:             $font-family-code;
+$headings-font-family:              $font-family-heading;
+
+$input-bg-disabled:              	#eeeeee;
+$input-color:                    	#333;
+$input-border:                   	#e5e5e5;
+$input-border-focus:             	#999;
+$input-color-placeholder:        	lighten($input-color, 50%);

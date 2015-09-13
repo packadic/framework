@@ -1,13 +1,14 @@
+// Typography
+//
+// Fonts etc
 $web-font:                          "http://fonts.googleapis.com/css?family=";
 $material-font-path:                "../bower_components/bootstrap-material-design/dist/fonts" ;
 $font-path:                         '../bower_components/bootstrap-sass-offical/assets/fonts/bootstrap';
 $fa-font-path:                      '../bower_components/font-awesome/fonts';
-$image-path:                        '../..'; // relative to styles/themes/*.css
 
-$web-font-primary:                  "Nunito:300,400,700"; //"Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,800,700";
+
+$web-font-primary:                  "Nunito:300"; //"Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,800,700";
 $font-family-primary:  	  		 	"Nunito", "Helvetica Neue", Helvetica, Arial, sans-serif;
-$font-family-default:  	  		 	$font-family-primary;
-$font-family-base: $font-family-primary;
 $web-font-heading:                  "Montserrat:400,700";
 $font-family-heading:               "Montserrat", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
@@ -20,6 +21,10 @@ $font-family-code:                  "Source Code Pro", Consolas, "Courier New", 
 $web-font:                          $web-font + $web-font-primary + "|" + $web-font-heading  + "|" + $web-font-sub-heading + "|" + $web-font-code;
 
 $base-font-weight: 300;
+
+
+
+
 
 $page-loader-size:                  100px !default;
 $page-loader-margin:                150px auto !default;
@@ -91,6 +96,12 @@ $zindex-modal-background:  			10049 !default;
 $zindex-modal:             			10050 !default;
 $zindex-top:						10100 !default;
 
+$general-border-radius:             0px !default;
+
+$bootstrap-switch-base: "bootstrap-switch";
+
+
+// @todo migrate to boostrap 4
 $screen-xs-min:              		480px !default;
 $screen-sm-min:              		768px !default;
 $screen-md-min:              		992px !default;
@@ -100,17 +111,3 @@ $screen-lg-med:                     1260px !default;
 $screen-xs-max:              		($screen-sm-min - 1) !default;
 $screen-sm-max:              		($screen-md-min - 1) !default;
 $screen-md-max:              		($screen-lg-min - 1) !default;
-
-$general-border-radius:             0px !default;
-
-
-// bootstrap overrides
-$border-radius:          0px;
-$border-radius-lg:       0px;
-$border-radius-sm:       0px;
-
-$btn-default-color:              #333 !default;
-$btn-default-bg:                 #fff !default;
-$btn-default-border:             #ccc !default;
-
-$bootstrap-switch-base: "bootstrap-switch";

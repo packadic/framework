@@ -137,7 +137,7 @@ module.exports = function (_grunt) {
         /**/
         //      Documentation
         /**/
-        sassdoc: {styles: {src: 'src/styles', options: {dest: '<%= target.dest %>/docs/scss'}}},
+        sassdoc: {styles: {src: ['src/styles', 'bower_components/bourbon/app/assets/stylesheets'], options: {dest: '<%= target.dest %>/docs/scss'}}},
         typedoc: {
             options : {target: 'es5', mode: 'file', hideGenerator: '', experimentalDecorators: '', includeDeclarations: ''},
             packadic: {src: ['!src/ts/packadic.d.ts', 'src/ts/packadic/**/*.ts'], options: {out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'README.md'}}

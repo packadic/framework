@@ -1,5 +1,4 @@
 
-
 .page-footer {
     padding: 5px 20px 10px 20px;
     font-size: 13px;
@@ -49,27 +48,47 @@
 
 @media (min-width: $screen-md-min) {
 
-
     .page-footer {
         clear: left;
 
         .page-boxed & {
+
             margin-left: 20px;
             margin-right: 20px;
         }
     }
 
-
     .page-footer-fixed {
+        &.page-boxed {
+            .page-footer {
+                margin-left: 0;
+                margin-right: 0;
+
+                .container {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+
+                @include media-breakpoint-up(sm) {
+                    .container {
+                        @include make-container();
+                    }
+                    .page-footer-inner {
+                        padding-left: 20px !important;
+                        padding-right: 20px !important;
+                    }
+                }
+            }
+        }
+
         .page-footer {
-          position: fixed;
-          left: 0;
-          right: 0;
-          z-index: $zindex-footer-fixed;
-          bottom: 0;
+            position: fixed;
+            left: 0;
+            right: 0;
+            z-index: $zindex-footer-fixed;
+            bottom: 0;
         }
     }
-
 
     .page-sidebar-fixed {
         &.page-sidebar-closed {
@@ -86,14 +105,12 @@
         }
     }
 
-
     .page-sidebar-fixed {
         .page-footer {
             margin-left: $sidebar-width;
             padding: 8px 20px 5px 40px;
         }
     }
-
 
     .page-boxed {
         .page-footer {
@@ -105,7 +122,6 @@
             padding-left: 20px;
         }
     }
-
 
     .page-sidebar-reversed.page-sidebar-fixed {
         .page-footer {
@@ -131,7 +147,6 @@
 
 @media (max-width: $screen-sm-max) {
 
-
     .page-footer {
         padding-left: 10px;
         padding-right: 10px;
@@ -140,13 +155,11 @@
 
 @media (max-width: $screen-xs-max) {
 
-
     .page-footer,
     .page-boxed .page-footer {
         padding-left: 10px;
         padding-right: 10px;
     }
-
 
     .page-footer-fixed {
         .page-footer {
@@ -158,21 +171,19 @@
     }
 }
 
-
-
 .scroll-to-top {
     display: inline-block;
-    padding:2px;
-    text-align:center;
-    position:fixed;
+    padding: 2px;
+    text-align: center;
+    position: fixed;
     z-index: $zindex-go-to-top;
     bottom: 35px;
-    display:none;
+    display: none;
     right: 30px;
 
     > i {
         display: inline-block;
-        color: darken(#94A0B2, 15%);
+        color: darken(#94a0b2, 15%);
         font-size: 40px;
         @include opacity(0.7);
     }
@@ -185,9 +196,7 @@
         }
     }
 
-
 }
-
 
 @media (min-width: $screen-md-min) {
     .scroll-to-top {

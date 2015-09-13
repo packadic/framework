@@ -2,7 +2,11 @@ $component-color-variants: (
     alert: true,
     text: true,
     bg: true,
-    label: true
+    label: true,
+    button: true,
+    button-outline: true,
+    progress: true,
+
 );
 
 @mixin make-color-variant($color-name) {
@@ -12,14 +16,16 @@ $component-color-variants: (
 
     // alert-variant($background, $border, $text-color)
     @if(map_get($component-color-variants, 'alert')) {
-        .alert-#{$color-name}-light {
-            @include alert-variant($light, darken(adjust-hue($light, -10), 5%), $dark);
-        }
-        .alert-#{$color-name} {
-            @include alert-variant($normal, darken(adjust-hue($normal, -10), 5%), darken($dark, 10));
-        }
-        .alert-#{$color-name}-dark {
-            @include alert-variant($dark, lighten(adjust-hue($dark, -10), 5%), $light);
+        .alert {
+            &.#{$color-name}-light {
+                @include alert-variant($light, darken(adjust-hue($light, -10), 5%), $dark);
+            }
+            &.#{$color-name} {
+                @include alert-variant($normal, darken(adjust-hue($normal, -10), 5%), darken($dark, 10));
+            }
+            &.#{$color-name}-dark {
+                @include alert-variant($dark, lighten(adjust-hue($dark, -10), 5%), $light);
+            }
         }
     }
 
@@ -36,17 +42,36 @@ $component-color-variants: (
     }
 
     @if(map_get($component-color-variants, 'label')) {
-        .label-#{$color-name}-light {
-            @include label-variant($light);
-        }
-        .label-#{$color-name} {
-            @include label-variant($normal);
-        }
-        .label-#{$color-name}-dark {
-            @include label-variant($dark);
+        .label {
+            &.#{$color-name}-light {
+                @include label-variant($light);
+            }
+            &.#{$color-name} {
+                @include label-variant($normal);
+            }
+            &.#{$color-name}-dark {
+                @include label-variant($dark);
+            }
         }
     }
-
+    //make-general-color-variant($class-name, $background-color, $border-color, $text-color)
+    //@include make-general-color-variant($color-name + '-light', $light, darken($light, 5%), $dark);
+    //@include make-general-color-variant($color-name,            $normal, darken($normal, 5%), #fff);
+    //@include make-general-color-variant($color-name + '-dark',  $dark, darken($dark, 5%), #fff);
+    @if(map_get($component-color-variants, 'button')) {
+        .btn {
+            //button-variant($text-color, $background-color, $border-color)
+            &.#{$color-name}-light {
+                @include button-variant($dark, $light, darken(adjust-hue($light, -10), 5%));
+            }
+            &.#{$color-name} {
+                @include button-variant(#fff, $normal, darken(adjust-hue($normal, -10), 5%));
+            }
+            &.#{$color-name}-dark {
+                @include button-variant(#fff, $dark, darken(adjust-hue($dark, -10), 5%));
+            }
+        }
+    }
     // text-emphasis-variant($parent, $color)
 
 

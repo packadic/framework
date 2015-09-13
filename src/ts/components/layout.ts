@@ -86,6 +86,10 @@ module layout {
             return this.l.el('header');
         }
 
+        public get headerInner() {
+            return this.l.el('header-inner');
+        }
+
         public get container() {
             return this.l.el('container');
         }
@@ -106,9 +110,10 @@ module layout {
             return this.l.el('footer');
         }
 
-        public get headerInner() {
-            return this.l.el('header-inner');
+        public get footerInner() {
+            return this.l.el('footer-inner');
         }
+
 
 
     }
@@ -351,15 +356,19 @@ module layout {
         }
 
         public closeSubmenus() {
-            var self:LayoutComponent = this;
-            el.sidebarMenu.find('ul.sub-menu').each(function () {
+
+            el.sidebarMenu.children('li.open').children('a').children('.arrow').removeClass('open');
+            el.sidebarMenu.children('li.open').children('.sub-menu:not(.always-open)').slideUp(this.config('layout.sidebar.slideSpeed'));
+            el.sidebarMenu.children('li.open').removeClass('open');
+            /*
+            el.sidebarMenu.find('ul.sub-menu').each(() => {
                 var $ul:JQuery = $(this);
                 if ($ul.is(":visible")) {
                     $('.arrow', $ul).removeClass("open");
                     $ul.parent().removeClass("open");
-                    $ul.slideUp(self.config('layout.sidebar.slideSpeed'));
+                    $ul.slideUp(this.config('layout.sidebar.slideSpeed'));
                 }
-            });
+            });*/
             this.app.emit('sidebar:close-submenus');
         }
 
@@ -612,6 +621,7 @@ module layout {
                 // el.container = .page-container
                 el.container.appendTo('body > .clearfix + .container');
                 if (this.isFooterFixed()) {
+                    el.footerInner.wrap($('<div>').addClass('container'));
                     //el.footer.html('<div class="container">' + el.footer.html() + '</div>');
                 } else {
                     el.footer.appendTo('body > .clearfix + .container');
@@ -620,7 +630,7 @@ module layout {
             } else {
                 var cont = $('body > .clearfix + .container').children().unwrap();
                 if (this.isFooterFixed()) {
-                    //el.footer.parent()
+                    el.footer.find('> .container').unwrap();
                 }
                 //cont.remove();
 
@@ -654,8 +664,8 @@ module layout {
 
         }
 
-        public scrollTo(el?:any, offset?:number) {
-            var $el:JQuery = typeof(el) === 'string' ? $(el) : el;
+        public scrollTo(ele?:any, offset?:number) {
+            var $el:JQuery = typeof(ele) === 'string' ? $(ele) : ele;
             var pos = ($el && $el.size() > 0) ? $el.offset().top : 0;
 
             if ($el) {

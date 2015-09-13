@@ -66,7 +66,7 @@ $mobile-sidebar-menu-link-bg-color-on-hover:             				darken($bg-color, 4
 // Footer
 $footer-font-color:                                                     material-color('blue-grey', '200');
 $footer-bg-color: 												        material-color('blue-grey', '900') !default;
-$footer-bg: $footer-bg-color;
+$footer-bg:                                                             $footer-bg-color !default;
 
 // Form controls
 $input-md-label-color:        		#888888;
@@ -79,12 +79,4 @@ $input-md-focus-border:				$brand-success;
 $input-md-checkbox-box-color:  		#666;
 $input-md-checkbox-disabled-opacity:0.7;
 
-$input-bg:                       	#fff !default;
-$input-bg-disabled:              	#eeeeee !default;
-
-$input-color:                    	#333 !default;
-$input-border:                   	#e5e5e5 !default;
-$input-border-focus:             	#999 !default;
-
-$input-color-placeholder:        	lighten($input-color, 50%) !default;
 $input-icon-color:               	#999 !default;

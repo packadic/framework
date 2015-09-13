@@ -79,6 +79,13 @@ var layout;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Elements.prototype, "headerInner", {
+            get: function () {
+                return this.l.el('header-inner');
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Elements.prototype, "container", {
             get: function () {
                 return this.l.el('container');
@@ -114,9 +121,9 @@ var layout;
             enumerable: true,
             configurable: true
         });
-        Object.defineProperty(Elements.prototype, "headerInner", {
+        Object.defineProperty(Elements.prototype, "footerInner", {
             get: function () {
-                return this.l.el('header-inner');
+                return this.l.el('footer-inner');
             },
             enumerable: true,
             configurable: true
@@ -322,15 +329,9 @@ var layout;
             $window.trigger('resize');
         };
         LayoutComponent.prototype.closeSubmenus = function () {
-            var self = this;
-            el.sidebarMenu.find('ul.sub-menu').each(function () {
-                var $ul = $(this);
-                if ($ul.is(":visible")) {
-                    $('.arrow', $ul).removeClass("open");
-                    $ul.parent().removeClass("open");
-                    $ul.slideUp(self.config('layout.sidebar.slideSpeed'));
-                }
-            });
+            el.sidebarMenu.children('li.open').children('a').children('.arrow').removeClass('open');
+            el.sidebarMenu.children('li.open').children('.sub-menu:not(.always-open)').slideUp(this.config('layout.sidebar.slideSpeed'));
+            el.sidebarMenu.children('li.open').removeClass('open');
             this.app.emit('sidebar:close-submenus');
         };
         LayoutComponent.prototype.closeSidebar = function (callback) {
@@ -545,6 +546,7 @@ var layout;
                 var cont = $('body > .clearfix').after('<div class="container"></div>');
                 el.container.appendTo('body > .clearfix + .container');
                 if (this.isFooterFixed()) {
+                    el.footerInner.wrap($('<div>').addClass('container'));
                 }
                 else {
                     el.footer.appendTo('body > .clearfix + .container');
@@ -554,6 +556,7 @@ var layout;
             else {
                 var cont = $('body > .clearfix + .container').children().unwrap();
                 if (this.isFooterFixed()) {
+                    el.footer.find('> .container').unwrap();
                 }
             }
         };
@@ -578,8 +581,8 @@ var layout;
             }
             $('body > .container').remove();
         };
-        LayoutComponent.prototype.scrollTo = function (el, offset) {
-            var $el = typeof (el) === 'string' ? $(el) : el;
+        LayoutComponent.prototype.scrollTo = function (ele, offset) {
+            var $el = typeof (ele) === 'string' ? $(ele) : ele;
             var pos = ($el && $el.size() > 0) ? $el.offset().top : 0;
             if ($el) {
                 if ($body.hasClass('page-header-fixed')) {

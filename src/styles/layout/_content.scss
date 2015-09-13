@@ -94,6 +94,10 @@
 
             .page-content-seperator {
                 margin-right: 0;
+
+                .page-sidebar-reversed & {
+                    margin-right: -20px;
+                }
             }
 
             &.no-min-height {
@@ -107,7 +111,7 @@
             .page-sidebar-reversed & {
                 margin-left: 0 !important;
                 margin-right: $sidebar-width !important;
-                padding-left: 0;
+                padding-left: 20px;
                 padding-right: 20px;
             }
 

@@ -4,22 +4,22 @@
 @include table-row-variant('warning', $state-warning-bg, $state-warning-text);
 @include table-row-variant('danger', $state-danger-bg, $state-danger-text);
 
-.table-codex td.highlight div.primary {
+.table-packadic td.highlight div.primary {
     border-left: 2px solid $brand-primary;
 }
 
-.table-codex td.highlight div.success {
+.table-packadic td.highlight div.success {
     border-left: 2px solid $brand-success;
 }
 
-.table-codex td.highlight div.info {
+.table-packadic td.highlight div.info {
     border-left: 2px solid $brand-info;
 }
 
-.table-codex td.highlight div.warning {
+.table-packadic td.highlight div.warning {
     border-left: 2px solid $brand-warning;
 }
 
-.table-codex td.highlight div.danger {
+.table-packadic td.highlight div.danger {
     border-left: 2px solid $brand-danger;
 }
