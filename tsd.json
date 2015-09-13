@@ -1,0 +1,30 @@
+{
+    "version": "v4",
+    "repo": "borisyankov/DefinitelyTyped",
+    "ref": "master",
+    "path": "src/ts/types",
+    "bundle": "src/ts/types/tsd.d.ts",
+    "installed": {
+        "lodash/lodash.d.ts": {
+            "commit": "0a51ae619b1729429892d1d0d25ec4476f88cad2"
+        },
+        "jquery/jquery.d.ts": {
+            "commit": "de1bfe2c1de921da660cc17a5af1de6c095b35eb"
+        },
+        "eventemitter2/eventemitter2.d.ts": {
+            "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+        },
+        "jqueryui/jqueryui.d.ts": {
+            "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+        },
+        "bootstrap/bootstrap.d.ts": {
+            "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+        },
+        "async/async.d.ts": {
+            "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+        },
+        "highlightjs/highlightjs.d.ts": {
+            "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+        }
+    }
+}

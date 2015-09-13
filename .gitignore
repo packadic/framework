@@ -1,0 +1,15 @@
+/node_modules
+/bower_components
+/demo
+/src/clones
+/src/old
+/types
+/tests
+.idea
+/run
+/screenlog.0
+/gh-pages
+sol.md
+letter.md
+/.dev
+/.tscache
