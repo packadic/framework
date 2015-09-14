@@ -6,7 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var packadic;
 (function (packadic) {
     var layout;
-    (function (layout) {
+    (function (layout_1) {
         var Component = packadic.components.Component;
         var Components = packadic.components.Components;
         var defaultConfig = {
@@ -19,6 +19,7 @@ var packadic;
                 _super.apply(this, arguments);
                 this.switching = false;
                 this.switchingTimeout = false;
+                this.mouseOverContent = false;
             }
             Object.defineProperty(QuickSidebarComponent.prototype, "$e", {
                 get: function () {
@@ -76,6 +77,7 @@ var packadic;
                 });
             };
             QuickSidebarComponent.prototype._initBindings = function () {
+                var _this = this;
                 var self = this;
                 $body.onClick('[data-quick-sidebar]', function (e) {
                     e.preventDefault();
@@ -122,11 +124,17 @@ var packadic;
                     }
                     self.close();
                 });
+                $body.on('mouseenter', '.quick-sidebar .qs-content', function (e) {
+                    _this.mouseOverContent = true;
+                }).on('mouseleave', '.quick-sidebar .qs-content', function (e) {
+                    _this.mouseOverContent = false;
+                });
             };
             QuickSidebarComponent.prototype._initResizeHandler = function () {
                 var self = this;
                 var resizeHandler = function () {
                     console.log('qs resize', arguments);
+                    self.handleTabsMiddleResizing();
                     if (self.isClosed()) {
                         return;
                     }
@@ -138,6 +146,30 @@ var packadic;
                     .on('resize', resizeHandler)
                     .on('footer:set-fixed', resizeHandler)
                     .on('header:set-fixed', resizeHandler);
+            };
+            QuickSidebarComponent.prototype.handleTabsMiddleResizing = function () {
+                var layout = this.app['layout'];
+                packadic.debug.log('xs breakpoint:', layout.getBreakpoint('sm'), 'viewport width', packadic.getViewPort().width);
+                var $middle = this.$e.find('.qs-header .middle');
+                var $tw = this.$e.find('.qs-tabs-wrapper');
+                var $header = this.$e.find('.qs-header');
+                if (packadic.getViewPort().width >= layout.getBreakpoint('sm') && packadic.getViewPort().width <= layout.getBreakpoint('md')) {
+                    var width = $header.children().first().outerWidth();
+                    width += $header.children().last().outerWidth();
+                    width = $header.width() - width;
+                    packadic.debug.log('width: ', width);
+                    if ($tw.closest('.qs-header').length == 0) {
+                        $tw.appendTo($middle);
+                    }
+                    $middle.css('width', width);
+                }
+                else {
+                    var $tw = this.$e.find('.qs-tabs-wrapper');
+                    if ($tw.closest('.qs-header').length > 0) {
+                        this.$e.find('.qs-header').after($tw);
+                    }
+                    $middle.attr('style', '');
+                }
             };
             QuickSidebarComponent.prototype.resetContent = function () {
                 var active = this.getActive();
@@ -172,7 +204,12 @@ var packadic;
                 this.switching = true;
                 setTimeout(function () {
                     packadic.plugins.makeSlimScroll($target, { height: height, wheelStep: packadic.isTouchDevice() ? 60 : 20 });
-                    $target.trigger("mouseleave");
+                    if (_this.mouseOverContent) {
+                        $target.trigger("mouseleave").trigger('mouseenter');
+                    }
+                    else {
+                        $target.trigger("mouseleave");
+                    }
                     _this.switching = false;
                 }, this.config('quickSidebar.transitionTime'));
             };
@@ -192,6 +229,7 @@ var packadic;
                 if (this.$e.find(target).length == 0) {
                     target = '#' + this.$e.find('.qs-content').first().attr('id');
                 }
+                this.handleTabsMiddleResizing();
                 this.resetContent();
                 $body.ensureClass("qs-shown", true);
                 this.openTarget(this.$e.find(target));
@@ -244,7 +282,7 @@ var packadic;
             };
             return QuickSidebarComponent;
         })(Component);
-        layout.QuickSidebarComponent = QuickSidebarComponent;
+        layout_1.QuickSidebarComponent = QuickSidebarComponent;
         Components.register('quickSidebar', QuickSidebarComponent, defaultConfig);
     })(layout = packadic.layout || (packadic.layout = {}));
 })(packadic || (packadic = {}));

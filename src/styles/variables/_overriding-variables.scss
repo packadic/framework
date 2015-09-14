@@ -1,6 +1,8 @@
-
+$em-base:                           16px;       // bourbon & bootstrap default
+$font-size-root:                    $em-base;   // bootstrap
 
 // bootstrap overrides
+
 $border-radius:                     0px;
 $border-radius-lg:                  0px;
 $border-radius-sm:                  0px;

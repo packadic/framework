@@ -128,7 +128,7 @@
 
 
 
-//@media (min-width: $screen-md-min) {
+// @media (min-width: $screen-md-min) {
 @include media-breakpoint-up(md){
 	.page-header.navbar {
 
@@ -186,7 +186,8 @@
 	}
 }
 
-//@media (max-width: $screen-sm-max) {
+// @media (max-width: $screen-sm-max) {
+// @media (max-width: 61.9em)
 @include media-breakpoint-down(md){
     .page-header.navbar {
 		padding: 0;
@@ -255,7 +256,8 @@
 	}
 }
 
-//@media (max-width: $screen-xs-max) {
+// @media (max-width: $screen-xs-max) {
+// @media (max-width: 33.9em)
 @include media-breakpoint-down(xs){
 	.page-header.navbar {
 		padding: 0;

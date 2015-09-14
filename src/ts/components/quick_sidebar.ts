@@ -19,6 +19,7 @@ module packadic.layout {
 
         switching:boolean = false;
         switchingTimeout:boolean = false;
+        mouseOverContent:boolean = false;
 
         public get $e() {
             return $('.quick-sidebar');
@@ -53,7 +54,6 @@ module packadic.layout {
             this._initTabs();
             this._initBindings();
             this._initResizeHandler();
-
             // if body class contains qs-shown which shows the quick sidebar
             // we auto select the first tab
             if (!this.isClosed()) {
@@ -156,12 +156,22 @@ module packadic.layout {
                 self.close();
                 // $(this).removeClass("c-layout-quick-sidebar-shown");
             });
+
+            // check if mouse is over any .qs-content. detection is required to fix openTarget timeout that creates the slimScroll
+            $body.on('mouseenter', '.quick-sidebar .qs-content', (e) => {
+                this.mouseOverContent = true;
+            }).on('mouseleave', '.quick-sidebar .qs-content', (e) => {
+                this.mouseOverContent = false;
+            })
         }
 
         protected _initResizeHandler() {
             var self:QuickSidebarComponent = this;
             var resizeHandler = function () {
                 console.log('qs resize', arguments);
+
+                self.handleTabsMiddleResizing();
+
                 if (self.isClosed()) {
                     return;
                 }
@@ -174,6 +184,34 @@ module packadic.layout {
                 .on('resize', resizeHandler)
                 .on('footer:set-fixed', resizeHandler)
                 .on('header:set-fixed', resizeHandler);
+        }
+
+        protected handleTabsMiddleResizing() {
+            var layout:LayoutComponent = this.app['layout'];
+            debug.log('xs breakpoint:', layout.getBreakpoint('sm'), 'viewport width', getViewPort().width);
+            var $middle = this.$e.find('.qs-header .middle');
+            var $tw = this.$e.find('.qs-tabs-wrapper');
+            var $header = this.$e.find('.qs-header');
+            if (getViewPort().width >= layout.getBreakpoint('sm') && getViewPort().width <= layout.getBreakpoint('md')) {
+
+                var width = $header.children().first().outerWidth();
+                width += $header.children().last().outerWidth();
+                width = $header.width() - width;
+                debug.log('width: ', width);
+
+                if ($tw.closest('.qs-header').length == 0) {
+                    $tw.appendTo($middle);
+                }
+                $middle.css('width', width);
+
+            } else {
+
+                var $tw = this.$e.find('.qs-tabs-wrapper');
+                if ($tw.closest('.qs-header').length > 0) {
+                    this.$e.find('.qs-header').after($tw);
+                }
+                $middle.attr('style', ''); // remove width css
+            }
         }
 
         protected resetContent() {
@@ -213,7 +251,11 @@ module packadic.layout {
             this.switching = true;
             setTimeout(() => {
                 plugins.makeSlimScroll($target, {height: height, wheelStep: isTouchDevice() ? 60 : 20});
-                $target.trigger("mouseleave");
+                if (this.mouseOverContent) {
+                    $target.trigger("mouseleave").trigger('mouseenter');
+                } else {
+                    $target.trigger("mouseleave");
+                }
                 this.switching = false;
             }, this.config('quickSidebar.transitionTime'));
         }
@@ -240,6 +282,7 @@ module packadic.layout {
             if (this.$e.find(target).length == 0) {
                 target = '#' + this.$e.find('.qs-content').first().attr('id');
             }
+            this.handleTabsMiddleResizing();
             this.resetContent();
             $body.ensureClass("qs-shown", true);
             this.openTarget(this.$e.find(target));

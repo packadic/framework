@@ -156,8 +156,19 @@ $quick-sidebar-transition-time: 500ms;
 }
 
 
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-only(sm) {
+    .quick-sidebar {
+        .qs-header {
+            .middle {
+                padding: 0 15px;
+            }
+        }
 
+        .qs-tabs-wrapper {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
 }
 
 @include media-breakpoint-up(md) {
