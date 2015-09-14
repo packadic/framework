@@ -83,7 +83,7 @@ module packadic.layout {
             // Binds the HTML5 data api
             $body.on('click', '[data-quick-sidebar]', function (e) {
                 e.preventDefault();
-                //e.stopPropagation();
+                e.stopPropagation();
 
                 var $this = $(this);
                 var action:string = $this.attr('data-quick-sidebar');
@@ -122,11 +122,19 @@ module packadic.layout {
             });
 
             // Clicking the heading tab names opens a new tab
-            $body.on('click', '.quick-sidebar .qs-tab', function(){
+            $body.on('click', '.quick-sidebar .qs-tab', function(e){
                 self.open($(this).attr('data-target'));
             });
 
-            $(document).on('click', '.qs-shown', (e) => {
+            $(document).on('click', '.qs-shown', function(e) {
+                //console.log(this, e);
+                if($(e.target).closest('.quick-sidebar').length > 0){
+                    return;
+                }
+                if(self.isPinned()){
+                    return;
+                }
+                self.close();
                 // $(this).removeClass("c-layout-quick-sidebar-shown");
             });
         }
@@ -168,6 +176,7 @@ module packadic.layout {
             setTimeout(() => {
                 this.$e.css('overflow', 'auto');
                 plugins.makeSlimScroll($target, {height: height});
+                $target.trigger("mouseleave");
             }, this.config('quickSidebar.transitionTime'));
         }
 
@@ -202,6 +211,9 @@ module packadic.layout {
         public close():QuickSidebarComponent {
             if (!this.exists()) {
                 return;
+            }
+            if(this.isPinned()){
+                this.unpin();
             }
             this.resetContent();
             $body.ensureClass("qs-shown", false);

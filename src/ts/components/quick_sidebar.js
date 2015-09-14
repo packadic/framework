@@ -65,6 +65,7 @@ var packadic;
                 var self = this;
                 $body.on('click', '[data-quick-sidebar]', function (e) {
                     e.preventDefault();
+                    e.stopPropagation();
                     var $this = $(this);
                     var action = $this.attr('data-quick-sidebar');
                     var target = $this.attr('data-target');
@@ -95,10 +96,17 @@ var packadic;
                     var $this = $(this);
                     $this.blur();
                 });
-                $body.on('click', '.quick-sidebar .qs-tab', function () {
+                $body.on('click', '.quick-sidebar .qs-tab', function (e) {
                     self.open($(this).attr('data-target'));
                 });
                 $(document).on('click', '.qs-shown', function (e) {
+                    if ($(e.target).closest('.quick-sidebar').length > 0) {
+                        return;
+                    }
+                    if (self.isPinned()) {
+                        return;
+                    }
+                    self.close();
                 });
             };
             QuickSidebarComponent.prototype._initResizeHandler = function () {
@@ -136,6 +144,7 @@ var packadic;
                 setTimeout(function () {
                     _this.$e.css('overflow', 'auto');
                     packadic.plugins.makeSlimScroll($target, { height: height });
+                    $target.trigger("mouseleave");
                 }, this.config('quickSidebar.transitionTime'));
             };
             QuickSidebarComponent.prototype.isClosed = function () {
@@ -162,6 +171,9 @@ var packadic;
             QuickSidebarComponent.prototype.close = function () {
                 if (!this.exists()) {
                     return;
+                }
+                if (this.isPinned()) {
+                    this.unpin();
                 }
                 this.resetContent();
                 $body.ensureClass("qs-shown", false);
