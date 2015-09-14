@@ -35,16 +35,15 @@ $quick-sidebar-transition-time: 500ms;
     bottom: 0;
     right: -$quick-sidebar-width;
     transition: right 0.2s;
-    overflow-x: auto;
+
+    overflow: hidden;
     color: $quick-sidebar-text-color;
 
     .qs-header {
-        padding: 15px;
         text-align: right;
         border-bottom: 1px solid lighten($quick-sidebar-bg-color, 8);
 
         .btn {
-            @extend .btn-sm;
 
             &.qs-close {
                 > i {
@@ -57,18 +56,24 @@ $quick-sidebar-transition-time: 500ms;
             }
         }
 
-        &.qs-header-xs {
-            padding: 7px;
-            .btn {
-                @extend .btn-xs;
-            }
-        }
+    }
+
+    .qs-tabs-wrapper {
+        //overflow: hidden;
+
+        padding: 7px 15px;
+        border-bottom: 1px solid lighten($quick-sidebar-bg-color, 8);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+
     }
 
     .qs-tabs {
-        padding: 7px 15px;
-        border-bottom: 1px solid lighten($quick-sidebar-bg-color, 8);
-        @include clearfix;
+
+        width: 20000em;
+        position: relative;
+        //@include clearfix;
 
         .qs-tab {
             transition: all $quick-sidebar-transition-time linear;
@@ -80,9 +85,9 @@ $quick-sidebar-transition-time: 500ms;
             padding: 0 10px 0 0;
             cursor: default;
 
-            &:not(.active){
+            &:not(.active) {
                 transition: all $quick-sidebar-transition-time linear;
-                color: #5E676B;
+                color: #5e676b;
             }
         }
     }
@@ -126,14 +131,6 @@ $quick-sidebar-transition-time: 500ms;
 
 .quick-sidebar {
 
-    .page-header-fixed & {
-        top: $header-height;
-    }
-
-    .page-footer-fixed & {
-        bottom: $page-footer-height;
-    }
-
     .qs-shown & {
         right: 0;
         transition: right 0.2s;
@@ -147,3 +144,55 @@ $quick-sidebar-transition-time: 500ms;
     }
 
 }
+
+@include media-breakpoint-up(xs) {
+    .quick-sidebar {
+
+        .qs-header {
+            padding: 7px;
+            .btn {
+                @include btn-xs;
+            }
+        }
+
+        .page-header-fixed & {
+            top: $header-height;
+        }
+
+        .page-footer-fixed & {
+            bottom: $page-footer-height;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .quick-sidebar {
+        width: 100%;
+        right: -100%;
+
+        .qs-header {
+            padding: 15px;
+
+            .btn {
+                @include btn-sm;
+            }
+        }
+
+        .page-header-fixed & {
+            top: 0;
+        }
+
+        .page-footer-fixed & {
+            bottom: 0;
+        }
+
+
+        .qs-tabs {
+            .qs-tab {
+                font-size: 18px;
+                padding: 0 20px 0 0;
+            }
+        }
+    }
+}
+

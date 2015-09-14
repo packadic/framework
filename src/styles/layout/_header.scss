@@ -128,7 +128,8 @@
 
 
 
-@media (min-width: $screen-md-min) {
+//@media (min-width: $screen-md-min) {
+@include media-breakpoint-up(md){
 	.page-header.navbar {
 
 		.page-logo {
@@ -185,8 +186,9 @@
 	}
 }
 
-@media (max-width: $screen-sm-max) {
-	.page-header.navbar {
+//@media (max-width: $screen-sm-max) {
+@include media-breakpoint-down(md){
+    .page-header.navbar {
 		padding: 0;
 		margin: 0;
 		position: relative;
@@ -238,7 +240,9 @@
 	}
 }
 
-@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+//@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+@include media-breakpoint-only(sm){
+
 	.page-boxed {
 		.page-header.navbar  {
 			margin: auto !important;
@@ -251,7 +255,8 @@
 	}
 }
 
-@media (max-width: $screen-xs-max) {
+//@media (max-width: $screen-xs-max) {
+@include media-breakpoint-down(xs){
 	.page-header.navbar {
 		padding: 0;
 

@@ -151,6 +151,11 @@ module packadic.plugins {
             }
             return this;
         };
+
+        $.fn.onClick = function(...args:any[]):JQuery{
+            var $this = $(this);
+            return $this.on.apply($this, [isTouchDevice() ? 'touchend' : 'click'].concat(args));
+        }
     }
 
 

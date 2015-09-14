@@ -6,12 +6,13 @@ nav.quick-sidebar
             button.btn.blue-grey.qs-next(type='button', data-quick-sidebar='next', title='Next tab')
                 i.fa.fa-arrow-right
 
-        button.btn.blue-grey-dark.qs-pin(type='button', data-quick-sidebar='pin', title='Pin/unpin the quick sidebar')
+        button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-quick-sidebar='pin', title='Pin/unpin the quick sidebar')
             i.fa.fa-thumb-tack
         button.btn.blue-grey.qs-close(type='button', data-quick-sidebar='close', title='Close')
             i.fa.fa-times
 
-    .qs-tabs
+    .qs-tabs-wrapper
+        .qs-tabs
 
     .qs-content#qs-layout(data-name='Layout')
         .qs-section
@@ -28,6 +29,13 @@ nav.quick-sidebar
                 +abtn(data-quick-sidebar=action, sm, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-random(data-name='Random')
+        .qs-section
+            h3 Other
+            - var n = 0;
+            while n < 30
+                p Line #{n ++}
+
+    .qs-content#qs-extras(data-name='Extras')
         .qs-section
             h3 Other
             - var n = 0;

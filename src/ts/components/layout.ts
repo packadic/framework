@@ -152,7 +152,7 @@ module packadic.layout {
             this._initSidebarResizeListener();
 
             var self:LayoutComponent = this;
-            $('body').on('click', '[data-layout-api]', function(e){
+            $('body').onClick( '[data-layout-api]', function(e){
                 var action:string = $(this).attr('data-layout-api');
                 switch(action){
                     case 'toggle-sidebar': self.isSidebarClosed() ? self.openSidebar() : self.closeSidebar(); break;
@@ -280,7 +280,7 @@ module packadic.layout {
 
         protected _initSidebarSubmenus() {
             var self:LayoutComponent = this;
-            el.sidebar.on('click', 'li > a', function (e) {
+            el.sidebar.onClick( 'li > a', function (e) {
                 var $this = $(this);
                 if (getViewPort().width >= self.getBreakpoint('md') && $this.parents('.page-sidebar-menu-hover-submenu').size() === 1) { // exit of hover sidebar menu
                     return;
@@ -324,7 +324,7 @@ module packadic.layout {
                 });
                 e.preventDefault();
             });
-            $document.on('click', '.page-header-fixed-mobile .responsive-toggler', function () {
+            $document.onClick( '.page-header-fixed-mobile .responsive-toggler', function () {
                 self.scrollTop();
             });
         }
@@ -332,7 +332,7 @@ module packadic.layout {
         protected _initToggleButton() {
             return;
             var self:LayoutComponent = this;
-            $body.on('click', self.config('layout.sidebar.togglerSelector'), function (e) {
+            $body.onClick( self.config('layout.sidebar.togglerSelector'), function (e) {
                 if (self.isSidebarClosed()) {
                     self.openSidebar();
                 } else {

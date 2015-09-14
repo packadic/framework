@@ -5,3 +5,9 @@
         padding: 1px 8px;
     }
 }
+
+@include media-breakpoint-down(md) {
+    .tooltip.tooltip-packadic {
+        display: none;
+    }
+}

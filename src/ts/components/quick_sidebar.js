@@ -42,7 +42,9 @@ var packadic;
                     trigger: 'hover focus',
                     selector: false
                 });
-                this.$e.find('.qs-header .btn[data-quick-sidebar]').tooltip(ttOpts);
+                if (!packadic.isTouchDevice()) {
+                    this.$e.find('.qs-header .btn[data-quick-sidebar]').tooltip(ttOpts);
+                }
                 this._initTabs();
                 this._initBindings();
                 this._initResizeHandler();
@@ -53,6 +55,11 @@ var packadic;
             QuickSidebarComponent.prototype._initTabs = function () {
                 var self = this;
                 var $tabs = this.$e.find('.qs-tabs').first();
+                var style = {
+                    width: $tabs.parent().width(),
+                    height: $tabs.innerHeight() - 1,
+                    float: 'left'
+                };
                 this.$e.find('.qs-content').each(function () {
                     var tab = $('<div>')
                         .addClass('qs-tab')
@@ -60,16 +67,22 @@ var packadic;
                         .attr('data-target', '#' + $(this).attr('id'));
                     tab.appendTo($tabs);
                 });
+                $tabs.parent().jcarousel({
+                    list: '.qs-tabs',
+                    items: '.qs-tab',
+                    center: true,
+                    wrap: 'both'
+                });
             };
             QuickSidebarComponent.prototype._initBindings = function () {
                 var self = this;
-                $body.on('click', '[data-quick-sidebar]', function (e) {
+                $body.onClick('[data-quick-sidebar]', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     var $this = $(this);
                     var action = $this.attr('data-quick-sidebar');
                     var target = $this.attr('data-target');
-                    target = target || self.$e.find('qs-content').first();
+                    target = target || self.$e.find('.qs-content').first();
                     switch (action) {
                         case 'open':
                             self.open(target);
@@ -92,14 +105,14 @@ var packadic;
                     }
                     packadic.debug.log('[data-quick-sidebar]', 'action: ', action, 'target: ', target);
                 });
-                $body.on('click', '.quick-sidebar .qs-header button', function (e) {
+                $body.onClick('.quick-sidebar .qs-header button', function (e) {
                     var $this = $(this);
                     $this.blur();
                 });
-                $body.on('click', '.quick-sidebar .qs-tab', function (e) {
+                $body.onClick('.quick-sidebar .qs-tab', function (e) {
                     self.open($(this).attr('data-target'));
                 });
-                $(document).on('click', '.qs-shown', function (e) {
+                $(document).onClick('.qs-shown', function (e) {
                     if ($(e.target).closest('.quick-sidebar').length > 0) {
                         return;
                     }
@@ -134,15 +147,14 @@ var packadic;
                 this.$e.find('.qs-content.active').removeClass('active');
             };
             QuickSidebarComponent.prototype.openTarget = function ($target) {
-                var _this = this;
                 var height = this.$e.outerHeight() - this.$e.find('.qs-header').outerHeight() - this.$e.find('.qs-tabs').outerHeight();
                 $target.ensureClass('active');
                 $(this).addClass('.active');
                 this.$e.find('.qs-tabs .qs-tab').removeClass('active');
-                this.$e.find('.qs-tabs .qs-tab[data-target="#' + $target.attr('id') + '"]').addClass('active');
-                this.$e.css('overflow', 'hidden');
+                var $tab = this.$e.find('.qs-tabs .qs-tab[data-target="#' + $target.attr('id') + '"]').addClass('active');
+                var $tabs = this.$e.find('.qs-tabs-wrapper');
+                $tabs.jcarousel('scroll', $tab);
                 setTimeout(function () {
-                    _this.$e.css('overflow', 'auto');
                     packadic.plugins.makeSlimScroll($target, { height: height });
                     $target.trigger("mouseleave");
                 }, this.config('quickSidebar.transitionTime'));

@@ -10,6 +10,7 @@
 @import "variables/extending-variables";                        // extending variables that depends on other variables (like bootstrap)
 @import "../../bower_components/bootstrap/scss/mixins";
 
+@import "components/mixins/size";
 @import "components/mixins/tables"; // component mixins should go after vendor(bootstrap) mixins, as they might replace/extend em
 @import "components/mixins/loader";
 

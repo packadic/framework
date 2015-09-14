@@ -34,6 +34,8 @@ interface JQuery {
     testWidget(...args:any[]):JQuery ;
     testPlugin(...args:any[]):JQuery ;
     slimScroll(...args:any[]):JQuery ;
+    onClick(...args:any[]):JQuery;
+    jcarousel(...args:any[]):JQuery;
 }
 
 interface HighlightJS {

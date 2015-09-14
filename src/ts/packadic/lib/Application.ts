@@ -137,7 +137,9 @@ module packadic {
             $(() => {
                 this.emit('boot', this);
                 this.timers.boot = new Date;
-                $body.tooltip(this.config('vendor.bootstrap.tooltip'));
+                if(!isTouchDevice()) {
+                    $body.tooltip(this.config('vendor.bootstrap.tooltip'));
+                }
                 $body.popover(this.config('vendor.bootstrap.popover'));
                 $.material.options = this.config('vendor.material');
                 $.material.init();

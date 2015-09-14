@@ -22,7 +22,7 @@ module.exports = function (_grunt) {
     var target = grunt.option('target') || 'dev';
     var vendorScripts = [
         'lodash/lodash.js', 'eventemitter2/lib/eventemitter2.js', 'async/dist/async.js', 'underscore.string/dist/underscore.string.js', 'jade/runtime.js',
-        'jquery/dist/jquery.js', 'jquery-migrate/jquery-migrate.js', 'jquery-ui/ui/widget.js', 'jquery-slimscroll/jquery.slimscroll.js',
+        'jquery/dist/jquery.js', 'jquery-migrate/jquery-migrate.js', 'jquery-ui/ui/widget.js', 'jquery-slimscroll/jquery.slimscroll.js', 'jcarousel/dist/jquery.jcarousel.js',
         'tether/dist/js/tether.js', 'bootstrap/dist/js/bootstrap.js', 'bootstrap-material-design/dist/js/material.js'
     ];
     grunt.log.subhead('Packadic Builder for Packadic ' + require('./bower.json').version);
@@ -62,7 +62,8 @@ module.exports = function (_grunt) {
             images: {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
             bower : {src: ['**/*.{js,css,woff*,ttf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
             scss  : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
-            js    : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'}
+            js    : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
+            ts_components: {src: ['**/*.ts'], cwd: 'src/ts/components', expand: true, dest: '<%= target.dest %>/assets/scripts/components'},
         },
         jade : {
             options  : {
@@ -173,7 +174,7 @@ module.exports = function (_grunt) {
             views           : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
             newerViews      : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
             ts_packadic   : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:components', 'uglify:ts_packadic', 'copy_ts_scripts']},
-            ts_components : {files: ['src/ts/components/**/*.ts'], tasks: ['ts:components', 'copy_ts_scripts']},
+            ts_components : {files: ['src/ts/components/**/*.ts'], tasks: ['ts:components', 'copy:ts_components', 'copy_ts_scripts']},
             ts_plugins    : {files: ['src/ts/plugins/**/*.ts'], tasks: ['ts:plugins', 'copy_ts_scripts']},
 
             jade_test_page: {files: ['src/views/test.jade'], tasks: ['jade:test_page']},

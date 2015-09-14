@@ -56,7 +56,8 @@
     "prism": "~1.0.1",
     "underscore.string": "~3.2.2",
     "jquery-ui": "~1.11.4",
-    "tether": "~1.1.0"
+    "tether": "~1.1.0",
+    "jcarousel": "~0.3.3"
   },
   "resolutions": {
     "jquery": "~1.11.2"
