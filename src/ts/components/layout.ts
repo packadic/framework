@@ -28,13 +28,24 @@ module packadic.layout {
         },
         breakpoints: {
             'screen-lg-med': "1260px",
+
             'screen-lg-min': "1200px",
             'screen-md-max': "1199px",
+
             'screen-md-min': "992px",
             'screen-sm-max': "991px",
+
             'screen-sm-min': "768px",
             'screen-xs-max': "767px",
+
             'screen-xs-min': "480px"
+        },
+        breakpoints4: { // bootstrap 4
+            xs: 0,
+            sm: 480,
+            md: 720,
+            lg: 960,
+            xl: 1140
         },
         sidebar: {
             autoScroll: true,
@@ -708,7 +719,8 @@ module packadic.layout {
         /****************************/
 
         public getBreakpoint(which:string) {
-            return parseInt(this.config.get('layout.breakpoints.screen-' + which + '-min').replace('px', ''));
+            //return parseInt(this.config.get('layout.breakpoints.screen-' + which + '-min').replace('px', ''));
+            return parseInt(this.config.get('layout.breakpoints4.' + which)); // bs4.0.0-alpha
         }
 
         public calculateViewportHeight() {

@@ -1,32 +1,37 @@
 nav.quick-sidebar
-    .qs-header.qs-header-xs
+    .qs-header
         .pull-left
             button.btn.blue-grey.qs-prev(type='button', data-quick-sidebar='prev', title='Previous tab')
                 i.fa.fa-arrow-left
             button.btn.blue-grey.qs-next(type='button', data-quick-sidebar='next', title='Next tab')
                 i.fa.fa-arrow-right
 
-        button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-quick-sidebar='pin', title='Pin/unpin the quick sidebar')
-            i.fa.fa-thumb-tack
-        button.btn.blue-grey.qs-close(type='button', data-quick-sidebar='close', title='Close')
-            i.fa.fa-times
+        .pull-left.middle
+
+        .pull-right
+            button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-quick-sidebar='pin', title='Pin/unpin the quick sidebar')
+                i.fa.fa-thumb-tack
+            button.btn.blue-grey.qs-close(type='button', data-quick-sidebar='close', title='Close')
+                i.fa.fa-times
 
     .qs-tabs-wrapper
         .qs-tabs
+
+    .qs-seperator
 
     .qs-content#qs-layout(data-name='Layout')
         .qs-section
             h3 Layout API
             p The layout API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
             each action, i in ['toggle-sidebar','page-boxed','header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','compact-sidebar','hover-sidebar','reversed-sidebar']
-                +abtn(data-layout-api=action, sm, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+                +abtn(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-qs(data-name='Quick-Sidebar')
         .qs-section
             h3 QuickSidebar API
             p The quick sidebar API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
             each action, i in ['pin', 'close', 'toggle', 'open', 'next', 'prev']
-                +abtn(data-quick-sidebar=action, sm, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+                +abtn(data-quick-sidebar=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-random(data-name='Random')
         .qs-section
@@ -36,6 +41,27 @@ nav.quick-sidebar
                 p Line #{n ++}
 
     .qs-content#qs-extras(data-name='Extras')
+        .qs-section
+            h3 Other
+            - var n = 0;
+            while n < 30
+                p Line #{n ++}
+
+    .qs-content#qs-another(data-name='Another')
+        .qs-section
+            h3 Other
+            - var n = 0;
+            while n < 30
+                p Line #{n ++}
+
+    .qs-content#qs-makeifythis(data-name='Makeifythis')
+        .qs-section
+            h3 Other
+            - var n = 0;
+            while n < 30
+                p Line #{n ++}
+
+    .qs-content#qs-nevertheless(data-name='Nevertheless')
         .qs-section
             h3 Other
             - var n = 0;

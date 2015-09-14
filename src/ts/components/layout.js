@@ -36,6 +36,13 @@ var packadic;
                 'screen-xs-max': "767px",
                 'screen-xs-min': "480px"
             },
+            breakpoints4: {
+                xs: 0,
+                sm: 480,
+                md: 720,
+                lg: 960,
+                xl: 1140
+            },
             sidebar: {
                 autoScroll: true,
                 keepExpanded: true,
@@ -644,7 +651,7 @@ var packadic;
                 this.scrollTo();
             };
             LayoutComponent.prototype.getBreakpoint = function (which) {
-                return parseInt(this.config.get('layout.breakpoints.screen-' + which + '-min').replace('px', ''));
+                return parseInt(this.config.get('layout.breakpoints4.' + which));
             };
             LayoutComponent.prototype.calculateViewportHeight = function () {
                 var sidebarHeight = packadic.getViewPort().height - el.header.outerHeight() - 30;

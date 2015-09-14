@@ -26,25 +26,48 @@ $quick-sidebar-transition-time: 500ms;
 }
 
 .quick-sidebar {
-    display: block;
-    width: $quick-sidebar-width;
-    background: $quick-sidebar-bg-color;
-    z-index: $zindex-quick-sidebar;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: -$quick-sidebar-width;
-    transition: right 0.2s;
 
-    overflow: hidden;
-    color: $quick-sidebar-text-color;
+    & {
+        width: 100%;
+        right: -100%;
+        display: block;
+        background: $quick-sidebar-bg-color;
+        color: $quick-sidebar-text-color;
+        z-index: $zindex-quick-sidebar;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        transition: right 0.2s;
+        overflow: hidden;
+    }
+
+    .page-header-fixed & {
+        top: 0;
+    }
+
+    .page-footer-fixed & {
+        bottom: 0;
+    }
+
+    .qs-shown & {
+        right: 0;
+        transition: right 0.2s;
+    }
+
+    .qs-pinned & {
+        button.qs-pin {
+            @extend .btn-success;
+        }
+    }
 
     .qs-header {
+        padding: 7px;
         text-align: right;
         border-bottom: 1px solid lighten($quick-sidebar-bg-color, 8);
+        @include clearfix;
 
         .btn {
-
+            //@include btn-md;
             &.qs-close {
                 > i {
                     color: $brand-danger;
@@ -59,37 +82,40 @@ $quick-sidebar-transition-time: 500ms;
     }
 
     .qs-tabs-wrapper {
-        //overflow: hidden;
-
-        padding: 7px 15px;
-        border-bottom: 1px solid lighten($quick-sidebar-bg-color, 8);
+        padding: 7px 0;
         position: relative;
         overflow: hidden;
         width: 100%;
-
+        margin-left: 15px;
+        margin-right: 15px;
     }
 
     .qs-tabs {
-
         width: 20000em;
         position: relative;
-        //@include clearfix;
 
         .qs-tab {
             transition: all $quick-sidebar-transition-time linear;
             display: block;
             float: left;
             text-transform: uppercase;
-            font-size: 10px;
             font-weight: 600;
-            padding: 0 10px 0 0;
             cursor: default;
+
+            font-size: 18px;
+            padding: 0 20px 0 0;
 
             &:not(.active) {
                 transition: all $quick-sidebar-transition-time linear;
                 color: #5e676b;
             }
         }
+    }
+
+    .qs-seperator {
+        width: 100%;
+        height: 1px;
+        background-color: lighten($quick-sidebar-bg-color, 8);
     }
 
     .qs-content {
@@ -129,31 +155,15 @@ $quick-sidebar-transition-time: 500ms;
     }
 }
 
-.quick-sidebar {
 
-    .qs-shown & {
-        right: 0;
-        transition: right 0.2s;
-    }
-
-    .qs-pinned & {
-        button.qs-pin {
-            @extend .btn-success;
-            //background-color: $brand-success;
-        }
-    }
+@include media-breakpoint-up(sm) {
 
 }
 
-@include media-breakpoint-up(xs) {
+@include media-breakpoint-up(md) {
     .quick-sidebar {
-
-        .qs-header {
-            padding: 7px;
-            .btn {
-                @include btn-xs;
-            }
-        }
+        width: $quick-sidebar-width;
+        right: -$quick-sidebar-width;
 
         .page-header-fixed & {
             top: $header-height;
@@ -162,37 +172,31 @@ $quick-sidebar-transition-time: 500ms;
         .page-footer-fixed & {
             bottom: $page-footer-height;
         }
-    }
-}
 
-@include media-breakpoint-down(md) {
-    .quick-sidebar {
-        width: 100%;
-        right: -100%;
-
-        .qs-header {
-            padding: 15px;
-
-            .btn {
-                @include btn-sm;
-            }
+        .qs-tabs-wrapper {
+            width: $quick-sidebar-width - (15 * 2); // 15px left margin and 15px right shorter
+            margin-left: 15px;
         }
-
-        .page-header-fixed & {
-            top: 0;
-        }
-
-        .page-footer-fixed & {
-            bottom: 0;
-        }
-
 
         .qs-tabs {
             .qs-tab {
-                font-size: 18px;
-                padding: 0 20px 0 0;
+                font-size: 10px;
+                padding: 0 10px 0 0;
             }
         }
     }
 }
 
+@include media-breakpoint-up(lg) {
+    .quick-sidebar {
+        .qs-header {
+            padding: 7px;
+            .btn {
+                @include btn-xs;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+}
