@@ -15,10 +15,12 @@
 module packadic.components {
 
     export interface IExtension {
+
         app:Application;
     }
 
     export interface IExtensionClass<T extends IExtension> {
+        dependencies:string[];
         new(name:string, host:Components, app:Application):T;
     }
 
@@ -30,7 +32,8 @@ module packadic.components {
 
         protected components:{[name:string]:Component};
 
-        protected static COMPONENTS:{[name:string]:IExtensionClass<Component>};
+        protected static COMPONENTS:{[name:string]:IExtensionClass<Component>} = {};
+        protected static COMPONENTSDEPS:util.obj.DependencySorter;
 
         private static _instance:Components;
 
@@ -86,17 +89,15 @@ module packadic.components {
          * @param cb
          * @returns {Component}
          */
-        public load(name:any, cb?:Function):Component {
+        protected load(name:any, cb?:Function):Component {
 
             if (this.has(name)) {
                 return this.get(name);
             }
 
-
-            if (typeof Components.COMPONENTS === 'undefined') {
-                Components.COMPONENTS = {};
+            if(typeof Components.COMPONENTSDEPS === 'undefined'){
+                Components.COMPONENTSDEPS = new util.obj.DependencySorter();
             }
-
             this.components[name] = new Components.COMPONENTS[name](name, this, this.app);
             this.app.emit('component:loaded', name, this.components[name]);
             debug.log('Components', ' loaded: ', name, this.components[name]);
@@ -129,12 +130,17 @@ module packadic.components {
          * @returns {packadic.components.Components}
          */
         public loadAll():Components {
-
-            if (typeof Components.COMPONENTS === 'undefined') {
-                Components.COMPONENTS = {};
+            if(typeof Components.COMPONENTSDEPS === 'undefined'){
+                Components.COMPONENTSDEPS = new util.obj.DependencySorter();
             }
 
-            Object.keys(Components.COMPONENTS).forEach((name:string) => {
+            var names:string[] = Components.COMPONENTSDEPS.sort();
+            console.log('loadAll deps:', names);
+            var missing:number = Object.keys(packadic.components.Components.COMPONENTSDEPS.getMissing()).length;
+            if(missing > 0){
+                console.warn('Missing dependencies: ' + missing.toString());
+            }
+            names.forEach((name:string) => {
                 if (!this.has(name)) {
                     this.load(name);
                 }
@@ -159,14 +165,17 @@ module packadic.components {
          * @param configToMergeIntoDefaults
          */
         public static register<T extends IExtension>(name:string, componentClass:IExtensionClass<Component>, configToMergeIntoDefaults?:any) {
-            if (typeof Components.COMPONENTS === 'undefined') {
-                Components.COMPONENTS = {};
+            if(typeof Components.COMPONENTSDEPS === 'undefined'){
+                Components.COMPONENTSDEPS = new util.obj.DependencySorter();
             }
             if (typeof Components.COMPONENTS[name] !== 'undefined') {
                 throw new Error('Cannot add ' + name + '. Already exists');
             }
 
             Components.COMPONENTS[name] = componentClass;
+            Components.COMPONENTSDEPS.addItem(name, componentClass.dependencies);
+
+            console.log('register deps:', componentClass);
 
             // merge config if needed
             if (typeof configToMergeIntoDefaults !== "undefined") {
@@ -184,6 +193,8 @@ module packadic.components {
      * @class Component
      */
     export class Component implements IExtension {
+        public static dependencies:string[] = [];
+
         public app:Application;
         public components:Components;
         public name:string;

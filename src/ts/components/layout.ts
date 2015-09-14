@@ -6,6 +6,8 @@ module packadic.layout {
     import Components = packadic.components.Components;
     import JQueryPositionOptions = JQueryUI.JQueryPositionOptions;
 
+
+
     var defaultConfig:any = {
         selectors: {
             'search': '.sidebar-search',

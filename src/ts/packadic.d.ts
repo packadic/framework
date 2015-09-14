@@ -40,6 +40,7 @@ declare module packadic.components {
         app: Application;
     }
     interface IExtensionClass<T extends IExtension> {
+        dependencies: string[];
         new (name: string, host: Components, app: Application): T;
     }
     class Components {
@@ -50,12 +51,13 @@ declare module packadic.components {
         protected static COMPONENTS: {
             [name: string]: IExtensionClass<Component>;
         };
+        protected static COMPONENTSDEPS: util.obj.DependencySorter;
         private static _instance;
         constructor(app?: Application);
         static instance: Components;
         has(name: string): boolean;
         get(name?: string): Component;
-        load(name: any, cb?: Function): Component;
+        protected load(name: any, cb?: Function): Component;
         all(): {
             [name: string]: Component;
         };
@@ -68,6 +70,7 @@ declare module packadic.components {
         static register<T extends IExtension>(name: string, componentClass: IExtensionClass<Component>, configToMergeIntoDefaults?: any): void;
     }
     class Component implements IExtension {
+        static dependencies: string[];
         app: Application;
         components: Components;
         name: string;
@@ -339,6 +342,41 @@ declare module packadic.util.obj {
     function copyObject<T>(object: T): T;
     function dotize(obj: any, prefix?: any): any;
     function applyMixins(derivedCtor: any, baseCtors: any[]): void;
+    class DependencySorter {
+        protected items: any;
+        protected dependencies: any;
+        protected dependsOn: any;
+        protected missing: any;
+        protected circular: any;
+        protected hits: any;
+        protected sorted: any;
+        constructor();
+        add(items: {
+            [name: string]: string | string[];
+        }): void;
+        addItem(name: string, deps?: string | string[]): void;
+        setItem(name: string, deps: string[]): void;
+        sort(): string[];
+        protected satisfied(name: string): boolean;
+        protected setSorted(item: any): void;
+        protected exists(item: any): boolean;
+        protected removeDependents(item: any): void;
+        protected setCircular(item: any, item2: any): void;
+        protected setMissing(item: any, item2: any): void;
+        protected setFound(item: any, item2: any): void;
+        protected isSorted(item: string): boolean;
+        requiredBy(item: string): boolean;
+        isDependent(item: string, item2: string): boolean;
+        hasDependents(item: any): boolean;
+        hasMissing(item: any): boolean;
+        isMissing(dep: string): boolean;
+        hasCircular(item: string): boolean;
+        isCircular(dep: any): boolean;
+        getDependents(item: any): string[];
+        getMissing(str?: any): string[];
+        getCircular(str?: any): any;
+        getHits(str?: any): any;
+    }
 }
 declare module packadic.util.promise {
     interface ImmediateSuccessCB<T, TP> {

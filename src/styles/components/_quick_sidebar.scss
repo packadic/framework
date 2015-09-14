@@ -41,6 +41,7 @@ $quick-sidebar-transition-time: 500ms;
         overflow: hidden;
     }
 
+    // parent classes that influence .quick-sidebar
     .page-header-fixed & {
         top: 0;
     }
@@ -59,6 +60,9 @@ $quick-sidebar-transition-time: 500ms;
             @extend .btn-success;
         }
     }
+
+
+    // classes
 
     .qs-header {
         padding: 7px;

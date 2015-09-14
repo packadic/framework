@@ -17,6 +17,8 @@ module packadic.layout {
      */
     export class QuickSidebarComponent extends Component {
 
+        public static dependencies:string[] = ['layout'];
+
         switching:boolean = false;
         switchingTimeout:boolean = false;
         mouseOverContent:boolean = false;
@@ -29,7 +31,7 @@ module packadic.layout {
             this.app.debug.log('QuickSidebarComponent init');
             this.app.on('booted', () => {
                 debug.log('QuickSidebarComponent received event emitted from app: booted');
-            })
+            });
         }
 
         public boot() {

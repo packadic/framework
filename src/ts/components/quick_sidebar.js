@@ -280,6 +280,7 @@ var packadic;
             QuickSidebarComponent.prototype.unpin = function () {
                 $body.removeClass('qs-pinned');
             };
+            QuickSidebarComponent.dependencies = ['layout'];
             return QuickSidebarComponent;
         })(Component);
         layout_1.QuickSidebarComponent = QuickSidebarComponent;
