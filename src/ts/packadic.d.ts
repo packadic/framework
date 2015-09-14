@@ -168,6 +168,13 @@ declare module packadic {
     function getRandomId(length?: number): string;
 }
 declare module packadic.plugins {
+    function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
+    function initHighlight(): void;
+    function makeSlimScroll(el: any, opts?: any): void;
+    function destroySlimScroll(el: any): void;
+    function registerHelperPlugins(): void;
+}
+declare module packadic.plugins {
     class Widget {
         _create(): any;
         _destroy(): void;
@@ -237,13 +244,6 @@ declare module packadic.plugins {
         _on(name: string, sel?: string, cb?: any): Plugin;
         static register(name: string, pluginClass: any): void;
     }
-}
-declare module packadic.plugins {
-    function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
-    function initHighlight(): void;
-    function makeSlimScroll(el: any, opts?: any): void;
-    function destroySlimScroll(el: any): void;
-    function registerHelperPlugins(): void;
 }
 declare module packadic.storage {
     var bags: {

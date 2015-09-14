@@ -1,13 +1,13 @@
 extends layouts/default
 
-mixin demo-dropdown-button(text, color, size)
+mixin demo-dropdown-button(id, text, color, size)
     - color = color || 'btn-primary';
     - size = size || 'xs';
-    .btn-group
-        button.btn.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='false', class=color + ' btn-' + size)
+    .dropdown.open
+        button.btn.dropdown-toggle(type='button', id=id data-toggle='dropdown', aria-expanded='false', aria-haspopup="true", class=color + ' btn-' + size)
             | #{text}&nbsp;
             span.caret
-        .dropdown-menu
+        .dropdown-menu.dropdown-menu-packadic(aria-labelledby=id)
             block
 
 mixin demo-dropdown-advanced-items
@@ -80,7 +80,22 @@ block breadcrumb
 
 
 block content
-    .row
-        .col-md-12
-            +demo-dropdown-button('Advanced dropdown inverse wide').dropdown-menu-inverse.dropdown-menu-wide
-                +demo-dropdown-advanced-items
+    .row: .col-md-12
+        +demo-dropdown-button('test-dd-1', 'Test dropdown')
+            h6.dropdown-header Dropdown header
+            a(href="#").dropdown-item Action
+            a(href="#").dropdown-item Another action
+            .dropdown-submenu
+                a(href="#").dropdown-item Sub menu
+                .dropdown-menu
+                    a(href="#").dropdown-item Action
+                    a(href="#").dropdown-item Another action
+            a(href="#").dropdown-item Something else here
+            .dropdown-divider
+            a(href="#").dropdown-item Seperated link
+            a(href="#").dropdown-item.disabled Disabled link
+            a(href="#").dropdown-item Another seperated link
+            .dropdown-footer
+                a(href='#') View
+                a(href='#') Cancel
+                a(href='#') Other

@@ -272,16 +272,12 @@ module packadic.util.obj {
                 hasChanged = false;
 
                 Object.keys(this.dependencies).forEach((item:string) => {
-                    console.log('sort', item);
                     if (this.satisfied(item)) {
-                        console.log('sort satisfied', item);
                         this.setSorted(item);
                         this.removeDependents(item);
                         hasChanged = true;
-                        console.log('sort satisfied', item, hasChanged);
                     }
                     this.hits[item]++;
-                    console.log('hits', hasChanged);
                 });
             }
 
@@ -293,9 +289,7 @@ module packadic.util.obj {
             var pass:boolean = true;
 
             this.getDependents(name).forEach((dep:string) => {
-                console.log('satisfied', name, 'dep: ', dep)
                 if (this.isSorted(dep)) {
-                    console.log('isSorted, return');
                     return;
                 }
 
@@ -304,23 +298,20 @@ module packadic.util.obj {
                     if (pass) {
                         pass = false;
                     }
-                    console.log('not exists', pass);
                 }
                 if (this.hasDependents(dep)) {
                     if (pass) {
                         pass = false;
                     }
-                    console.log('not hasDependents', pass);
                 } else {
                     this.setFound(name, dep);
-                    console.log('setFound');
                 }
                 if (this.isDependent(name, dep)) {
                     this.setCircular(name, dep);
                     if (pass) {
                         pass = false;
                     }
-                    console.log('isDependent', pass);
+
                 }
             });
 

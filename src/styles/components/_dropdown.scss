@@ -1,0 +1,144 @@
+
+
+$dropdown-menu-head-color:                  #cbd2d9;
+$dropdown-menu-bg-color:                    #2c3137;
+$dropdown-menu-box-shadow:                  none;
+$dropdown-menu-border:                      0;
+$dropdown-menu-separator-color:             #434951;
+$dropdown-menu-item-color:                  #7d8691;
+$dropdown-menu-item-color-active:           #ff6b57;
+$dropdown-menu-item-bg-color-on-active:     #292e33;
+$dropdown-menu-footer-border-color:         $dropdown-menu-separator-color;
+$dropdown-menu-footer-bg-color:             lighten($dropdown-menu-bg-color, 5);
+$dropdown-menu-footer-item-color:           #7d8691;
+$dropdown-menu-footer-item-color-active:    lighten($dropdown-menu-footer-item-color, 10);
+$dropdown-menu-footer-bg-color-on-active:   lighten($dropdown-menu-footer-bg-color, 10);
+
+
+.dropdown-menu {
+
+    & {
+        font-family: $font-family-base;
+        text-transform: uppercase;
+        font-size: em(12px);
+        font-weight: 500;
+        letter-spacing: 1px;
+        line-height: 20px;
+        padding-bottom: 0;
+    }
+
+    .dropdown-item {
+
+        &:last-child {
+            padding-bottom: 5px;
+        }
+    }
+    .dropdown-submenu {
+        position: relative;
+        > .dropdown-item {
+            &:after {
+                display: block;
+                content: " ";
+                float: right;
+                width: 0;
+                height: 0;
+                border-color: transparent;
+                border-style: solid;
+                border-width: 5px 0 5px 5px;
+                margin-top: 5px;
+                margin-right: -10px;
+            }
+        }
+
+        > .dropdown-menu {
+            top: 0;
+            left: 100%;
+            margin-top: 0;
+            margin-left: 0;
+        }
+
+        &:hover > .dropdown-menu {
+            display: block;
+        }
+
+        &.pull-left {
+            float: none;
+            > .dropdown-menu {
+                left: -100%;
+                margin-left: 10px;
+
+            }
+        }
+
+        &.submenu-left {
+            > .dropdown-menu {
+                left: -100%;
+                right: 100%;
+            }
+        }
+    }
+
+    .dropdown-footer {
+        border-top: 1px solid transparent;
+        display: table;
+        table-layout: fixed;
+        //width: inherit;
+        a {
+            display: table-cell;
+            width: 25%; // http://stackoverflow.com/questions/10525744/css-table-cell-equal-width
+            text-align: center;
+            font-size: 11px;
+            padding: 3px 3px 4px 3px;
+        }
+        a + a {
+            border-left: 1px solid transparent;
+        }
+    }
+}
+
+
+.dropdown-menu.dropdown-menu-packadic,
+.dropdown-menu-packadic .dropdown-submenu > .dropdown-menu {
+    background-color: $dropdown-menu-bg-color;
+    border: $dropdown-menu-border;
+
+    .dropdown-header {
+        margin: 0;
+        color: $dropdown-menu-head-color;
+    }
+
+    .dropdown-divider {
+        background-color: $dropdown-menu-separator-color;
+    }
+
+    .dropdown-item {
+        color: $dropdown-menu-item-color;
+        &:active,
+        &.active,
+        &:hover {
+            &:not(&.disabled) {
+                color: $dropdown-menu-item-color-active;
+                background-color: $dropdown-menu-item-bg-color-on-active;
+            }
+        }
+        &.disabled {
+            color: darken($dropdown-menu-item-color, 15);
+        }
+    }
+
+    .dropdown-footer a {
+        border-top-color: $dropdown-menu-footer-border-color;
+        background-color: $dropdown-menu-footer-bg-color;
+        color: $dropdown-menu-footer-item-color;
+        &:hover {
+            background: $dropdown-menu-footer-bg-color-on-active;
+            color: $dropdown-menu-footer-item-color-active;
+            text-decoration: none;
+        }
+        + a {
+            border-left-color: $dropdown-menu-footer-border-color;
+        }
+
+    }
+
+}
