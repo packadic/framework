@@ -87,7 +87,8 @@ module.exports = function (_grunt) {
             styles : {
                 files: {
                     '<%= target.dest %>/assets/styles/stylesheet.css'          : 'src/styles/stylesheet.scss',
-                    '<%= target.dest %>/assets/styles/themes/theme-default.css': 'src/styles/themes/theme-default.scss'
+                    '<%= target.dest %>/assets/styles/themes/theme-default.css': 'src/styles/themes/theme-default.scss',
+                    '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css': 'src/styles/themes/theme-dark-sidebar.scss'
                 }
             }
         },

@@ -21,6 +21,7 @@
 
             > a {
                 color: $sidebar-menu-link-font-color;
+                background: $sidebar-menu-link-bg-color;
 
                 @media (max-width: $screen-sm-max) { /* 991px */
                     border-top: 1px solid lighten($sidebar-bg-color, 8%);

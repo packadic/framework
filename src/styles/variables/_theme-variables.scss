@@ -2,8 +2,6 @@ $bg-color:                                          material-color('blue-grey', 
 $bg:                                                $bg-color  !default;
 $header-bg-color:                                   material-color('blue-grey', '900') !default;
 $header-bg:                                         $header-bg-color !default;
-$content-wrapper-bg-color:                          material-color('blue-grey', '200') !default;
-$content-wrapper-bg:                                $content-wrapper-bg-color !default;
 $content-bg-color:                                  material-color('grey', '50') !default;
 $content-bg:                                        $content-bg-color !default;
 
@@ -26,17 +24,20 @@ $header-action-button-border-color-hover:           material-color('blue-grey', 
 
 // Sidebar menu
 $sidebar-bg-color:                                                      material-color('blue-grey', '200') !default;
+$content-wrapper-bg-color:                                              $sidebar-bg-color !default;
+$content-wrapper-bg:                                                    $content-wrapper-bg-color !default;
 
 $sidebar-menu-active-color:                                             material-color('blue-grey', '600') !default;
 
 $sidebar-menu-link-font-color:                                  		material-color('blue-grey', '500') !default;
 $sidebar-menu-link-font-color-on-hover:                         		material-color('blue-grey', '100') !default;
-$sidebar-menu-link-font-color-on-active: $brand-color !default;
+$sidebar-menu-link-font-color-on-active:                                $brand-color !default;
 
-$sidebar-menu-link-icon-font-color: $brand-color-inversed !default;
-$sidebar-menu-link-icon-font-color-on-active: $brand-color-inversed-alt !default;
+$sidebar-menu-link-icon-font-color:                                     $brand-color-inversed !default;
+$sidebar-menu-link-icon-font-color-on-active:                           $brand-color-inversed-alt !default;
 $sidebar-menu-link-icon-font-color-on-hover:                            material-color('blue-grey', '50') !default;
 
+$sidebar-menu-link-bg-color:                                            $sidebar-bg-color !default;
 $sidebar-menu-link-bg-color-on-hover:                           		material-color('blue-grey', '300') !default;
 $sidebar-menu-link-bg-color-on-active:                          		material-color('blue-grey', '100') !default;
 

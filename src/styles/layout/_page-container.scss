@@ -6,12 +6,16 @@
   	@include clearfix();
 
 	.page-header-fixed & {
-		margin-top: $header-height; 
-	}	  
+		margin-top: $header-height;
+	}
 
 	.page-footer-fixed.page-footer-fixed-mobile & {
 		margin-bottom: 20px !important;
 	}
+}
+
+.page-edged .page-container {
+    padding: 0 !important;
 }
 
 @media (min-width: $screen-lg-med) {
@@ -46,7 +50,7 @@
 }
 
 @media (max-width: $screen-xs-min) {
-	.page-container {  		
+	.page-container {
 		.page-header-fixed.page-header-fixed-mobile & {
   			margin-top: $header-height-xs !important;
   		}

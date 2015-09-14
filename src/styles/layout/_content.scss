@@ -80,8 +80,8 @@
     }
 }
 
-@media (min-width: $screen-md-min) {
-
+//@media (min-width: $screen-md-min) {
+@include media-breakpoint-up(lg){
     .page-content-wrapper {
         float: left;
         width: 100%;
@@ -144,7 +144,8 @@
     }
 }
 
-@media (max-width: $screen-sm-max) {
+//@media (max-width: $screen-sm-max) {
+@include media-breakpoint-down(md){
     .page-boxed > .container {
         width: 100%;
         max-width: none !important;
@@ -161,14 +162,15 @@
     }
 }
 
-@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
-
+//@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+@include media-breakpoint-only(sm){
     .page-boxed > .container {
         margin: auto !important;
     }
 }
 
-@media (max-width: $screen-xs-max) {
+//@media (max-width: $screen-xs-max) {
+@include media-breakpoint-down(xs){
     .page-content-wrapper .page-content {
         padding: 20px 10px 10px 10px !important;
         overflow: hidden;

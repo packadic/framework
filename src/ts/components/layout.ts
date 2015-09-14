@@ -7,7 +7,6 @@ module packadic.layout {
     import JQueryPositionOptions = JQueryUI.JQueryPositionOptions;
 
 
-
     var defaultConfig:any = {
         selectors: {
             'search': '.sidebar-search',
@@ -65,7 +64,7 @@ module packadic.layout {
                 closed: false,
                 reversed: false,
                 fixed: true,
-                compact: false,
+                condensed: false,
             },
             header: {
                 fixed: true
@@ -124,7 +123,6 @@ module packadic.layout {
         }
 
 
-
     }
 
     var el:Elements;
@@ -149,38 +147,72 @@ module packadic.layout {
         public boot() {
             debug.log('LayoutComponent debug');
             el = new Elements(this);
+
             this._initHeader();
             this._initFixed();
             this._initSidebarSubmenus();
             this._initToggleButton();
             this._initGoTop();
-            //self._initPreferences();
 
-
-            // self._initLogo();
             this.sidebarResolveActive();
-
             this.fixBreadcrumb();
+
             this._initResizeEvent();
             this._initSidebarResizeListener();
+            this._initEdgedHeightResizeListener();
 
             var self:LayoutComponent = this;
-            $('body').onClick( '[data-layout-api]', function(e){
+            $('body').onClick('[data-layout-api]', function (e) {
                 var action:string = $(this).attr('data-layout-api');
-                switch(action){
-                    case 'toggle-sidebar': self.isSidebarClosed() ? self.openSidebar() : self.closeSidebar(); break;
-                    case 'page-boxed': self.setBoxed(!self.isBoxed() ); break;
-                    case 'header-fixed': self.setHeaderFixed(!self.isHeaderFixed() ); break;
-                    case 'footer-fixed': self.setFooterFixed(!self.isFooterFixed() ); break;
-                    case 'sidebar-fixed': self.setSidebarFixed(!self.isSidebarFixed()); break;
-                    case 'close-submenus': self.closeSubmenus(); break;
-                    case 'close-sidebar': self.closeSidebar(); break;
-                    case 'open-sidebar': self.openSidebar(); break;
-                    case 'hide-sidebar': self.hideSidebar(); break;
-                    case 'show-sidebar': self.showSidebar(); break;
-                    case 'compact-sidebar': self.setSidebarCompact(!self.isSidebarCompact()); break;
-                    case 'hover-sidebar': self.setSidebarHover(!self.isSidebarHover()); break;
-                    case 'reversed-sidebar': self.setSidebarReversed(!self.isSidebarReversed()); break;
+                switch (action) {
+
+                    case 'theme':
+                        self.setTheme($(this).attr('data-theme'));
+                        break;
+                    case 'page-boxed':
+                        self.setBoxed(!self.isBoxed());
+                        break;
+                    case 'page-edged':
+                        self.setEdged(!self.isEdged());
+                        break;
+                    case 'header-fixed':
+                        self.setHeaderFixed(!self.isHeaderFixed());
+                        break;
+                    case 'footer-fixed':
+                        self.setFooterFixed(!self.isFooterFixed());
+                        break;
+
+
+                    case 'toggle-sidebar':
+                        self.isSidebarClosed() ? self.openSidebar() : self.closeSidebar();
+                        break;
+                    case 'sidebar-fixed':
+                        self.setSidebarFixed(!self.isSidebarFixed());
+                        break;
+                    case 'close-submenus':
+                        self.closeSubmenus();
+                        break;
+                    case 'close-sidebar':
+                        self.closeSidebar();
+                        break;
+                    case 'open-sidebar':
+                        self.openSidebar();
+                        break;
+                    case 'hide-sidebar':
+                        self.hideSidebar();
+                        break;
+                    case 'show-sidebar':
+                        self.showSidebar();
+                        break;
+                    case 'condensed-sidebar':
+                        self.setSidebarCondensed(!self.isSidebarCondensed());
+                        break;
+                    case 'hover-sidebar':
+                        self.setSidebarHover(!self.isSidebarHover());
+                        break;
+                    case 'reversed-sidebar':
+                        self.setSidebarReversed(!self.isSidebarReversed());
+                        break;
                 }
             })
         }
@@ -228,6 +260,23 @@ module packadic.layout {
                     resizing = false;
                 }, this.config('layout.sidebar.slideSpeed'));
             });
+        }
+
+        protected _initEdgedHeightResizeListener() {
+            var listener = () => {
+                if (this.isEdged() && getViewPort().width >= this.getBreakpoint('md')) {
+                    debug.log('edged height resize', 'viewport height', getViewPort().height, 'calculated', this.calculateViewportHeight());
+                    el.sidebarMenu.css('min-height', this.calculateViewportHeight());
+                    el.content.css('min-height', this.calculateViewportHeight());
+                } else {
+                    el.sidebarMenu.removeAttr('style');
+                    el.content.removeAttr('style');
+                }
+            };
+            this.app.on('resize', listener);
+            this.app.on('sidebar:closed', listener);
+            this.app.on('sidebar:opened', listener);
+            listener();
         }
 
         protected _initHeader() {
@@ -293,7 +342,7 @@ module packadic.layout {
 
         protected _initSidebarSubmenus() {
             var self:LayoutComponent = this;
-            el.sidebar.onClick( 'li > a', function (e) {
+            el.sidebar.onClick('li > a', function (e) {
                 var $this = $(this);
                 if (getViewPort().width >= self.getBreakpoint('md') && $this.parents('.page-sidebar-menu-hover-submenu').size() === 1) { // exit of hover sidebar menu
                     return;
@@ -337,7 +386,7 @@ module packadic.layout {
                 });
                 e.preventDefault();
             });
-            $document.onClick( '.page-header-fixed-mobile .responsive-toggler', function () {
+            $document.onClick('.page-header-fixed-mobile .responsive-toggler', function () {
                 self.scrollTop();
             });
         }
@@ -345,7 +394,7 @@ module packadic.layout {
         protected _initToggleButton() {
             return;
             var self:LayoutComponent = this;
-            $body.onClick( self.config('layout.sidebar.togglerSelector'), function (e) {
+            $body.onClick(self.config('layout.sidebar.togglerSelector'), function (e) {
                 if (self.isSidebarClosed()) {
                     self.openSidebar();
                 } else {
@@ -390,14 +439,14 @@ module packadic.layout {
             el.sidebarMenu.children('li.open').children('.sub-menu:not(.always-open)').slideUp(this.config('layout.sidebar.slideSpeed'));
             el.sidebarMenu.children('li.open').removeClass('open');
             /*
-            el.sidebarMenu.find('ul.sub-menu').each(() => {
-                var $ul:JQuery = $(this);
-                if ($ul.is(":visible")) {
-                    $('.arrow', $ul).removeClass("open");
-                    $ul.parent().removeClass("open");
-                    $ul.slideUp(this.config('layout.sidebar.slideSpeed'));
-                }
-            });*/
+             el.sidebarMenu.find('ul.sub-menu').each(() => {
+             var $ul:JQuery = $(this);
+             if ($ul.is(":visible")) {
+             $('.arrow', $ul).removeClass("open");
+             $ul.parent().removeClass("open");
+             $ul.slideUp(this.config('layout.sidebar.slideSpeed'));
+             }
+             });*/
             this.app.emit('sidebar:close-submenus');
         }
 
@@ -603,9 +652,9 @@ module packadic.layout {
             this.app.emit('sidebar:' + fixed ? 'fix' : 'unfix');
         }
 
-        public setSidebarCompact(compact:boolean) {
-            el.sidebarMenu.ensureClass("page-sidebar-menu-compact", compact);
-            this.app.emit('sidebar:' + compact ? 'compact' : 'decompact');
+        public setSidebarCondensed(condensed:boolean) {
+            $body.ensureClass("page-sidebar-condensed", condensed);
+            this.app.emit('sidebar:' + condensed ? 'condensed' : 'decondensed');
         }
 
         public setSidebarHover(hover:boolean) {
@@ -660,12 +709,28 @@ module packadic.layout {
             } else {
                 var cont = $('body > .clearfix + .container').children().unwrap();
                 if (this.isFooterFixed()) {
-                    el.footer.find('> .container').unwrap();
+                    el.footerInner.unwrap();
                 }
                 //cont.remove();
             }
             this.app.emit('resize');
             this.app.emit('set-boxed', boxed);
+        }
+
+        public setEdged(edged:boolean) {
+
+            if (edged && this.isBoxed()) {
+                this.setBoxed(false);
+            }
+
+            $body.ensureClass('page-edged', edged);
+            this.app.emit('resize');
+        }
+
+        public setTheme(name:string):LayoutComponent {
+            var $ts = $('#theme-style');
+            $ts.attr('href', $ts.attr('href').replace(/(.*?\/styles\/themes\/theme)\-.*?\.css/, '$1-' + name + '.css'));
+            return this;
         }
 
         public reset() {
@@ -726,7 +791,7 @@ module packadic.layout {
         }
 
         public calculateViewportHeight() {
-            var sidebarHeight = getViewPort().height - el.header.outerHeight() - 30;
+            var sidebarHeight = getViewPort().height - el.header.outerHeight();
             if (this.isFooterFixed()) {
                 sidebarHeight = sidebarHeight - el.footer.outerHeight();
             }
@@ -746,6 +811,10 @@ module packadic.layout {
             return $body.hasClass('page-boxed');
         }
 
+        public isEdged():boolean {
+            return $body.hasClass('page-edged');
+        }
+
         public isSidebarClosed():boolean {
             return $body.hasClass('page-sidebar-closed')
         }
@@ -758,8 +827,8 @@ module packadic.layout {
             return $('.page-sidebar-fixed').size() !== 0;
         }
 
-        public isSidebarCompact():boolean {
-            return el.sidebarMenu.hasClass('page-sidebar-menu-compact');
+        public isSidebarCondensed():boolean {
+            return $body.hasClass('page-sidebar-condensed');
         }
 
         public isSidebarHover():boolean {

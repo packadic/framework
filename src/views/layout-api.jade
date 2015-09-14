@@ -6,9 +6,6 @@ mixin layout-action(id, name, js)
         td.pl.pr: pre.m-n.p-n: code.lang-javascript.bg-color-grey-50=js
         td.pl.pr: pre.m-n.p-n: code.lang-html.bg-color-grey-50='<a href="#" data-toggle="' + id + '"></a>'
 
-append styles
-    link(href=assetPath + 'bower_components/highlightjs/styles/tomorrow.css', type="text/css", rel="stylesheet")
-
 block page-title
     | Layout API
 
@@ -42,6 +39,8 @@ block content
 
 
 
+append styles
+    link(href=assetPath + 'bower_components/highlightjs/styles/tomorrow.css', type="text/css", rel="stylesheet")
 
 append scripts
     script(src=assetPath + 'bower_components/highlightjs/highlight.pack.min.js')

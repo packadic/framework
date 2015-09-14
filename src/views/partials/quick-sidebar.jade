@@ -23,7 +23,7 @@ nav.quick-sidebar
         .qs-section
             h3 Layout API
             p The layout API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
-            each action, i in ['toggle-sidebar','page-boxed','header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','compact-sidebar','hover-sidebar','reversed-sidebar']
+            each action, i in ['toggle-sidebar','page-boxed', 'page-edged', 'header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','condensed-sidebar','hover-sidebar','reversed-sidebar']
                 +abtn(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-qs(data-name='Quick-Sidebar')

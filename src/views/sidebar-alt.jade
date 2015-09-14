@@ -1,0 +1,44 @@
+extends layouts/default
+
+block vars
+    - bodyClass += ' page-sidebar-condensed page-edged'
+    - themeStyle = 'dark-sidebar';
+
+block page-title
+    | Alternative sidebar
+    small theme
+
+
+block breadcrumb
+    +breadcrumb('index.html') Home
+    +breadcrumb('sidebar-alt.html', true) Alternative sidebar
+
+
+block content
+    .row: .col-md-12
+        :markdown
+            This page uses the `theme-sidebar-alt.css` theme stylesheet and uses the following classes in the DOM:
+            ```html
+                <body class="page-sidebar-condensed.page-edged">
+                </body>
+            ```
+
+            #### Whut?
+                - The `.page-sidebar-condensed` makes the sidebar smaller.
+                - `.page-edged` removes the outer spacing and edges the menu/content to all borderds.
+
+
+
+append styles
+    link(href=assetPath + 'bower_components/highlightjs/styles/tomorrow.css', type="text/css", rel="stylesheet")
+
+append scripts
+    script(src=assetPath + 'bower_components/highlightjs/highlight.pack.min.js')
+
+append init-script
+    script.
+        packadic.Application.instance.booted(function (app) {
+
+            hljs.initHighlighting();
+
+        });
