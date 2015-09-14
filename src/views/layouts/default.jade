@@ -1,5 +1,5 @@
 include ../_base
-- var bodyClass = 'page-header-fixed page-sidebar-closed-hide-logo'
+- var bodyClass = 'page-header-fixed page-sidebar-closed-hide-logo qs-shown'
 - var sidebarClass = ''
 - var pageHeaderClass = 'navbar-fixed-top';
 - rootPath = rootPath || '';
@@ -35,13 +35,17 @@ html(lang="en")
                 .page-header-inner
                     .page-logo
                         .logo-packadic.pull-left Packadic
-                        .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Open/close the sidebar menu', data-layout-api='toggle-sidebar', data-placement='bottom')
+                        .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='toggle-sidebar', data-placement='right')
 
                     a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
 
+                    .pull-right
+                        .quick-sidebar-toggler(data-quick-sidebar='toggle', data-target='#qs-main', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
+
         .clearfix
 
-
+        block quick-sidebar
+            include ../partials/quick-sidebar
 
         block page-container
             // #page
@@ -55,6 +59,7 @@ html(lang="en")
                             ul.page-sidebar-menu(class=sidebarClass, data-keep-expanded="false", data-auto-scroll="true", data-slide-speed="200")
 
                                     include ../partials/sidebar-items
+
 
                 // .page-content
                 .page-content-wrapper
@@ -91,6 +96,7 @@ html(lang="en")
             script(src=assetPath + 'scripts/vendor.js')
             script(src=assetPath + 'scripts/packadic.js')
             script(src=assetPath + 'scripts/components/layout.js')
+            script(src=assetPath + 'scripts/components/quick_sidebar.js')
             script(src=assetPath + 'scripts/plugins/testPlugin.js')
             script(src=assetPath + 'scripts/plugins/testWidget.js')
 

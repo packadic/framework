@@ -45,6 +45,16 @@ module packadic {
                 alwaysVisible: false,
                 railVisible: true,
                 disableFadeOut: true
+            },
+            bootstrap: {
+                tooltip: {
+                    container: 'body',
+                    template: '<div class="tooltip tooltip-packadic" role="tooltip"><div class="tooltip-inner"></div></div>',
+                    selector: '*[data-toggle="tooltip"]'
+                },
+                popover: {
+                    selector: '*[data-toggle="popover"]'
+                }
             }
         }
     };

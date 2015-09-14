@@ -9,9 +9,9 @@ $component-color-variants: (
 );
 
 @mixin make-color-variant($color-name) {
-    $light: material-color($color-name, '200');
+    $light: material-color($color-name, '300');
     $normal: material-color($color-name, '500');
-    $dark: material-color($color-name, '900');
+    $dark: material-color($color-name, '800');
 
     @if (map_get($component-color-variants, 'alert')) {
         .alert {

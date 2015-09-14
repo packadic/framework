@@ -137,11 +137,13 @@ module packadic {
             $(() => {
                 this.emit('boot', this);
                 this.timers.boot = new Date;
-                $('*[data-toggle="popover"]').popover();
-                $('*[data-toggle="tooltip"]').tooltip();
-                $.material.options = this.config.get('vendor.material');
+                $body.tooltip(this.config('vendor.bootstrap.tooltip'));
+                $body.popover(this.config('vendor.bootstrap.popover'));
+                $.material.options = this.config('vendor.material');
                 $.material.init();
-                //this.initHighlight();
+                if(defined(window['hljs'])) {
+                    //hljs.initHighlight();
+                }
                 this.isBooted = true;
                 this.emit('booted', this);
                 defer.resolve(this);

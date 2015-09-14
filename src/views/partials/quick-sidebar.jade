@@ -1,0 +1,29 @@
+nav.quick-sidebar
+    .qs-header.qs-header-xs
+        .pull-left
+            button.btn.blue-grey.qs-next(type='button', data-quick-sidebar='next', title='Next tab')
+                i.fa.fa-arrow-left
+            button.btn.blue-grey.qs-prev(type='button', data-quick-sidebar='prev', title='Previous tab')
+                i.fa.fa-arrow-right
+
+        button.btn.qs-pin(type='button', data-quick-sidebar='pin', title='Pin/unpin the quick sidebar')
+            i.fa.fa-thumb-tack
+        button.btn.blue-grey-dark.qs-close(type='button', data-quick-sidebar='close', title='Close')
+            i.fa.fa-times
+
+    .qs-tabs
+
+    .qs-content#qs-main(data-name='Main')
+        .qs-section
+            h3 Layout API
+            each action, i in ['toggle-sidebar','page-boxed','header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','compact-sidebar','hover-sidebar','reversed-sidebar']
+                +abtn(data-layout-api=action, xs, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+            h3 QuickSidebar API
+            each action, i in ['pin', 'close', 'toggle', 'open', 'next', 'prev']
+                +abtn(data-quick-sidebar=action, xs, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+    .qs-content#qs-other(data-name='Other')
+        .qs-section
+            h3 Other
+            - var n = 0;
+            while n < 30
+                p Line #{n ++}

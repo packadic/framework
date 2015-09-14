@@ -1,0 +1,27 @@
+extends layouts/default
+
+
+block page-title
+    | Menus
+
+
+block breadcrumb
+    +breadcrumb('index.html') Home
+    +breadcrumb('menus.html', true) Menus
+
+
+block prepend page-container
+
+
+
+block content
+    .row
+        .col-md-12
+            h4 Menus
+                small.pl Using $ pmenu widget
+    .row
+        .col-md-12
+            #pmenu-example
+
+
+append init-script

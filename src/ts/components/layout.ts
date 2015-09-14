@@ -1,13 +1,9 @@
 /// <reference path="./../types.d.ts" />
 /// <reference path="./../packadic.d.ts" />
-module layout {
+module packadic.layout {
 
-    import debug = packadic.debug;
     import Component = packadic.components.Component;
     import Components = packadic.components.Components;
-    import plugins = packadic.plugins;
-    import getViewPort = packadic.getViewPort;
-    import util = packadic.util;
     import JQueryPositionOptions = JQueryUI.JQueryPositionOptions;
 
     var defaultConfig:any = {
@@ -373,7 +369,6 @@ module layout {
             if (this.isSidebarClosed() && this.isSidebarFixed()) {
                 el.sidebarMenu.trigger("mouseleave");
             }
-            $window.trigger('resize');
         }
 
         public closeSubmenus() {
@@ -621,6 +616,7 @@ module layout {
                 $body.removeClass("page-header-fixed");
                 el.header.removeClass("navbar-fixed-top").addClass("navbar-static-top");
             }
+            this.app.emit('header:set-fixed', fixed);
         }
 
         public setFooterFixed(fixed:boolean) {
@@ -629,6 +625,7 @@ module layout {
             } else {
                 $body.removeClass("page-footer-fixed");
             }
+            this.app.emit('footer:set-fixed', fixed);
         }
 
         public setBoxed(boxed:boolean) {
@@ -647,16 +644,15 @@ module layout {
                 } else {
                     el.footer.appendTo('body > .clearfix + .container');
                 }
-                this.app.emit('resize');
             } else {
                 var cont = $('body > .clearfix + .container').children().unwrap();
                 if (this.isFooterFixed()) {
                     el.footer.find('> .container').unwrap();
                 }
                 //cont.remove();
-
-
             }
+            this.app.emit('resize');
+            this.app.emit('set-boxed', boxed);
         }
 
         public reset() {

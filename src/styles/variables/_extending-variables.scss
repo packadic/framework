@@ -1,3 +1,4 @@
+// Bootstrap extending variables
 $btn-default-color:                 #333 !default;
 $btn-default-bg:                    #fff !default;
 $btn-default-border:                #ccc !default;
@@ -10,3 +11,5 @@ $btn-padding-x-xs:                  $btn-padding-x-sm / 2 !default;
 $btn-padding-y-xs:                  $btn-padding-y-sm !default;
 $btn-border-radius-xs:              $border-radius-xs !default;
 $table-xs-cell-padding:             $table-sm-cell-padding / 2;
+
+$tooltip-border:                    1px solid #617884;

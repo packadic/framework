@@ -34,6 +34,16 @@ var packadic;
                 alwaysVisible: false,
                 railVisible: true,
                 disableFadeOut: true
+            },
+            bootstrap: {
+                tooltip: {
+                    container: 'body',
+                    template: '<div class="tooltip tooltip-packadic" role="tooltip"><div class="tooltip-inner"></div></div>',
+                    selector: '*[data-toggle="tooltip"]'
+                },
+                popover: {
+                    selector: '*[data-toggle="popover"]'
+                }
             }
         }
     };
@@ -144,10 +154,12 @@ var packadic;
             $(function () {
                 _this.emit('boot', _this);
                 _this.timers.boot = new Date;
-                $('*[data-toggle="popover"]').popover();
-                $('*[data-toggle="tooltip"]').tooltip();
-                $.material.options = _this.config.get('vendor.material');
+                $body.tooltip(_this.config('vendor.bootstrap.tooltip'));
+                $body.popover(_this.config('vendor.bootstrap.popover'));
+                $.material.options = _this.config('vendor.material');
                 $.material.init();
+                if (packadic.defined(window['hljs'])) {
+                }
                 _this.isBooted = true;
                 _this.emit('booted', _this);
                 defer.resolve(_this);
