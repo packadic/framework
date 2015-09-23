@@ -138,9 +138,9 @@
 
 .page-sidebar-closed .page-sidebar-menu.page-sidebar-menu-closed > li:hover {
     > a {
-        @include box-shadow($sidebar-menu-hover-box-shadow-header);
+        @include box-shadow($sidebar-menu-sub-menu-box-shadow);
     }
     > .sub-menu {
-        @include box-shadow($sidebar-menu-hover-box-shadow-sub-menu);
+        @include box-shadow($sidebar-menu-sub-menu-box-shadow);
     }
 }

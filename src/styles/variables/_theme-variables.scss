@@ -55,7 +55,7 @@ $sidebar-menu-sub-menu-link-bg-color-on-active:                         $sidebar
 $sidebar-menu-sub-menu-link-font-color-on-active:                       $sidebar-menu-link-font-color-on-active !default;
 $sidebar-menu-sub-menu-link-icon-font-color-on-active:                  $sidebar-menu-link-icon-font-color-on-active !default;
 
-$sidebar-menu-sub-menu-box-shadow-color:                                darken($sidebar-menu-link-bg-color-on-hover, 30%) !default;
+$sidebar-menu-sub-menu-box-shadow:                                      4px 4px 0px rgba(#000000, 0.1) !default;
 $sidebar-menu-hover-sub-menu-bg-color:									#FFFFFF !default;
 
 $sidebar-menu-hover-box-shadow-header:                                  6px 5px 0px rgba(94, 109, 116, 0.8);
