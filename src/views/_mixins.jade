@@ -3,7 +3,7 @@ mixin stylesheet(name, bower)
     - var path = bower === true ? assetPath + 'bower_components/' : assetPath + 'styles/';
     link(href=path + name, rel='stylesheet', type='text/css')&attributes(attributes)
 
-mixin javascript(name)
+mixin javascript(name, bower)
     - name = _s.endsWith(name, '.js') ? name : name + '.js';
     - var path = bower === true ? assetPath + 'bower_components/' : assetPath + 'scripts/';
     script(src=path + name)
