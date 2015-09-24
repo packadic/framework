@@ -78,10 +78,12 @@ html(lang="en")
         block page-footer
             .page-footer
                 .page-footer-inner
-                    - var year = (new Date()).getFullYear()
-                    | Copyright Packadic
-                .scroll-to-top
-                    i.fa.fa-level-up
+                    block page-footer-inner
+                        - var year = (new Date()).getFullYear()
+                        | Copyright Packadic
+                block scroll-to-top
+                    .scroll-to-top
+                        i.fa.fa-level-up
 
         block scripts
             script(src=assetPath + 'scripts/vendor.js')
