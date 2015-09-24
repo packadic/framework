@@ -26,3 +26,4 @@ var packadic;
         plugins.Widget.register('pmenu', PackadicMenuWidget);
     })(plugins = packadic.plugins || (packadic.plugins = {}));
 })(packadic || (packadic = {}));
+//# sourceMappingURL=pmenu.js.map

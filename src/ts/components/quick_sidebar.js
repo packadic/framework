@@ -398,3 +398,4 @@ var packadic;
         components.Components.register('quick_sidebar', QuickSidebarComponent, defaultConfig);
     })(components = packadic.components || (packadic.components = {}));
 })(packadic || (packadic = {}));
+//# sourceMappingURL=quick_sidebar.js.map

@@ -23,3 +23,4 @@ var packadic;
         plugins.Plugin.register('testPlugin', TestPlugin);
     })(plugins = packadic.plugins || (packadic.plugins = {}));
 })(packadic || (packadic = {}));
+//# sourceMappingURL=testPlugin.js.map

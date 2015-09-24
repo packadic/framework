@@ -796,3 +796,4 @@ var packadic;
         components.Components.register('layout', LayoutComponent, defaultConfig);
     })(components = packadic.components || (packadic.components = {}));
 })(packadic || (packadic = {}));
+//# sourceMappingURL=layout.js.map

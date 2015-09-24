@@ -26,3 +26,4 @@ var packadic;
         plugins.Widget.register('testWidget', TestWidget);
     })(plugins = packadic.plugins || (packadic.plugins = {}));
 })(packadic || (packadic = {}));
+//# sourceMappingURL=testWidget.js.map

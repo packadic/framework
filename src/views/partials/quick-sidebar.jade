@@ -26,12 +26,12 @@ nav.quick-sidebar
             .row
                 .col-xs-6.pr-n.text-center
                     h4 Core
-                    each action, i in ['toggle-sidebar','page-boxed', 'page-edged', 'header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','condensed-sidebar','hover-sidebar','reversed-sidebar']
+                    each action, i in ['page-boxed', 'page-edged', 'header-fixed','footer-fixed', 'sidebar-toggle', 'sidebar-fixed','sidebar-close-submenus','sidebar-close','sidebar-open','sidebar-hide','sidebar-show','sidebar-condensed','sidebar-hover','sidebar-reversed']
                         +abtn.btn-xs(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
                 .col-xs-6.pl-n.text-center
                     h4 Quick Sidebar
-                    each action, i in ['qs-toggle', 'qs-open', 'qs-close', 'qs-next', 'qs-prev', 'qs-pin', 'qs-unpin', 'qs-togglepin']
+                    each action, i in ['qs-toggle', 'qs-show', 'qs-hide', 'qs-open', 'qs-next', 'qs-prev', 'qs-pin', 'qs-unpin', 'qs-togglepin']
                         +abtn.btn-xs(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
                     h4 Styles

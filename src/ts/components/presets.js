@@ -95,3 +95,4 @@ var packadic;
         components.Components.register('presets', PresetsComponent, defaultConfig);
     })(components = packadic.components || (packadic.components = {}));
 })(packadic || (packadic = {}));
+//# sourceMappingURL=presets.js.map
