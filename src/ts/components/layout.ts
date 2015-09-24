@@ -222,8 +222,9 @@ module packadic.components {
             this.setApiActions(apiActions);
 
             $body.onClick('[data-layout-api]', function (e:JQueryEventObject) {
-                e.preventDefault();
+                e.stopImmediatePropagation();
                 e.stopPropagation();
+                e.preventDefault();
 
                 var action:string = $(this).attr('data-layout-api');
                 var args:string = $(this).attr('data-layout-api-args');
@@ -748,7 +749,6 @@ module packadic.components {
                 }
                 //cont.remove();
             }
-            this.app.emit('resize');
             this.app.emit('set-boxed', boxed);
         }
 
@@ -759,7 +759,19 @@ module packadic.components {
             }
 
             $body.ensureClass('page-edged', edged);
-            this.app.emit('resize');
+            this.app.emit('set-edged');
+        }
+
+        protected firingResizeEvent:boolean = false;
+        public fireResizedEvent(){
+            if(this.firingResizeEvent){
+                return;
+            }
+            this.firingResizeEvent = true;
+            setTimeout(() => {
+                this.app.emit('resize');
+                this.firingResizeEvent = false;
+            }, 60);
         }
 
         public setTheme(name:string):LayoutComponent {
@@ -778,6 +790,7 @@ module packadic.components {
         public reset() {
             $body.
                 removeClass("page-boxed").
+                removeClass("page-edged").
                 removeClass("page-footer-fixed").
                 removeClass("page-sidebar-fixed").
                 removeClass("page-header-fixed").

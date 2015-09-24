@@ -24,25 +24,26 @@ nav.quick-sidebar
             h3 Layout API
             p The layout API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
             each action, i in ['toggle-sidebar','page-boxed', 'page-edged', 'header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','condensed-sidebar','hover-sidebar','reversed-sidebar']
-                +abtn(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+                +abtn.btn-sm(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-themes(data-name='Themes')
         .qs-section
-            h3 Themes
+            h3 Styles
             p Customisation made easy. The result is here.
             each theme in ['default', 'dark-sidebar']
-                +abtn(data-layout-api='theme', data-theme=theme, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=theme
+                +abtn.btn-sm(data-layout-api='theme', data-layout-api-args=theme, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=theme
 
             h3 Presets
-                +abtn.blue-grey(data-preset='default', block) Default
-                +abtn.blue-grey(data-preset='condensed-dark', block) Condensed Dark
+            p Complete layout presets.
+            +abtn.btn-sm.blue-grey(data-layout-api='preset' data-layout-api-args='default', block) Default
+            +abtn.btn-sm.blue-grey(data-layout-api='preset' data-layout-api-args='condensed-dark', block) Condensed Dark
 
     .qs-content#qs-qs(data-name='Quick-Sidebar')
         .qs-section
             h3 QuickSidebar API
             p The quick sidebar API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
             each action, i in ['qs-pin', 'qs-close', 'qs-toggle', 'qs-open', 'qs-next', 'qs-prev']
-                +abtn(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+                +abtn.btn-sm(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-random(data-name='Random')
         .qs-section

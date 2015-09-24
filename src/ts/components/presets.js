@@ -3,6 +3,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+/// <reference path="./../types.d.ts" />
+/// <reference path="./../packadic.d.ts" />
 var packadic;
 (function (packadic) {
     var components;
@@ -13,7 +15,7 @@ var packadic;
                 theme: 'default'
             },
             'condensed-dark': {
-                layout: ['header-fixed', 'footer-fixed'],
+                layout: ['header-fixed', 'footer-fixed', 'page-edged', 'condensed-sidebar'],
                 theme: 'dark-sidebar'
             }
         };
@@ -31,12 +33,18 @@ var packadic;
             };
             PresetsComponent.prototype.boot = function () {
                 var self = this;
-                packadic.debug.log('PresetsComponent debug');
-                $body.onClick('[data-preset]', function (e) {
-                    var $this = $(this);
-                    var preset = $this.attr('data-preset');
-                    var presetConfig = self.config('presets.' + preset);
-                });
+                this._initLayoutApiActions();
+            };
+            PresetsComponent.prototype._initLayoutApiActions = function () {
+                var _this = this;
+                var self = this;
+                var apiActions = {
+                    'preset': function (presetName) {
+                        console.log('preset', presetName, _this, self);
+                        self.set(presetName);
+                    }
+                };
+                self.layout.setApiActions(apiActions);
             };
             Object.defineProperty(PresetsComponent.prototype, "layout", {
                 get: function () {
@@ -52,7 +60,7 @@ var packadic;
                 enumerable: true,
                 configurable: true
             });
-            PresetsComponent.prototype.applyPreset = function (name) {
+            PresetsComponent.prototype.set = function (name) {
                 var _this = this;
                 var presetsConfig = this.config('presets.' + name);
                 Object.keys(presetsConfig).forEach(function (presetType) {
@@ -60,18 +68,26 @@ var packadic;
                 });
             };
             PresetsComponent.prototype.applyPresetType = function (name, config) {
+                var _this = this;
                 this.layout.reset();
                 switch (name) {
                     case 'theme':
                         this.layout.setTheme(config);
+                        this.app.emit('layout:preset:theme', config);
                         break;
                     case 'layout':
-                        this.layout.setTheme(config);
+                        console.log('apply preset type', name, config, this, self);
+                        if (packadic.kindOf(config) === 'string') {
+                            config = [config];
+                        }
+                        config.forEach(function (actionName) {
+                            console.log('apply preset type', name, config, _this, self);
+                            _this.layout.api(actionName);
+                        });
+                        this.app.emit('layout:preset:layout', config);
                         break;
                 }
-            };
-            PresetsComponent.prototype.presetDarkCondensed = function () {
-                this.layout.setTheme('dark-sidebar');
+                this.app.on('resize', function () { console.log('apply preset refresh', _this); _this.quick_sidebar.refresh(); });
             };
             PresetsComponent.dependencies = ['layout', 'quick_sidebar'];
             return PresetsComponent;

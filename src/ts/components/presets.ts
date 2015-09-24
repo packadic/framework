@@ -9,7 +9,7 @@ module packadic.components {
             theme: 'default'
         },
         'condensed-dark': {
-            layout: ['header-fixed', 'footer-fixed'],
+            layout: ['header-fixed', 'footer-fixed', 'page-edged', 'condensed-sidebar'],
             theme: 'dark-sidebar'
         }
     };
@@ -23,7 +23,6 @@ module packadic.components {
 
 
         public init() {
-
             this.app.debug.log('PresetsComponent init');
             this.app.on('booted', () => {
                 debug.log('PresetsComponent received event emitted from app: booted');
@@ -32,43 +31,60 @@ module packadic.components {
 
         public boot() {
             var self:PresetsComponent = this;
-            debug.log('PresetsComponent debug');
-            $body.onClick('[data-preset]', function(e){
-                var $this:JQuery = $(this);
-                var preset:string = $this.attr('data-preset');
-                var presetConfig:any = self.config('presets.' + preset);
-            })
+            this._initLayoutApiActions();
         }
 
-        public get layout():LayoutComponent {
+        protected _initLayoutApiActions() {
+            var self:PresetsComponent = this;
+            var apiActions:any = {
+                'preset': (presetName:string) => {
+                    console.log('preset', presetName, this, self);
+                    self.set(presetName);
+                }
+            };
+            self.layout.setApiActions(apiActions);
+        }
+
+        protected get layout():LayoutComponent {
             return <LayoutComponent> this.components.get('layout'); // this.app['layout'];
         }
 
-        public get quick_sidebar():QuickSidebarComponent{
+        protected get quick_sidebar():QuickSidebarComponent {
             return <QuickSidebarComponent> this.components.get('quick_sidebar'); //this.app['quick_sidebar'];
         }
 
-        public applyPreset(name:string){
+        public set(name:string) {
             var presetsConfig:any = this.config('presets.' + name);
             Object.keys(presetsConfig).forEach((presetType:string) => {
                 this.applyPresetType(presetType, presetsConfig[presetType]);
             });
         }
 
-        public applyPresetType(name:string, config?:any){
+        protected applyPresetType(name:string, config?:any) {
             this.layout.reset();
-            switch(name){
-                case 'theme': this.layout.setTheme(config); break;
-                case 'layout': this.layout.setTheme(config); break;
+            switch (name) {
+                case 'theme':
+                    this.layout.setTheme(config);
+                    this.app.emit('layout:preset:theme', config);
+                    break;
+                case 'layout':
+                    console.log('apply preset type', name, config, this, self);
+                    if(kindOf(config) === 'string'){
+                        config = [config];
+                    }
+                    config.forEach((actionName:string) => {
+                        console.log('apply preset type', name, config, this, self);
+                        this.layout.api(actionName);
+                    });
+                    this.app.emit('layout:preset:layout', config);
+                    break;
             }
+            this.app.on('resize', () => { console.log('apply preset refresh', this); this.quick_sidebar.refresh() });
         }
 
-        public presetDarkCondensed(){
-            this.layout.setTheme('dark-sidebar');
-        }
 
     }
 
-    Components.register('presets', PresetsComponent , defaultConfig);
+    Components.register('presets', PresetsComponent, defaultConfig);
 
 }

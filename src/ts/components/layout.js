@@ -1,3 +1,5 @@
+/// <reference path="./../types.d.ts" />
+/// <reference path="./../packadic.d.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -140,6 +142,7 @@ var packadic;
                 _super.apply(this, arguments);
                 this.openCloseInProgress = false;
                 this.closing = false;
+                this.firingResizeEvent = false;
             }
             LayoutComponent.prototype.init = function () {
                 var _this = this;
@@ -217,8 +220,9 @@ var packadic;
                 };
                 this.setApiActions(apiActions);
                 $body.onClick('[data-layout-api]', function (e) {
-                    e.preventDefault();
+                    e.stopImmediatePropagation();
                     e.stopPropagation();
+                    e.preventDefault();
                     var action = $(this).attr('data-layout-api');
                     var args = $(this).attr('data-layout-api-args');
                     console.log('data-layout-api', this, action, args);
@@ -662,7 +666,6 @@ var packadic;
                         el.footerInner.unwrap();
                     }
                 }
-                this.app.emit('resize');
                 this.app.emit('set-boxed', boxed);
             };
             LayoutComponent.prototype.setEdged = function (edged) {
@@ -670,7 +673,18 @@ var packadic;
                     this.setBoxed(false);
                 }
                 $body.ensureClass('page-edged', edged);
-                this.app.emit('resize');
+                this.app.emit('set-edged');
+            };
+            LayoutComponent.prototype.fireResizedEvent = function () {
+                var _this = this;
+                if (this.firingResizeEvent) {
+                    return;
+                }
+                this.firingResizeEvent = true;
+                setTimeout(function () {
+                    _this.app.emit('resize');
+                    _this.firingResizeEvent = false;
+                }, 60);
             };
             LayoutComponent.prototype.setTheme = function (name) {
                 var $ts = $('#theme-style');
@@ -687,6 +701,7 @@ var packadic;
             LayoutComponent.prototype.reset = function () {
                 $body.
                     removeClass("page-boxed").
+                    removeClass("page-edged").
                     removeClass("page-footer-fixed").
                     removeClass("page-sidebar-fixed").
                     removeClass("page-header-fixed").
