@@ -109,7 +109,10 @@ module.exports = function (_grunt) {
             },
             ts_packadic: {
                 files: {
-                    '<%= target.dest %>/assets/scripts/packadic.min.js': '<%= target.dest %>/assets/scripts/packadic.js'
+                    '<%= target.dest %>/assets/scripts/packadic.min.js': [
+                        'src/ts/packadic.js',
+                        'src/ts/{components,plugins}/*.js'
+                    ]
                 }
             }
         },
@@ -122,14 +125,14 @@ module.exports = function (_grunt) {
             }
         },
         ts        : {
-            options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true},
+            options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true, sourceMap: target === 'dev'},
             packadic  : {
-                options: {declaration: true},
+                options: {declaration: true, sourceMap: target === 'dev'},
                 src    : ['src/ts/packadic/**/*.ts'],
                 out    : 'src/ts/packadic.js'
             },
-            components: {files: [{src: ['src/ts/components/**/*.ts']}], options: {declaration: false}},
-            plugins   : {files: [{src: ['src/ts/plugins/**/*.ts']}], options: {declaration: false}},
+            components: {files: [{src: ['src/ts/components/**/*.ts']}], options: {declaration: false, sourceMap: target === 'dev'}},
+            plugins   : {files: [{src: ['src/ts/plugins/**/*.ts']}], options: {declaration: false, sourceMap: target === 'dev'}},
             angular2  : {
                 options: {declaration: false, experimentalDecorators: true, module: 'system'},
                 src    : ['src/angular2/**/*.ts', '!src/angular2/**/*_spec.ts'] //, out: '<%= target.dest %>/angular2/app.js'
@@ -223,13 +226,13 @@ module.exports = function (_grunt) {
         // compile
         ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles']],
         ['scripts', 'Concat & uglify vendor scripts and compile typescript files',
-            ['clean:scripts', 'uglify:vendor', 'concat:vendor', 'jade:templates', 'ts:packadic', 'uglify:ts_packadic', 'ts:components', 'ts:plugins', 'copy_ts_scripts', 'copy:js']
+            ['clean:scripts', 'uglify:vendor', 'concat:vendor', 'jade:templates', 'ts:packadic', 'ts:components', 'ts:plugins',  'uglify:ts_packadic','copy_ts_scripts', 'copy:js']
         ],
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build
         ['docs', 'Generate the docs', ['clean:docs', 'typedoc:ts']],
         ['demo', 'Build the theme', ['clean:all', 'bower', 'images', 'styles', 'scripts', 'views', 'docs']],
-        ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'styles', 'scripts', 'images']],
+        ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'images', 'styles', 'scripts']],
         ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'styles', 'scripts', 'images', 'jade:test_page', 'jade:views']],
         // dev
         ['lib', 'Compile typescript files in lib for node.', ['typescript:lib']],
