@@ -5,6 +5,7 @@ include ../_base
 - rootPath = rootPath || '';
 - var assetPath = rootPath + 'assets/';
 - var themeStyle = 'default';
+- var highlightJsStyle = 'tommorow';
 block vars
 doctype html
 <!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
@@ -23,9 +24,9 @@ html(lang="en")
                 meta(name="viewport", content="width=device-width, initial-scale=1")
                 meta(http-equiv="X-UA-Compatible", content="IE=edge")
             block styles
-                link(href=assetPath + "styles/stylesheet.css", type="text/css", rel="stylesheet")
-                link(href=assetPath + "styles/themes/theme-"+themeStyle+".css", type="text/css", rel="stylesheet", id='theme-style')
-                link(href=assetPath + "bower_components/highlightjs/styles/tomorrow.css", type="text/css", rel="stylesheet", id='hljs-style')
+                +stylesheet('stylesheet')
+                +stylesheet('themes/theme-' +themeStyle)(id='theme-style')
+                +stylesheet('highlightjs/styles/' + highlightJsStyle, true)(id='hljs-style')
 
     body.page-loading(class=bodyClass)
         #page-loader
@@ -86,13 +87,13 @@ html(lang="en")
                         i.fa.fa-level-up
 
         block scripts
-            script(src=assetPath + 'scripts/vendor.js')
-            script(src=assetPath + 'scripts/packadic.js')
-            script(src=assetPath + 'scripts/components/layout.js')
-            script(src=assetPath + 'scripts/components/quick_sidebar.js')
-            script(src=assetPath + 'scripts/components/presets.js')
-            script(src=assetPath + 'scripts/plugins/testPlugin.js')
-            script(src=assetPath + 'scripts/plugins/testWidget.js')
+            +javascript(src='vendor.js')
+            +javascript(src='packadic.js')
+            +javascript(src='components/layout.js')
+            +javascript(src='components/quick_sidebar.js')
+            +javascript(src='components/presets.js')
+            +javascript(src='plugins/testPlugin.js')
+            +javascript(src='plugins/testWidget.js')
 
         block init-script
             script.

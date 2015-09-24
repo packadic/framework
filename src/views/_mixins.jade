@@ -1,3 +1,13 @@
+mixin stylesheet(name, bower)
+    - name = name.endsWith('.css') ? name : name + '.css';
+    - var path = bower === true ? assetPath + 'bower_components/' : assetPath + 'styles/';
+    link(href=path + name, rel='stylesheet', type='text/css')&attributes(attributes)
+
+mixin javascript(name)
+    - name = name.endsWith('.js') ? name : name + '.js';
+    - var path = bower === true ? assetPath + 'bower_components/' : assetPath + 'scripts/';
+    script(src=path + name)
+
 mixin sb-item(title, href, icon, hasChildren)
     - href = href || '#';
     li&attributes(attributes)
