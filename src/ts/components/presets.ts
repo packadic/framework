@@ -61,28 +61,25 @@ module packadic.components {
         }
 
         protected applyPresetType(name:string, config?:any) {
-            this.layout.reset();
+            var self:PresetsComponent = this;
             switch (name) {
                 case 'theme':
                     this.layout.setTheme(config);
                     this.app.emit('layout:preset:theme', config);
                     break;
                 case 'layout':
-                    console.log('apply preset type', name, config, this, self);
+                    this.layout.reset();
                     if(kindOf(config) === 'string'){
                         config = [config];
                     }
                     config.forEach((actionName:string) => {
-                        console.log('apply preset type', name, config, this, self);
-                        this.layout.api(actionName);
+                        self.layout.api(actionName);
                     });
                     this.app.emit('layout:preset:layout', config);
                     break;
             }
             this.app.on('resize', () => { console.log('apply preset refresh', this); this.quick_sidebar.refresh() });
         }
-
-
     }
 
     Components.register('presets', PresetsComponent, defaultConfig);

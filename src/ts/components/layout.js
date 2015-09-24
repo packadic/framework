@@ -142,7 +142,6 @@ var packadic;
                 _super.apply(this, arguments);
                 this.openCloseInProgress = false;
                 this.closing = false;
-                this.firingResizeEvent = false;
             }
             LayoutComponent.prototype.init = function () {
                 var _this = this;
@@ -187,34 +186,34 @@ var packadic;
                     'footer-fixed': function () {
                         _this.setFooterFixed(!_this.isFooterFixed());
                     },
-                    'toggle-sidebar': function () {
+                    'sidebar-toggle': function () {
                         _this.isSidebarClosed() ? _this.openSidebar() : _this.closeSidebar();
                     },
                     'sidebar-fixed': function () {
                         _this.setSidebarFixed(!_this.isSidebarFixed());
                     },
-                    'close-submenus': function () {
+                    'sidebar-close-submenus': function () {
                         _this.closeSubmenus();
                     },
-                    'close-sidebar': function () {
+                    'sidebar-close': function () {
                         _this.closeSidebar();
                     },
-                    'open-sidebar': function () {
+                    'sidebar-open': function () {
                         _this.openSidebar();
                     },
-                    'hide-sidebar': function () {
+                    'sidebar-hide': function () {
                         _this.hideSidebar();
                     },
-                    'show-sidebar': function () {
+                    'sidebar-show': function () {
                         _this.showSidebar();
                     },
-                    'condensed-sidebar': function () {
+                    'sidebar-condensed': function () {
                         _this.setSidebarCondensed(!_this.isSidebarCondensed());
                     },
-                    'hover-sidebar': function () {
+                    'sidebar-hover': function () {
                         _this.setSidebarHover(!_this.isSidebarHover());
                     },
-                    'reversed-sidebar': function () {
+                    'sidebar-reversed': function () {
                         _this.setSidebarReversed(!_this.isSidebarReversed());
                     },
                 };
@@ -225,7 +224,6 @@ var packadic;
                     e.preventDefault();
                     var action = $(this).attr('data-layout-api');
                     var args = $(this).attr('data-layout-api-args');
-                    console.log('data-layout-api', this, action, args);
                     self.api(action, args);
                 });
             };
@@ -247,7 +245,7 @@ var packadic;
                 if (!this._apiCallbacks[action]) {
                     throw new Error('Layout api action ' + action + ' does not exist');
                 }
-                this._apiCallbacks[action](args);
+                this._apiCallbacks[action].apply(this._apiCallbacks[action], args);
             };
             LayoutComponent.prototype.removePageLoader = function () {
                 $body.removeClass('page-loading');
@@ -440,7 +438,7 @@ var packadic;
                 el.sidebarMenu.children('li.open').children('a').children('.arrow').removeClass('open');
                 el.sidebarMenu.children('li.open').children('.sub-menu:not(.always-open)').slideUp(this.config('layout.sidebar.slideSpeed'));
                 el.sidebarMenu.children('li.open').removeClass('open');
-                this.app.emit('sidebar:close-submenus');
+                this.app.emit('layout:sidebar:close-submenus');
             };
             LayoutComponent.prototype.closeSidebar = function (callback) {
                 var self = this;
@@ -451,7 +449,7 @@ var packadic;
                 self.openCloseInProgress = true;
                 self.closing = true;
                 var defer = $.Deferred();
-                this.app.emit('sidebar:close');
+                this.app.emit('layout:sidebar:close');
                 self.closeSubmenus();
                 var $title = el.sidebarMenu.find('li a span.title, li a span.arrow');
                 async.parallel([
@@ -492,7 +490,7 @@ var packadic;
                         callback();
                     }
                     defer.resolve();
-                    self.app.emit('sidebar:closed');
+                    self.app.emit('layout:sidebar:closed');
                 });
                 return defer.promise();
             };
@@ -505,7 +503,7 @@ var packadic;
                 var defer = $.Deferred();
                 var $title = el.sidebarMenu.find('li a span.title, li a span.arrow');
                 self.setSidebarClosed(false);
-                this.app.emit('sidebar:open');
+                this.app.emit('layout:sidebar:open');
                 async.parallel([
                     function (cb) {
                         el.content.css('margin-left', self.config('layout.sidebar.closedWidth'))
@@ -551,7 +549,7 @@ var packadic;
                         callback();
                     }
                     defer.resolve();
-                    self.app.emit('sidebar:opened');
+                    self.app.emit('layout:sidebar:opened');
                 });
                 return defer.promise();
             };
@@ -566,13 +564,13 @@ var packadic;
                     $body.addClass('page-sidebar-hide');
                 }
                 $('header.top .sidebar-toggler').hide();
-                this.app.emit('sidebar:hide');
+                this.app.emit('layout:sidebar:hide');
             };
             LayoutComponent.prototype.showSidebar = function () {
                 $body.removeClass('page-sidebar-closed')
                     .removeClass('page-sidebar-hide');
                 $('header.top .sidebar-toggler').show();
-                this.app.emit('sidebar:show');
+                this.app.emit('layout:sidebar:show');
             };
             LayoutComponent.prototype.sidebarResolveActive = function () {
                 var self = this;
@@ -613,19 +611,19 @@ var packadic;
                     this._initFixedHovered();
                 }
                 this._initFixed();
-                this.app.emit('sidebar:' + fixed ? 'fix' : 'unfix');
+                this.app.emit('layout:sidebar:fixed', fixed);
             };
             LayoutComponent.prototype.setSidebarCondensed = function (condensed) {
                 $body.ensureClass("page-sidebar-condensed", condensed);
-                this.app.emit('sidebar:' + condensed ? 'condensed' : 'decondensed');
+                this.app.emit('layout:sidebar:condensed', condensed);
             };
             LayoutComponent.prototype.setSidebarHover = function (hover) {
                 el.sidebarMenu.ensureClass("page-sidebar-menu-hover-submenu", hover && !this.isSidebarFixed());
-                this.app.emit('sidebar:' + hover ? 'hover' : 'dehover');
+                this.app.emit('layout:sidebar:hover', hover);
             };
             LayoutComponent.prototype.setSidebarReversed = function (reversed) {
                 $body.ensureClass("page-sidebar-reversed", reversed);
-                this.app.emit('sidebar:' + reversed ? 'set-right' : 'set-left');
+                this.app.emit('layout:sidebar:reversed', reversed);
             };
             LayoutComponent.prototype.setHeaderFixed = function (fixed) {
                 if (fixed === true) {
@@ -636,7 +634,7 @@ var packadic;
                     $body.removeClass("page-header-fixed");
                     el.header.removeClass("navbar-fixed-top").addClass("navbar-static-top");
                 }
-                this.app.emit('header:set-fixed', fixed);
+                this.app.emit('layout:header:fixed', fixed);
             };
             LayoutComponent.prototype.setFooterFixed = function (fixed) {
                 if (fixed === true) {
@@ -645,7 +643,7 @@ var packadic;
                 else {
                     $body.removeClass("page-footer-fixed");
                 }
-                this.app.emit('footer:set-fixed', fixed);
+                this.app.emit('layout:footer:fixed', fixed);
             };
             LayoutComponent.prototype.setBoxed = function (boxed) {
                 $body.ensureClass('page-boxed', boxed);
@@ -666,25 +664,14 @@ var packadic;
                         el.footerInner.unwrap();
                     }
                 }
-                this.app.emit('set-boxed', boxed);
+                this.app.emit('layout:page:boxed', boxed);
             };
             LayoutComponent.prototype.setEdged = function (edged) {
                 if (edged && this.isBoxed()) {
                     this.setBoxed(false);
                 }
                 $body.ensureClass('page-edged', edged);
-                this.app.emit('set-edged');
-            };
-            LayoutComponent.prototype.fireResizedEvent = function () {
-                var _this = this;
-                if (this.firingResizeEvent) {
-                    return;
-                }
-                this.firingResizeEvent = true;
-                setTimeout(function () {
-                    _this.app.emit('resize');
-                    _this.firingResizeEvent = false;
-                }, 60);
+                this.app.emit('layout:page:edged');
             };
             LayoutComponent.prototype.setTheme = function (name) {
                 var $ts = $('#theme-style');

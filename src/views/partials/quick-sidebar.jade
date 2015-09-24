@@ -9,7 +9,7 @@ nav.quick-sidebar
         .pull-left.middle.hidden-xs-down.hidden-md-up
 
         .pull-right
-            button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-layout-api='qs-pin', title='Pin/unpin the quick sidebar')
+            button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-layout-api='qs-togglepin', title='Pin/unpin the quick sidebar')
                 i.fa.fa-thumb-tack
             button.btn.blue-grey.qs-close(type='button', data-layout-api='qs-close', title='Close')
                 i.fa.fa-times
@@ -23,48 +23,46 @@ nav.quick-sidebar
         .qs-section
             h3 Layout API
             p The layout API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
-            each action, i in ['toggle-sidebar','page-boxed', 'page-edged', 'header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','condensed-sidebar','hover-sidebar','reversed-sidebar']
-                +abtn.btn-sm(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+            .row
+                .col-xs-6.pr-n.text-center
+                    h4 Core
+                    each action, i in ['toggle-sidebar','page-boxed', 'page-edged', 'header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','condensed-sidebar','hover-sidebar','reversed-sidebar']
+                        +abtn.btn-xs(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
-    .qs-content#qs-themes(data-name='Themes')
-        .qs-section
-            h3 Styles
-            p Customisation made easy. The result is here.
-            each theme in ['default', 'dark-sidebar']
-                +abtn.btn-sm(data-layout-api='theme', data-layout-api-args=theme, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=theme
+                .col-xs-6.pl-n.text-center
+                    h4 Quick Sidebar
+                    each action, i in ['qs-toggle', 'qs-open', 'qs-close', 'qs-next', 'qs-prev', 'qs-pin', 'qs-unpin', 'qs-togglepin']
+                        +abtn.btn-xs(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
-            h3 Presets
-            p Complete layout presets.
-            +abtn.btn-sm.blue-grey(data-layout-api='preset' data-layout-api-args='default', block) Default
-            +abtn.btn-sm.blue-grey(data-layout-api='preset' data-layout-api-args='condensed-dark', block) Condensed Dark
+                    h4 Styles
+                    each theme in ['default', 'dark-sidebar']
+                        +abtn.btn-xs(data-layout-api='theme', data-layout-api-args=theme, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=theme
 
-    .qs-content#qs-qs(data-name='Quick-Sidebar')
-        .qs-section
-            h3 QuickSidebar API
-            p The quick sidebar API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
-            each action, i in ['qs-pin', 'qs-close', 'qs-toggle', 'qs-open', 'qs-next', 'qs-prev']
-                +abtn.btn-sm(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+                    h4 Presets
+                    +abtn.btn-xs.blue-grey(data-layout-api='preset' data-layout-api-args='default', block) Default
+                    +abtn.btn-xs.blue-grey(data-layout-api='preset' data-layout-api-args='condensed-dark', block) Condensed Dark
+
 
     .qs-content#qs-random(data-name='Random')
         .qs-section
-            h3 Other
+            h3 Random
             - var n = 0;
             while n < 30
-                p Line #{n ++}
+                p asdf #{n ++}
 
     .qs-content#qs-extras(data-name='Extras')
         .qs-section
-            h3 Other
+            h3 Extras
             - var n = 0;
             while n < 30
                 p Line #{n ++}
 
     .qs-content#qs-another(data-name='Another')
         .qs-section
-            h3 Other
+            h3 Another
             - var n = 0;
             while n < 30
-                p Line #{n ++}
+                p Anotherf #{n ++}
 
     .qs-content#qs-makeifythis(data-name='Makeifythis')
         .qs-section

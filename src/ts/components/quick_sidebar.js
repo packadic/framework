@@ -20,7 +20,7 @@ var packadic;
                 var self = this;
                 this.qs = qs;
                 this.active = this.getFirst();
-                this.previous = this.getFirst();
+                this.previous = this.getLast();
                 var style = {
                     width: this.$tabs.parent().width(),
                     height: this.$tabs.innerHeight() - 1,
@@ -66,21 +66,80 @@ var packadic;
                 enumerable: true,
                 configurable: true
             });
+            QuickSidebarTabs.prototype.handleTabsMiddleResizing = function () {
+                packadic.debug.log('xs breakpoint:', this.qs.layout.getBreakpoint('sm'), 'viewport width', packadic.getViewPort().width);
+                var $middle = this.find('.qs-header .middle');
+                var $header = this.find('.qs-header');
+                if (packadic.getViewPort().width >= this.qs.layout.getBreakpoint('sm') && packadic.getViewPort().width <= this.qs.layout.getBreakpoint('md')) {
+                    var width = $header.children().first().outerWidth();
+                    width += $header.children().last().outerWidth();
+                    width = $header.width() - width;
+                    packadic.debug.log('width: ', width);
+                    if (this.$wrapper.closest('.qs-header').length == 0) {
+                        this.$wrapper.appendTo($middle);
+                    }
+                    $middle.css('width', width);
+                }
+                else {
+                    if (this.$wrapper.closest('.qs-header').length > 0) {
+                        this.find('.qs-header').after(this.$wrapper);
+                    }
+                    $middle.attr('style', '');
+                }
+                return this;
+            };
+            QuickSidebarTabs.prototype.refresh = function () {
+                this.handleTabsMiddleResizing()
+                    .destroyContentScroll()
+                    .initContentScroll();
+            };
+            QuickSidebarTabs.prototype.getContentScrollHeight = function () {
+                return this.qs.$e.outerHeight()
+                    - this.find('.qs-header').outerHeight()
+                    - this.find('.qs-tabs-wrapper').outerHeight()
+                    - this.find('.qs-seperator').outerHeight();
+            };
+            QuickSidebarTabs.prototype.initContentScroll = function ($content) {
+                $content = packadic.defined($content) ? $($content) : this.getTabContent(this.getActive());
+                this.destroyContentScroll($content);
+                packadic.plugins.makeSlimScroll($content, {
+                    height: this.getContentScrollHeight(),
+                    wheelStep: packadic.isTouchDevice() ? 60 : 20
+                });
+                if (this.qs.mouseOverContent) {
+                    this.$content.trigger("mouseleave").trigger('mouseenter');
+                }
+                else {
+                    this.$content.trigger("mouseleave");
+                }
+                return this;
+            };
+            QuickSidebarTabs.prototype.destroyContentScroll = function ($content) {
+                $content = packadic.defined($content) ? $($content) : this.getTabContent(this.getActive());
+                packadic.plugins.destroySlimScroll($content);
+                this.find('.slimScrollBar, .slimScrollRail').remove();
+                return this;
+            };
             QuickSidebarTabs.prototype.closeTabs = function () {
-                this.find('.qs-content.active, .qs-tab.active').removeClass('active');
+                this.find('.qs-tab.active').removeClass('active');
+                var $activeTabContent = this.find('.qs-content.active').removeClass('active');
+                if ($activeTabContent.length) {
+                    packadic.plugins.destroySlimScroll($activeTabContent);
+                    this.find('.slimScrollBar, .slimScrollRail').remove();
+                }
                 return this;
             };
             QuickSidebarTabs.prototype.openTab = function (id) {
                 var _this = this;
-                id = id || this.getPrevious() || this.getFirst();
-                var $tab = this.getTab(id);
+                id = packadic.defined(id) ? packadic.util.str.lstrip(id, '#') : this.getFirst();
+                var $tab = this.getTabNav(id);
                 var $tabContent = this.getTabContent(id);
                 if (this.switching) {
                     if (this.switchingTimeout = false) {
                         setTimeout(function () {
                             _this.openTab(id);
                             _this.switching = false;
-                        }, this.qs.config('quickSidebar.transitionTime'));
+                        }, this.qs.config('quick_sidebar.transitionTime'));
                         this.switchingTimeout = true;
                     }
                     return;
@@ -88,21 +147,16 @@ var packadic;
                 this.closeTabs();
                 $tab.ensureClass('active', true);
                 $tabContent.ensureClass('active', true);
-                var height = this.qs.getContentScrollHeight();
                 this.$wrapper.jcarousel('scroll', $tab);
+                if (id !== this.active) {
+                    this.previous = this.active;
+                    this.active = id;
+                }
                 this.switching = true;
-                this.previous = this.active;
-                this.active = id;
                 setTimeout(function () {
-                    packadic.plugins.makeSlimScroll($tabContent, { height: height, wheelStep: packadic.isTouchDevice() ? 60 : 20 });
-                    if (_this.qs.mouseOverContent) {
-                        $tabContent.trigger("mouseleave").trigger('mouseenter');
-                    }
-                    else {
-                        $tabContent.trigger("mouseleave");
-                    }
+                    _this.initContentScroll($tabContent);
                     _this.switching = false;
-                }, this.qs.config('quickSidebar.transitionTime'));
+                }, this.qs.config('quick_sidebar.transitionTime'));
                 return this;
             };
             QuickSidebarTabs.prototype.openPreviousTab = function () {
@@ -110,24 +164,24 @@ var packadic;
                 return this;
             };
             QuickSidebarTabs.prototype.openNextTab = function () {
-                this.getTab(this.getNext());
+                this.openTab(this.getNext());
                 return this;
             };
             QuickSidebarTabs.prototype.getActive = function () {
                 return this.active;
             };
             QuickSidebarTabs.prototype.getPrevious = function () {
-                var previous = this.getTab(this.getActive()).parent().prev('.qs-content:not(.active)').attr('id');
+                var previous = this.getTabContent(this.getActive()).parent().prev('.qs-content:not(.active)').attr('id');
                 if (!previous && this.hasTab(this.previous)) {
                     previous = this.previous;
                 }
-                else {
+                else if (!previous) {
                     previous = this.getLast();
                 }
                 return previous;
             };
             QuickSidebarTabs.prototype.getNext = function () {
-                var next = this.getTab(this.getActive()).parent().next('.qs-content:not(.active)').attr('id');
+                var next = this.getTabContent(this.getActive()).parent().next('.qs-content:not(.active)').attr('id');
                 if (!this.hasTab(next)) {
                     next = this.getFirst();
                 }
@@ -140,13 +194,13 @@ var packadic;
                 return this.find('.qs-content').last().attr('id');
             };
             QuickSidebarTabs.prototype.hasTab = function (id) {
-                return this.find('.qs-content #' + id).length > 0;
+                return this.find('.qs-content#' + id).length > 0;
             };
-            QuickSidebarTabs.prototype.getTab = function (id) {
-                return this.find('.qs-tabs .qs-tab[data-target="#' + id + '"]');
+            QuickSidebarTabs.prototype.getTabNav = function (id) {
+                return this.find('.qs-tabs .qs-tab[data-target="#' + id + '"]').first();
             };
             QuickSidebarTabs.prototype.getTabContent = function (id) {
-                return this.find('.qs-content #' + id);
+                return this.find('.qs-content#' + id).first();
             };
             return QuickSidebarTabs;
         })();
@@ -155,20 +209,8 @@ var packadic;
             __extends(QuickSidebarComponent, _super);
             function QuickSidebarComponent() {
                 _super.apply(this, arguments);
-                this.switching = false;
-                this.switchingTimeout = false;
                 this.mouseOverContent = false;
             }
-            Object.defineProperty(QuickSidebarComponent.prototype, "$e", {
-                get: function () {
-                    return $('.quick-sidebar');
-                },
-                enumerable: true,
-                configurable: true
-            });
-            QuickSidebarComponent.prototype.find = function (find) {
-                return this.$e.find(find);
-            };
             QuickSidebarComponent.prototype.init = function () {
                 this.app.debug.log('QuickSidebarComponent init');
                 this.app.on('booted', function () {
@@ -194,7 +236,7 @@ var packadic;
                 this._initResizeHandler();
                 this._initLayoutApiActions();
                 if (!this.isClosed()) {
-                    this.next();
+                    this.openNextTab();
                 }
             };
             Object.defineProperty(QuickSidebarComponent.prototype, "layout", {
@@ -204,46 +246,30 @@ var packadic;
                 enumerable: true,
                 configurable: true
             });
-            QuickSidebarComponent.prototype.getContentScrollHeight = function () {
-                return this.$e.outerHeight()
-                    - this.$e.find('.qs-header').outerHeight()
-                    - this.$e.find('.qs-tabs-wrapper').outerHeight()
-                    - this.$e.find('.qs-seperator').outerHeight();
-            };
-            QuickSidebarComponent.prototype._initTabs = function () {
-                var self = this;
-                var $tabs = this.$e.find('.qs-tabs').first();
-                var style = {
-                    width: $tabs.parent().width(),
-                    height: $tabs.innerHeight() - 1,
-                    float: 'left'
-                };
-                this.$e.find('.qs-content').each(function () {
-                    var tab = $('<div>')
-                        .addClass('qs-tab')
-                        .text($(this).attr('data-name'))
-                        .attr('data-target', '#' + $(this).attr('id'));
-                    tab.appendTo($tabs);
-                });
-                $tabs.parent().jcarousel({
-                    list: '.qs-tabs',
-                    items: '.qs-tab',
-                    wrap: 'both'
-                });
+            Object.defineProperty(QuickSidebarComponent.prototype, "$e", {
+                get: function () {
+                    return $('.quick-sidebar');
+                },
+                enumerable: true,
+                configurable: true
+            });
+            QuickSidebarComponent.prototype.find = function (find) {
+                return this.$e.find(find);
             };
             QuickSidebarComponent.prototype._initLayoutApiActions = function () {
-                var _this = this;
                 var self = this;
                 var apiActions = {
                     'qs-toggle': function (target) {
-                        (self.isClosed() && self.open(target)) || self.close();
+                        (self.isClosed() && self.show().openTab(target)) || self.hide();
                     },
                     'qs-open': function (target) {
-                        console.log('qs-open', self, _this, target);
-                        self.open(target);
+                        self.openTab(target);
                     },
                     'qs-close': function () {
-                        self.close();
+                        self.hide();
+                    },
+                    'qs-togglepin': function () {
+                        !self.isPinned() && self.pin() || self.unpin();
                     },
                     'qs-pin': function () {
                         self.pin();
@@ -252,10 +278,10 @@ var packadic;
                         self.unpin();
                     },
                     'qs-next': function () {
-                        self.next();
+                        self.openNextTab();
                     },
                     'qs-prev': function () {
-                        self.prev();
+                        self.openPreviousTab();
                     }
                 };
                 self.layout.setApiActions(apiActions);
@@ -274,7 +300,7 @@ var packadic;
                     if (self.isPinned()) {
                         return;
                     }
-                    self.close();
+                    self.hide();
                 });
                 $body.on('mouseenter', '.quick-sidebar .qs-content', function (e) {
                     _this.mouseOverContent = true;
@@ -285,168 +311,85 @@ var packadic;
             QuickSidebarComponent.prototype._initResizeHandler = function () {
                 var self = this;
                 var resizeHandler = function () {
+                    if (self.isClosed()) {
+                        return;
+                    }
                     self.refresh();
                 };
                 this.app
                     .on('resize', resizeHandler)
-                    .on('footer:set-fixed', resizeHandler)
-                    .on('header:set-fixed', resizeHandler);
+                    .on('layout:footer:fixed', resizeHandler)
+                    .on('layout:header:fixed', resizeHandler)
+                    .on('layout:page:fixed', resizeHandler)
+                    .on('layout:page:boxed', resizeHandler);
             };
-            QuickSidebarComponent.prototype.handleTabsMiddleResizing = function () {
-                var layout = this.app['layout'];
-                packadic.debug.log('xs breakpoint:', layout.getBreakpoint('sm'), 'viewport width', packadic.getViewPort().width);
-                var $middle = this.$e.find('.qs-header .middle');
-                var $tw = this.$e.find('.qs-tabs-wrapper');
-                var $header = this.$e.find('.qs-header');
-                if (packadic.getViewPort().width >= layout.getBreakpoint('sm') && packadic.getViewPort().width <= layout.getBreakpoint('md')) {
-                    var width = $header.children().first().outerWidth();
-                    width += $header.children().last().outerWidth();
-                    width = $header.width() - width;
-                    packadic.debug.log('width: ', width);
-                    if ($tw.closest('.qs-header').length == 0) {
-                        $tw.appendTo($middle);
-                    }
-                    $middle.css('width', width);
-                }
-                else {
-                    var $tw = this.$e.find('.qs-tabs-wrapper');
-                    if ($tw.closest('.qs-header').length > 0) {
-                        this.$e.find('.qs-header').after($tw);
-                    }
-                    $middle.attr('style', '');
-                }
-            };
-            QuickSidebarComponent.prototype.resetContent = function () {
-                var active = this.getActive();
-                if (active.length) {
-                    packadic.plugins.destroySlimScroll(active.removeClass('active'));
-                    this.$e.find('.slimScrollBar, .slimScrollRail').remove();
-                }
-                this.$e.find('.qs-content.active').removeClass('active');
-            };
-            QuickSidebarComponent.prototype.openTarget = function ($target) {
-                var _this = this;
-                if (this.switching) {
-                    if (this.switchingTimeout = false) {
-                        setTimeout(function () {
-                            _this.openTarget($target);
-                            _this.switching = false;
-                        }, this.config('quickSidebar.transitionTime'));
-                        this.switchingTimeout = true;
-                    }
+            QuickSidebarComponent.prototype.refresh = function () {
+                if (this.isClosed()) {
                     return;
                 }
-                var target = $target.attr('id');
-                $target.ensureClass('active');
-                var height = this.$e.outerHeight()
-                    - this.$e.find('.qs-header').outerHeight()
-                    - this.$e.find('.qs-tabs-wrapper').outerHeight()
-                    - this.$e.find('.qs-seperator').outerHeight();
-                this.$e.find('.qs-tabs .qs-tab').removeClass('active');
-                var $tab = this.$e.find('.qs-tabs .qs-tab[data-target="#' + $target.attr('id') + '"]').addClass('active');
-                var $tabsWrapper = this.$e.find('.qs-tabs-wrapper');
-                $tabsWrapper.jcarousel('scroll', $tab);
-                this.switching = true;
-                this.previous = $target.attr('id');
-                setTimeout(function () {
-                    packadic.plugins.makeSlimScroll($target, { height: height, wheelStep: packadic.isTouchDevice() ? 60 : 20 });
-                    if (_this.mouseOverContent) {
-                        $target.trigger("mouseleave").trigger('mouseenter');
-                    }
-                    else {
-                        $target.trigger("mouseleave");
-                    }
-                    _this.switching = false;
-                }, this.config('quickSidebar.transitionTime'));
+                this.tabs.refresh();
+                this._emit('refresh');
+                return this;
             };
-            QuickSidebarComponent.prototype.open = function (target) {
+            QuickSidebarComponent.prototype._emit = function (name) {
+                var args = [];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    args[_i - 1] = arguments[_i];
+                }
+                this.app.emit('qs:' + name, [this].concat(args));
+            };
+            QuickSidebarComponent.prototype.show = function () {
                 if (!this.exists()) {
                     return this;
                 }
-                if (!target || this.$e.find(target).length == 0) {
-                    target = '#' + this.$e.find('.qs-content').first().attr('id');
-                }
-                this.handleTabsMiddleResizing();
-                this.resetContent();
                 $('body').ensureClass("qs-shown", true);
-                this.openTarget(this.$e.find(target));
+                this._emit('show');
                 return this;
             };
-            QuickSidebarComponent.prototype.close = function () {
+            QuickSidebarComponent.prototype.hide = function () {
                 if (!this.exists()) {
                     return;
                 }
                 if (this.isPinned()) {
                     this.unpin();
                 }
-                this.resetContent();
                 $body.ensureClass("qs-shown", false);
-                return this;
-            };
-            QuickSidebarComponent.prototype.next = function () {
-                if (this.switching) {
-                    return;
-                }
-                var $next = this.getActive().parent().next('.qs-content:not(.active)');
-                if ($next.length == 0) {
-                    $next = this.$e.find('.qs-content').first();
-                }
-                this.resetContent();
-                this.openTarget($next);
-                return this;
-            };
-            QuickSidebarComponent.prototype.prev = function () {
-                if (this.switching) {
-                    return;
-                }
-                this.resetContent();
-                this.openTarget(this.getPrevious());
-                return this;
-            };
-            QuickSidebarComponent.prototype.getPrevious = function () {
-                var $prev;
-                if (packadic.kindOf(this.previous) === 'string') {
-                    $prev = this.$e.find('#' + this.previous);
-                }
-                else {
-                    $prev = this.getActive().parent().prev('.qs-content:not(.active)');
-                }
-                if ($prev.length == 0) {
-                    $prev = this.$e.find('.qs-content').last();
-                }
-                return $prev;
-            };
-            QuickSidebarComponent.prototype.refresh = function () {
-                var self = this;
-                console.log('qs refresh', arguments);
-                self.handleTabsMiddleResizing();
-                if (self.isClosed()) {
-                    return;
-                }
-                var active = self.getActive();
-                self.resetContent();
-                self.openTarget(active);
-                return this;
-            };
-            QuickSidebarComponent.prototype.pin = function () {
-                $body.ensureClass('qs-pinned', true);
-                return this;
-            };
-            QuickSidebarComponent.prototype.unpin = function () {
-                $body.removeClass('qs-pinned');
+                this._emit('hide');
                 return this;
             };
             QuickSidebarComponent.prototype.isClosed = function () {
                 return !$body.hasClass("qs-shown");
             };
-            QuickSidebarComponent.prototype.exists = function () {
-                return this.$e.length > 0;
+            QuickSidebarComponent.prototype.openTab = function (id) {
+                this.tabs.openTab(id);
+                this._emit('open');
+                return this;
             };
-            QuickSidebarComponent.prototype.getActive = function () {
-                return this.$e.find('.qs-content.active');
+            QuickSidebarComponent.prototype.openNextTab = function () {
+                this.tabs.openNextTab();
+                this._emit('next');
+                return this;
+            };
+            QuickSidebarComponent.prototype.openPreviousTab = function () {
+                this.tabs.openPreviousTab();
+                this._emit('prev');
+                return this;
+            };
+            QuickSidebarComponent.prototype.pin = function () {
+                $body.ensureClass('qs-pinned', true);
+                this._emit('pin');
+                return this;
+            };
+            QuickSidebarComponent.prototype.unpin = function () {
+                $body.removeClass('qs-pinned');
+                this._emit('unpin');
+                return this;
             };
             QuickSidebarComponent.prototype.isPinned = function () {
                 return $body.hasClass('qs-pinned');
+            };
+            QuickSidebarComponent.prototype.exists = function () {
+                return this.$e.length > 0;
             };
             QuickSidebarComponent.dependencies = ['layout'];
             return QuickSidebarComponent;

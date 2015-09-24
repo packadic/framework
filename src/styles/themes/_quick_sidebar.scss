@@ -143,14 +143,24 @@ $quick-sidebar-transition-time: 500ms;
                 margin-top: 10px;
             }
 
-            > h3 {
-                font-size: 13px;
-                color: $quick-sidebar-header-color;
-                margin: 15px 0;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
 
+
+        }
+
+        h3, h4, h5 {
+            font-size: 13px;
+            color: $quick-sidebar-header-color;
+            margin: 15px 0;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        h4, h5 {
+            font-size: 12px;
+            margin: 5px 0;
+        }
+
+        h5 {
+            text-transform: initial;
         }
     }
 

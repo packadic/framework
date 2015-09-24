@@ -1,3 +1,5 @@
+
+
 /// <reference path="./../types.d.ts" />
 /// <reference path="./../packadic.d.ts" />
 
@@ -124,10 +126,33 @@ module packadic.components {
 
     var el:Elements;
 
-
-
     /**
      * @class LayoutComponent
+     * ## The Layout Component
+     * ##### Fires events:
+     * - `resize`, `layout:page:boxed`, `layout:page:edged`
+     * - `layout:header:fixed`, `layout:footer:fixed`
+     * - `layout:sidebar:open`, `layout:sidebar:opened`, `layout:sidebar:close`, `layout:sidebar:closed`
+     * - `layout:sidebar:hide`, `layout:sidebar:show`
+     * - `layout:sidebar:fixed`, `layout:sidebar:condensed`, `layout:sidebar:reversed`, `layout:sidebar:hover`
+     *
+     *
+     * ##### Usage example JS
+     * ```typescript
+     * app.components.get('layout').showSidebar();
+     * app.components.layout.showSidebar();
+     * app.components.layout.api('sidebar-show');
+     * app.on('layout:sidebar:show', function(){
+     *      console.log(this, arguments);
+     * });
+     * ```
+     *
+     * ##### Usage example HTML5 data-attributes
+     * ```html
+     * <a href="#" data-layout-api="sidebar-toggle">Toggle sidebar</a>
+     * ```
+     *
+     *
      */
     export class LayoutComponent extends Component {
 
@@ -187,34 +212,34 @@ module packadic.components {
                 },
 
 
-                'toggle-sidebar': () => {
+                'sidebar-toggle': () => {
                     this.isSidebarClosed() ? this.openSidebar() : this.closeSidebar();
                 },
                 'sidebar-fixed': () => {
                     this.setSidebarFixed(!this.isSidebarFixed());
                 },
-                'close-submenus': () => {
+                'sidebar-close-submenus': () => {
                     this.closeSubmenus();
                 },
-                'close-sidebar': () => {
+                'sidebar-close': () => {
                     this.closeSidebar();
                 },
-                'open-sidebar': () => {
+                'sidebar-open': () => {
                     this.openSidebar();
                 },
-                'hide-sidebar': () => {
+                'sidebar-hide': () => {
                     this.hideSidebar();
                 },
-                'show-sidebar': () => {
+                'sidebar-show': () => {
                     this.showSidebar();
                 },
-                'condensed-sidebar': () => {
+                'sidebar-condensed': () => {
                     this.setSidebarCondensed(!this.isSidebarCondensed());
                 },
-                'hover-sidebar': () => {
+                'sidebar-hover': () => {
                     this.setSidebarHover(!this.isSidebarHover());
                 },
-                'reversed-sidebar': () => {
+                'sidebar-reversed': () => {
                     this.setSidebarReversed(!this.isSidebarReversed());
                 },
             };
@@ -228,11 +253,20 @@ module packadic.components {
 
                 var action:string = $(this).attr('data-layout-api');
                 var args:string = $(this).attr('data-layout-api-args');
-                console.log('data-layout-api', this, action, args);
                 self.api(action, args);
             });
         }
 
+        /**
+         * Register a new layout-api action
+         * @param {String} actionName - The name of the action
+         * @param {Function} callbackFn - The function to call
+         * ```typescript
+         * layout.setApiAction('sidebar-toggle', () => {
+         *      layout.isSidebarClosed() ? layout.openSidebar() : layout.closeSidebar();
+         * });
+         * ```
+         */
         public setApiAction(actionName:string, callbackFn:Function){
             this._apiCallbacks[actionName] = callbackFn;
         }
@@ -245,12 +279,20 @@ module packadic.components {
 
         }
 
+        /**
+         * Call a registered layout-api action
+         * @param action
+         * @param args
+         * ```typescript
+         * layout.api('sidebar-toggle');
+         * ```
+         */
         public api(action:string, ...args:any[]){
             var self:LayoutComponent = this;
             if(!this._apiCallbacks[action]){
                 throw new Error('Layout api action ' + action + ' does not exist');
             }
-            this._apiCallbacks[action](args);
+            this._apiCallbacks[action].apply(this._apiCallbacks[action], args);
         }
 
 
@@ -483,7 +525,7 @@ module packadic.components {
              $ul.slideUp(this.config('layout.sidebar.slideSpeed'));
              }
              });*/
-            this.app.emit('sidebar:close-submenus');
+            this.app.emit('layout:sidebar:close-submenus');
         }
 
         public closeSidebar(callback?:any):JQueryPromise<any> {
@@ -497,7 +539,7 @@ module packadic.components {
             self.closing = true;
             var defer:any = $.Deferred();
 
-            this.app.emit('sidebar:close');
+            this.app.emit('layout:sidebar:close');
             self.closeSubmenus();
 
             var $title = el.sidebarMenu.find('li a span.title, li a span.arrow');
@@ -544,7 +586,7 @@ module packadic.components {
                     callback();
                 }
                 defer.resolve();
-                self.app.emit('sidebar:closed');
+                self.app.emit('layout:sidebar:closed');
             });
             return defer.promise();
         }
@@ -561,7 +603,7 @@ module packadic.components {
 
             self.setSidebarClosed(false);
 
-            this.app.emit('sidebar:open');
+            this.app.emit('layout:sidebar:open');
             async.parallel([
                 function (cb:any) {
                     el.content.css('margin-left', self.config('layout.sidebar.closedWidth'))
@@ -611,7 +653,7 @@ module packadic.components {
                 }
                 defer.resolve();
 
-                self.app.emit('sidebar:opened');
+                self.app.emit('layout:sidebar:opened');
             });
             return defer.promise();
         }
@@ -628,7 +670,7 @@ module packadic.components {
                 $body.addClass('page-sidebar-hide');
             }
             $('header.top .sidebar-toggler').hide();
-            this.app.emit('sidebar:hide');
+            this.app.emit('layout:sidebar:hide');
         }
 
         public showSidebar() {
@@ -636,7 +678,7 @@ module packadic.components {
             $body.removeClass('page-sidebar-closed')
                 .removeClass('page-sidebar-hide');
             $('header.top .sidebar-toggler').show();
-            this.app.emit('sidebar:show');
+            this.app.emit('layout:sidebar:show');
         }
 
         protected sidebarResolveActive() {
@@ -685,22 +727,22 @@ module packadic.components {
                 this._initFixedHovered();
             }
             this._initFixed();
-            this.app.emit('sidebar:' + fixed ? 'fix' : 'unfix');
+            this.app.emit('layout:sidebar:fixed', fixed);
         }
 
         public setSidebarCondensed(condensed:boolean) {
             $body.ensureClass("page-sidebar-condensed", condensed);
-            this.app.emit('sidebar:' + condensed ? 'condensed' : 'decondensed');
+            this.app.emit('layout:sidebar:condensed', condensed);
         }
 
         public setSidebarHover(hover:boolean) {
             el.sidebarMenu.ensureClass("page-sidebar-menu-hover-submenu", hover && !this.isSidebarFixed());
-            this.app.emit('sidebar:' + hover ? 'hover' : 'dehover');
+            this.app.emit('layout:sidebar:hover', hover);
         }
 
         public setSidebarReversed(reversed:boolean) {
             $body.ensureClass("page-sidebar-reversed", reversed);
-            this.app.emit('sidebar:' + reversed ? 'set-right' : 'set-left');
+            this.app.emit('layout:sidebar:reversed', reversed);
         }
 
         /****************************/
@@ -714,7 +756,7 @@ module packadic.components {
                 $body.removeClass("page-header-fixed");
                 el.header.removeClass("navbar-fixed-top").addClass("navbar-static-top");
             }
-            this.app.emit('header:set-fixed', fixed);
+            this.app.emit('layout:header:fixed', fixed);
         }
 
         public setFooterFixed(fixed:boolean) {
@@ -723,7 +765,7 @@ module packadic.components {
             } else {
                 $body.removeClass("page-footer-fixed");
             }
-            this.app.emit('footer:set-fixed', fixed);
+            this.app.emit('layout:footer:fixed', fixed);
         }
 
         public setBoxed(boxed:boolean) {
@@ -749,7 +791,7 @@ module packadic.components {
                 }
                 //cont.remove();
             }
-            this.app.emit('set-boxed', boxed);
+            this.app.emit('layout:page:boxed', boxed);
         }
 
         public setEdged(edged:boolean) {
@@ -759,19 +801,7 @@ module packadic.components {
             }
 
             $body.ensureClass('page-edged', edged);
-            this.app.emit('set-edged');
-        }
-
-        protected firingResizeEvent:boolean = false;
-        public fireResizedEvent(){
-            if(this.firingResizeEvent){
-                return;
-            }
-            this.firingResizeEvent = true;
-            setTimeout(() => {
-                this.app.emit('resize');
-                this.firingResizeEvent = false;
-            }, 60);
+            this.app.emit('layout:page:edged');
         }
 
         public setTheme(name:string):LayoutComponent {
@@ -814,6 +844,11 @@ module packadic.components {
 
         }
 
+        /**
+         * Animated scroll to the given element
+         * @param ele
+         * @param offset
+         */
         public scrollTo(ele?:any, offset?:number) {
             var $el:JQuery = typeof(ele) === 'string' ? $(ele) : ele;
             var pos = ($el && $el.size() > 0) ? $el.offset().top : 0;

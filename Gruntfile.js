@@ -143,7 +143,15 @@ module.exports = function (_grunt) {
         sassdoc: {styles: {src: ['src/styles', 'bower_components/bourbon/app/assets/stylesheets'], options: {dest: '<%= target.dest %>/docs/scss'}}},
         typedoc: {
             options : {target: 'es5', mode: 'file', hideGenerator: '', experimentalDecorators: '', includeDeclarations: ''},
-            packadic: {src: ['!src/ts/packadic.d.ts', 'src/ts/packadic/**/*.ts'], options: {out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}}
+            packadic: {
+                options: {
+                    out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'docs/packadic.md',
+                    ignoreCompilerErrors: '', excludeExternals: ''
+                },
+                src: ['src/ts/**/*.ts', '!src/ts/packadic.d.ts', '!src/ts/plugins/**/*.ts']
+            },
+            components: {src: ['src/ts/components/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/components', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}},
+            plugins: {src: ['src/ts/plugins/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/plugins', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}}
         },
 
         /**/

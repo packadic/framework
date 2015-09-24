@@ -69,20 +69,19 @@ var packadic;
             };
             PresetsComponent.prototype.applyPresetType = function (name, config) {
                 var _this = this;
-                this.layout.reset();
+                var self = this;
                 switch (name) {
                     case 'theme':
                         this.layout.setTheme(config);
                         this.app.emit('layout:preset:theme', config);
                         break;
                     case 'layout':
-                        console.log('apply preset type', name, config, this, self);
+                        this.layout.reset();
                         if (packadic.kindOf(config) === 'string') {
                             config = [config];
                         }
                         config.forEach(function (actionName) {
-                            console.log('apply preset type', name, config, _this, self);
-                            _this.layout.api(actionName);
+                            self.layout.api(actionName);
                         });
                         this.app.emit('layout:preset:layout', config);
                         break;

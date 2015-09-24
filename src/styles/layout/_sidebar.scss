@@ -304,6 +304,12 @@
 		}
 	}
 
+    .page-sidebar-fixed.page-edged {
+        .page-sidebar {
+            top: $header-height;
+        }
+    }
+
 	.page-sidebar-closed {
 		.page-sidebar {
 			width: $sidebar-collapsed-width !important;
