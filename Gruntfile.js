@@ -71,6 +71,7 @@ module.exports = function (_grunt) {
             options  : {
                 pretty: true, data: function () {
                     return _.merge({}, {
+                        _: _,
                         _inspect: util.inspect,
                         material: require('./src/grunt/material-colors')
                     });
