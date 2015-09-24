@@ -27,7 +27,7 @@ html(lang="en")
                 link(href=assetPath + "styles/themes/theme-"+themeStyle+".css", type="text/css", rel="stylesheet", id='theme-style')
                 link(href=assetPath + "bower_components/highlightjs/styles/tomorrow.css", type="text/css", rel="stylesheet", id='hljs-style')
 
-    body.page-loading(class=bodyClass)
+    body.angular2-app.page-loading(class=bodyClass)
         #page-loader
             .loader.loader-page
 
@@ -48,7 +48,7 @@ html(lang="en")
                         ul.nav.navbar-nav
                         //a.nav-link.nav-link-icon(href="#"): i.fa.fa-cog
                     .pull-right
-                        .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
+                        .nav-link.quick-sidebar-toggler(data-quick-sidebar='toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
 
 
 
@@ -109,6 +109,9 @@ html(lang="en")
             script(src=assetPath + 'scripts/plugins/testPlugin.js')
             script(src=assetPath + 'scripts/plugins/testWidget.js')
 
+            script(src=assetPath + 'bower_components/reflect-metadata/Reflect.js')
+            script(src=assetPath + 'bower_components/system.js/dist/system.src.js')
+            script(src=assetPath + '../angular2-app/app.js')
         block init-script
             script.
                 // last
@@ -121,6 +124,15 @@ html(lang="en")
                     $('#testPluginContainer').testPlugin({});
                     $('#testWidgetContainer').testWidget({});
                 });
+                System.config({
+                    defaultJSExtensions: true,
+                    map: {
+                        angular2: 'assets/angular2',
+                        rx: 'bower_components/rxjs/dist/rx.js'
+                    }
+                });
+                //System.baseURL = '/angular2';
+                System.import('angular2-app/app');
 
         block script
 

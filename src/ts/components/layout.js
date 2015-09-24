@@ -5,10 +5,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var packadic;
 (function (packadic) {
-    var layout;
-    (function (layout_1) {
-        var Component = packadic.components.Component;
-        var Components = packadic.components.Components;
+    var components;
+    (function (components) {
         var defaultConfig = {
             selectors: {
                 'search': '.sidebar-search',
@@ -154,6 +152,7 @@ var packadic;
             LayoutComponent.prototype.boot = function () {
                 packadic.debug.log('LayoutComponent debug');
                 el = new Elements(this);
+                this._initLayoutApiActions();
                 this._initHeader();
                 this._initFixed();
                 this._initSidebarSubmenus();
@@ -164,57 +163,87 @@ var packadic;
                 this._initResizeEvent();
                 this._initSidebarResizeListener();
                 this._initEdgedHeightResizeListener();
+            };
+            LayoutComponent.prototype._initLayoutApiActions = function () {
+                var _this = this;
                 var self = this;
-                $('body').onClick('[data-layout-api]', function (e) {
+                this._apiCallbacks = {};
+                var apiActions = {
+                    'theme': function (themeName) {
+                        _this.setTheme(themeName);
+                    },
+                    'page-boxed': function () {
+                        _this.setBoxed(!_this.isBoxed());
+                    },
+                    'page-edged': function () {
+                        _this.setEdged(!_this.isEdged());
+                    },
+                    'header-fixed': function () {
+                        _this.setHeaderFixed(!_this.isHeaderFixed());
+                    },
+                    'footer-fixed': function () {
+                        _this.setFooterFixed(!_this.isFooterFixed());
+                    },
+                    'toggle-sidebar': function () {
+                        _this.isSidebarClosed() ? _this.openSidebar() : _this.closeSidebar();
+                    },
+                    'sidebar-fixed': function () {
+                        _this.setSidebarFixed(!_this.isSidebarFixed());
+                    },
+                    'close-submenus': function () {
+                        _this.closeSubmenus();
+                    },
+                    'close-sidebar': function () {
+                        _this.closeSidebar();
+                    },
+                    'open-sidebar': function () {
+                        _this.openSidebar();
+                    },
+                    'hide-sidebar': function () {
+                        _this.hideSidebar();
+                    },
+                    'show-sidebar': function () {
+                        _this.showSidebar();
+                    },
+                    'condensed-sidebar': function () {
+                        _this.setSidebarCondensed(!_this.isSidebarCondensed());
+                    },
+                    'hover-sidebar': function () {
+                        _this.setSidebarHover(!_this.isSidebarHover());
+                    },
+                    'reversed-sidebar': function () {
+                        _this.setSidebarReversed(!_this.isSidebarReversed());
+                    },
+                };
+                this.setApiActions(apiActions);
+                $body.onClick('[data-layout-api]', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     var action = $(this).attr('data-layout-api');
-                    switch (action) {
-                        case 'theme':
-                            self.setTheme($(this).attr('data-theme'));
-                            break;
-                        case 'page-boxed':
-                            self.setBoxed(!self.isBoxed());
-                            break;
-                        case 'page-edged':
-                            self.setEdged(!self.isEdged());
-                            break;
-                        case 'header-fixed':
-                            self.setHeaderFixed(!self.isHeaderFixed());
-                            break;
-                        case 'footer-fixed':
-                            self.setFooterFixed(!self.isFooterFixed());
-                            break;
-                        case 'toggle-sidebar':
-                            self.isSidebarClosed() ? self.openSidebar() : self.closeSidebar();
-                            break;
-                        case 'sidebar-fixed':
-                            self.setSidebarFixed(!self.isSidebarFixed());
-                            break;
-                        case 'close-submenus':
-                            self.closeSubmenus();
-                            break;
-                        case 'close-sidebar':
-                            self.closeSidebar();
-                            break;
-                        case 'open-sidebar':
-                            self.openSidebar();
-                            break;
-                        case 'hide-sidebar':
-                            self.hideSidebar();
-                            break;
-                        case 'show-sidebar':
-                            self.showSidebar();
-                            break;
-                        case 'condensed-sidebar':
-                            self.setSidebarCondensed(!self.isSidebarCondensed());
-                            break;
-                        case 'hover-sidebar':
-                            self.setSidebarHover(!self.isSidebarHover());
-                            break;
-                        case 'reversed-sidebar':
-                            self.setSidebarReversed(!self.isSidebarReversed());
-                            break;
-                    }
+                    var args = $(this).attr('data-layout-api-args');
+                    console.log('data-layout-api', this, action, args);
+                    self.api(action, args);
                 });
+            };
+            LayoutComponent.prototype.setApiAction = function (actionName, callbackFn) {
+                this._apiCallbacks[actionName] = callbackFn;
+            };
+            LayoutComponent.prototype.setApiActions = function (apiActions) {
+                var _this = this;
+                $.each(apiActions, function (actionName, actionFn) {
+                    _this.setApiAction(actionName, actionFn);
+                });
+            };
+            LayoutComponent.prototype.api = function (action) {
+                var args = [];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    args[_i - 1] = arguments[_i];
+                }
+                var self = this;
+                if (!this._apiCallbacks[action]) {
+                    throw new Error('Layout api action ' + action + ' does not exist');
+                }
+                this._apiCallbacks[action](args);
             };
             LayoutComponent.prototype.removePageLoader = function () {
                 $body.removeClass('page-loading');
@@ -562,9 +591,7 @@ var packadic;
                         href = self.config('docgen.baseUrl') + href;
                     }
                     var path = packadic.util.str.trim(href, '/');
-                    packadic.debug.log(path, currentPath, href);
                     if (path == currentPath) {
-                        packadic.debug.log('Resolved active sidebar link', this);
                         var $el = $(this);
                         $el.parent('li').not('.active').addClass('active');
                         var $parentsLi = $el.parents('li').addClass('open');
@@ -647,6 +674,13 @@ var packadic;
             };
             LayoutComponent.prototype.setTheme = function (name) {
                 var $ts = $('#theme-style');
+                if ($ts.length === 0) {
+                    $ts = packadic.cre('link')
+                        .attr('href', '#')
+                        .attr('rel', 'stylesheet')
+                        .attr('type', 'text/css');
+                    $('head').append($ts);
+                }
                 $ts.attr('href', $ts.attr('href').replace(/(.*?\/styles\/themes\/theme)\-.*?\.css/, '$1-' + name + '.css'));
                 return this;
             };
@@ -728,8 +762,8 @@ var packadic;
                 return $body.hasClass('page-sidebar-reversed');
             };
             return LayoutComponent;
-        })(Component);
-        layout_1.LayoutComponent = LayoutComponent;
+        })(components.Component);
+        components.LayoutComponent = LayoutComponent;
         var Loader = (function () {
             function Loader(name, el) {
                 this.name = name;
@@ -756,8 +790,8 @@ var packadic;
             };
             return Loader;
         })();
-        layout_1.Loader = Loader;
-        Components.register('layout', LayoutComponent, defaultConfig);
-    })(layout = packadic.layout || (packadic.layout = {}));
+        components.Loader = Loader;
+        components.Components.register('layout', LayoutComponent, defaultConfig);
+    })(components = packadic.components || (packadic.components = {}));
 })(packadic || (packadic = {}));
 //# sourceMappingURL=layout.js.map

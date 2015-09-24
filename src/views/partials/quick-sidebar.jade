@@ -1,17 +1,17 @@
 nav.quick-sidebar
     .qs-header
         .pull-left
-            button.btn.blue-grey.qs-prev(type='button', data-quick-sidebar='prev', title='Previous tab')
+            button.btn.blue-grey.qs-prev(type='button', data-layout-api='qs-prev', title='Previous tab')
                 i.fa.fa-arrow-left
-            button.btn.blue-grey.qs-next(type='button', data-quick-sidebar='next', title='Next tab')
+            button.btn.blue-grey.qs-next(type='button', data-layout-api='qs-next', title='Next tab')
                 i.fa.fa-arrow-right
 
         .pull-left.middle.hidden-xs-down.hidden-md-up
 
         .pull-right
-            button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-quick-sidebar='pin', title='Pin/unpin the quick sidebar')
+            button.btn.blue-grey-dark.hidden-md-down.qs-pin(type='button', data-layout-api='qs-pin', title='Pin/unpin the quick sidebar')
                 i.fa.fa-thumb-tack
-            button.btn.blue-grey.qs-close(type='button', data-quick-sidebar='close', title='Close')
+            button.btn.blue-grey.qs-close(type='button', data-layout-api='qs-close', title='Close')
                 i.fa.fa-times
 
     .qs-tabs-wrapper
@@ -26,12 +26,23 @@ nav.quick-sidebar
             each action, i in ['toggle-sidebar','page-boxed', 'page-edged', 'header-fixed','footer-fixed','sidebar-fixed','close-submenus','close-sidebar','open-sidebar','hide-sidebar','show-sidebar','condensed-sidebar','hover-sidebar','reversed-sidebar']
                 +abtn(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
+    .qs-content#qs-themes(data-name='Themes')
+        .qs-section
+            h3 Themes
+            p Customisation made easy. The result is here.
+            each theme in ['default', 'dark-sidebar']
+                +abtn(data-layout-api='theme', data-theme=theme, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=theme
+
+            h3 Presets
+                +abtn.blue-grey(data-preset='default', block) Default
+                +abtn.blue-grey(data-preset='condensed-dark', block) Condensed Dark
+
     .qs-content#qs-qs(data-name='Quick-Sidebar')
         .qs-section
             h3 QuickSidebar API
             p The quick sidebar API provides easy interaction with the layout with either HTML5 data-attributes or pure Javascript.
-            each action, i in ['pin', 'close', 'toggle', 'open', 'next', 'prev']
-                +abtn(data-quick-sidebar=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
+            each action, i in ['qs-pin', 'qs-close', 'qs-toggle', 'qs-open', 'qs-next', 'qs-prev']
+                +abtn(data-layout-api=action, block, class=i % 2 ? 'blue-grey' : 'blue-grey-light')=action
 
     .qs-content#qs-random(data-name='Random')
         .qs-section

@@ -1,10 +1,7 @@
 /// <reference path="./../types.d.ts" />
 /// <reference path="./../packadic.d.ts" />
-module packadic.layout {
 
-    import Component = packadic.components.Component;
-    import Components = packadic.components.Components;
-    import JQueryPositionOptions = JQueryUI.JQueryPositionOptions;
+module packadic.components {
 
 
     var defaultConfig:any = {
@@ -128,6 +125,7 @@ module packadic.layout {
     var el:Elements;
 
 
+
     /**
      * @class LayoutComponent
      */
@@ -135,6 +133,8 @@ module packadic.layout {
 
         public openCloseInProgress:boolean = false;
         public closing:boolean = false;
+
+        protected _apiCallbacks:{[actionName:string]:Function};
 
         public init() {
             this.app.debug.log('LayoutComponent init');
@@ -148,6 +148,7 @@ module packadic.layout {
             debug.log('LayoutComponent debug');
             el = new Elements(this);
 
+            this._initLayoutApiActions();
             this._initHeader();
             this._initFixed();
             this._initSidebarSubmenus();
@@ -161,60 +162,94 @@ module packadic.layout {
             this._initSidebarResizeListener();
             this._initEdgedHeightResizeListener();
 
+
+
+        }
+
+        protected _initLayoutApiActions(){
             var self:LayoutComponent = this;
-            $('body').onClick('[data-layout-api]', function (e) {
+            this._apiCallbacks = {};
+            var apiActions:any = {
+                'theme': (themeName:string) => {
+                    this.setTheme(themeName);
+                },
+                'page-boxed': () => {
+                    this.setBoxed(!this.isBoxed());
+                },
+                'page-edged': () => {
+                    this.setEdged(!this.isEdged());
+                },
+                'header-fixed': () => {
+                    this.setHeaderFixed(!this.isHeaderFixed());
+                },
+                'footer-fixed': () => {
+                    this.setFooterFixed(!this.isFooterFixed());
+                },
+
+
+                'toggle-sidebar': () => {
+                    this.isSidebarClosed() ? this.openSidebar() : this.closeSidebar();
+                },
+                'sidebar-fixed': () => {
+                    this.setSidebarFixed(!this.isSidebarFixed());
+                },
+                'close-submenus': () => {
+                    this.closeSubmenus();
+                },
+                'close-sidebar': () => {
+                    this.closeSidebar();
+                },
+                'open-sidebar': () => {
+                    this.openSidebar();
+                },
+                'hide-sidebar': () => {
+                    this.hideSidebar();
+                },
+                'show-sidebar': () => {
+                    this.showSidebar();
+                },
+                'condensed-sidebar': () => {
+                    this.setSidebarCondensed(!this.isSidebarCondensed());
+                },
+                'hover-sidebar': () => {
+                    this.setSidebarHover(!this.isSidebarHover());
+                },
+                'reversed-sidebar': () => {
+                    this.setSidebarReversed(!this.isSidebarReversed());
+                },
+            };
+
+            this.setApiActions(apiActions);
+
+            $body.onClick('[data-layout-api]', function (e:JQueryEventObject) {
+                e.preventDefault();
+                e.stopPropagation();
+
                 var action:string = $(this).attr('data-layout-api');
-                switch (action) {
+                var args:string = $(this).attr('data-layout-api-args');
+                console.log('data-layout-api', this, action, args);
+                self.api(action, args);
+            });
+        }
 
-                    case 'theme':
-                        self.setTheme($(this).attr('data-theme'));
-                        break;
-                    case 'page-boxed':
-                        self.setBoxed(!self.isBoxed());
-                        break;
-                    case 'page-edged':
-                        self.setEdged(!self.isEdged());
-                        break;
-                    case 'header-fixed':
-                        self.setHeaderFixed(!self.isHeaderFixed());
-                        break;
-                    case 'footer-fixed':
-                        self.setFooterFixed(!self.isFooterFixed());
-                        break;
+        public setApiAction(actionName:string, callbackFn:Function){
+            this._apiCallbacks[actionName] = callbackFn;
+        }
 
 
-                    case 'toggle-sidebar':
-                        self.isSidebarClosed() ? self.openSidebar() : self.closeSidebar();
-                        break;
-                    case 'sidebar-fixed':
-                        self.setSidebarFixed(!self.isSidebarFixed());
-                        break;
-                    case 'close-submenus':
-                        self.closeSubmenus();
-                        break;
-                    case 'close-sidebar':
-                        self.closeSidebar();
-                        break;
-                    case 'open-sidebar':
-                        self.openSidebar();
-                        break;
-                    case 'hide-sidebar':
-                        self.hideSidebar();
-                        break;
-                    case 'show-sidebar':
-                        self.showSidebar();
-                        break;
-                    case 'condensed-sidebar':
-                        self.setSidebarCondensed(!self.isSidebarCondensed());
-                        break;
-                    case 'hover-sidebar':
-                        self.setSidebarHover(!self.isSidebarHover());
-                        break;
-                    case 'reversed-sidebar':
-                        self.setSidebarReversed(!self.isSidebarReversed());
-                        break;
-                }
-            })
+        public setApiActions(apiActions:{[name:string]: Function}){
+            $.each(apiActions, (actionName:string, actionFn:any) => {
+                this.setApiAction(actionName, actionFn);
+            });
+
+        }
+
+        public api(action:string, ...args:any[]){
+            var self:LayoutComponent = this;
+            if(!this._apiCallbacks[action]){
+                throw new Error('Layout api action ' + action + ' does not exist');
+            }
+            this._apiCallbacks[action](args);
         }
 
 
@@ -626,10 +661,10 @@ module packadic.layout {
                 }
 
                 var path = util.str.trim(href, '/');
-                debug.log(path, currentPath, href);
+                //debug.log(path, currentPath, href);
 
                 if (path == currentPath) { //util.strEndsWith(path, currentPath)
-                    debug.log('Resolved active sidebar link', this);
+                    //debug.log('Resolved active sidebar link', this);
                     var $el = $(this);
                     $el.parent('li').not('.active').addClass('active');
                     var $parentsLi = $el.parents('li').addClass('open');
@@ -729,6 +764,13 @@ module packadic.layout {
 
         public setTheme(name:string):LayoutComponent {
             var $ts = $('#theme-style');
+            if($ts.length === 0){
+                $ts = cre('link')
+                    .attr('href', '#')
+                    .attr('rel', 'stylesheet')
+                    .attr('type', 'text/css');
+                $('head').append($ts);
+            }
             $ts.attr('href', $ts.attr('href').replace(/(.*?\/styles\/themes\/theme)\-.*?\.css/, '$1-' + name + '.css'));
             return this;
         }

@@ -1,10 +1,7 @@
 /// <reference path="./../types.d.ts" />
 /// <reference path="./../packadic.d.ts" />
-module packadic.layout {
+module packadic.components {
 
-    import Component = packadic.components.Component;
-    import Components = packadic.components.Components;
-    import JQueryPositionOptions = JQueryUI.JQueryPositionOptions;
 
     var defaultConfig:any = {
         transitionTime: 500
@@ -56,12 +53,19 @@ module packadic.layout {
             this._initTabs();
             this._initBindings();
             this._initResizeHandler();
+            this._initLayoutApiActions();
+
             // if body class contains qs-shown which shows the quick sidebar
             // we auto select the first tab
             if (!this.isClosed()) {
                 this.next();
             }
         }
+
+        public get layout():LayoutComponent {
+            return <LayoutComponent> this.components.get('layout'); // this.app['layout'];
+        }
+
 
         /**
          * Auto generates the heading tabs by checking all content
@@ -94,47 +98,37 @@ module packadic.layout {
             //$tabs.parent().scrollLeft(0);
         }
 
+        protected _initLayoutApiActions(){
+            var self:QuickSidebarComponent = this;
+            var apiActions:any = {
+                'qs-open': (target?:string) => {
+                    console.log('qs-open', self, this, target);
+                    self.open(target);
+                },
+                'qs-close': () => {
+                    self.close();
+                },
+                'qs-pin': () => {
+                    self.isPinned() ? self.unpin() : self.pin();
+                },
+                'qs-toggle': (target?:string) => {
+                    (self.isClosed() && self.open(target)) || self.close();
+                },
+                'qs-next': () => {
+                    self.next();
+                },
+                'qs-prev': () => {
+                    self.prev();
+                }
+            };
+            self.layout.setApiActions(apiActions);
+        }
         /**
          * Initialises event bindings
          * @private
          */
         protected _initBindings() {
             var self:QuickSidebarComponent = this;
-
-            // Binds the HTML5 data api
-            $body.onClick('[data-quick-sidebar]', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                var $this = $(this);
-                var action:string = $this.attr('data-quick-sidebar');
-                var target:any = $this.attr('data-target');
-                target = target || self.$e.find('.qs-content').first();
-
-                switch (action) {
-                    case 'open':
-                        self.open(target);
-                        break;
-                    case 'close':
-                        self.close();
-                        break;
-                    case 'pin':
-                        self.isPinned() ? self.unpin() : self.pin();
-                        break;
-                    case 'toggle':
-                        (self.isClosed() && self.open(target)) || self.close();
-                        break;
-                    case 'next':
-                        self.next();
-                        break;
-                    case 'prev':
-                        self.prev();
-                        break;
-                }
-
-                debug.log('[data-quick-sidebar]', 'action: ', action, 'target: ', target); //, 'self: ', self, 'this: ', this);
-
-            });
 
             // Blur the pressed header buttons automaticly
             $body.onClick('.quick-sidebar .qs-header button', function (e) {
@@ -277,17 +271,20 @@ module packadic.layout {
             return this.$e.find('.qs-content.active');
         }
 
-        public open(target:any):QuickSidebarComponent {
+        public open(target?:any):QuickSidebarComponent {
+            console.log('open', target, this, $body);
             if (!this.exists()) {
                 return this;
             }
-            if (this.$e.find(target).length == 0) {
+
+            if (!target || this.$e.find(target).length == 0) {
                 target = '#' + this.$e.find('.qs-content').first().attr('id');
             }
             this.handleTabsMiddleResizing();
             this.resetContent();
-            $body.ensureClass("qs-shown", true);
+            $('body').ensureClass("qs-shown", true);
             this.openTarget(this.$e.find(target));
+            console.log('open', target, this, $body);
             return this;
         }
 
@@ -348,6 +345,6 @@ module packadic.layout {
 
     }
 
-    Components.register('quickSidebar', QuickSidebarComponent, defaultConfig);
+    Components.register('quick_sidebar', QuickSidebarComponent, defaultConfig);
 
 }

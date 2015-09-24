@@ -25,6 +25,7 @@ $quick-sidebar-transition-time: 500ms;
 
 }
 
+
 .quick-sidebar {
 
     & {
@@ -57,8 +58,9 @@ $quick-sidebar-transition-time: 500ms;
 
     .qs-pinned & {
         button.qs-pin {
-            @extend .btn-success;
+            background: $brand-success;
         }
+
     }
 
 

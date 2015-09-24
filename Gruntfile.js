@@ -9,7 +9,7 @@ var _       = require('lodash'),
 
 var docs = {};
 
-function getVendorScripts(vendorScripts){
+function getVendorScripts(vendorScripts) {
     var scripts = [];
     for (var k in vendorScripts) {
         scripts.push('bower_components/' + vendorScripts[k]);
@@ -41,7 +41,7 @@ module.exports = function (_grunt) {
         /**/
         //      Basics & pre-processing
         /**/
-        clean: {
+        clean : {
             all              : {src: '<%= target.dest %>'},
             docs             : {src: '<%= target.dest %>/docs'},
             assets           : {src: '<%= target.dest %>/assets'},
@@ -54,18 +54,20 @@ module.exports = function (_grunt) {
         },
         concat: {
             vendor: {
-                src: getVendorScripts(vendorScripts),
+                src : getVendorScripts(vendorScripts),
                 dest: '<%= target.dest %>/assets/scripts/vendor.js'
             }
         },
-        copy : {
-            images: {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
-            bower : {src: ['**/*.{js,css,woff*,ttf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
-            scss  : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
-            js    : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
+        copy  : {
+            images       : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
+            bower        : {src: ['**/*.{js,css,woff*,ttf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
+            scss         : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
+            js           : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
             ts_components: {src: ['**/*.ts'], cwd: 'src/ts/components', expand: true, dest: '<%= target.dest %>/assets/scripts/components'},
+            angular2_app: {src: ['**/*.{js,js.map,html,css}'], cwd: 'src/angular2', expand: true, dest: '<%= target.dest %>/angular2-app'},
+            angular2_files: {src: ['**/*.{js,js.map,html}'], cwd: 'node_modules/angular2', expand: true, dest: '<%= target.dest %>/assets/angular2'}
         },
-        jade : {
+        jade  : {
             options  : {
                 pretty: true, data: function () {
                     return _.merge({}, {
@@ -86,8 +88,8 @@ module.exports = function (_grunt) {
             options: {sourceMap: false, outputStyle: 'expanded'}, // '<%= target.name === "demo" ? "expanded" : "compressed" %>'},
             styles : {
                 files: {
-                    '<%= target.dest %>/assets/styles/stylesheet.css'          : 'src/styles/stylesheet.scss',
-                    '<%= target.dest %>/assets/styles/themes/theme-default.css': 'src/styles/themes/theme-default.scss',
+                    '<%= target.dest %>/assets/styles/stylesheet.css'               : 'src/styles/stylesheet.scss',
+                    '<%= target.dest %>/assets/styles/themes/theme-default.css'     : 'src/styles/themes/theme-default.scss',
                     '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css': 'src/styles/themes/theme-dark-sidebar.scss'
                 }
             }
@@ -128,6 +130,10 @@ module.exports = function (_grunt) {
             },
             components: {files: [{src: ['src/ts/components/**/*.ts']}], options: {declaration: false}},
             plugins   : {files: [{src: ['src/ts/plugins/**/*.ts']}], options: {declaration: false}},
+            angular2  : {
+                options: {declaration: false, experimentalDecorators: true, module: 'system'},
+                src    : ['src/angular2/**/*.ts', '!src/angular2/**/*_spec.ts'] //, out: '<%= target.dest %>/angular2/app.js'
+            }
             //widgets   : {files: [{src: ['src/ts/widgets/**/*.ts']}], options: {declaration: false}}
         },
 
@@ -137,7 +143,7 @@ module.exports = function (_grunt) {
         sassdoc: {styles: {src: ['src/styles', 'bower_components/bourbon/app/assets/stylesheets'], options: {dest: '<%= target.dest %>/docs/scss'}}},
         typedoc: {
             options : {target: 'es5', mode: 'file', hideGenerator: '', experimentalDecorators: '', includeDeclarations: ''},
-            packadic: {src: ['!src/ts/packadic.d.ts', 'src/ts/packadic/**/*.ts'], options: {out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'README.md'}}
+            packadic: {src: ['!src/ts/packadic.d.ts', 'src/ts/packadic/**/*.ts'], options: {out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}}
         },
 
         /**/
@@ -164,22 +170,26 @@ module.exports = function (_grunt) {
             watch  : ['default_watch']
         },
         default_watch : {
-            options: {livereload: true},
+            options      : {livereload: true},
             //tasks       : {files: ['src/tasks/**/*.ts', '!src/tasks/**/*.d.ts'], tasks: ['typescript:tasks']},
             //templates   : {files: ['src/templates/**/*.jade'], tasks: ['jade:templates']},
             //newerViews      : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:demo']},
             //views           : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:demo']},
             //grunt_typescript: {files: ['src/clones/grunt-typescript/src/**/*.ts'], tasks: ['subgrunt:typescript']},
             //js          : {files: ['src/js/**/*.js'], tasks: ['copy:js']},
-            styles        : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
-            views           : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
-            newerViews      : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
-            ts_packadic   : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:components', 'uglify:ts_packadic', 'copy_ts_scripts']},
-            ts_components : {files: ['src/ts/components/**/*.ts'], tasks: ['ts:components', 'copy:ts_components', 'copy_ts_scripts']},
-            ts_plugins    : {files: ['src/ts/plugins/**/*.ts'], tasks: ['ts:plugins', 'copy_ts_scripts']},
+            styles       : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
+            views        : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
+            newerViews   : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
+            ts_packadic  : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:components', 'uglify:ts_packadic', 'copy_ts_scripts']},
+            ts_components: {files: ['src/ts/components/**/*.ts'], tasks: ['ts:components', 'copy:ts_components', 'copy_ts_scripts']},
+            ts_plugins   : {files: ['src/ts/plugins/**/*.ts'], tasks: ['ts:plugins', 'copy_ts_scripts']},
 
             jade_test_page: {files: ['src/views/test.jade'], tasks: ['jade:test_page']},
             bower         : {files: ['bower.json'], tasks: ['bower']},
+            angular2: {
+                files: ['src/angular2/**/*.{ts,css,html}'],
+                tasks: ['ts:angular2', 'copy:angular2_app']
+            },
             livereload    : {
                 options: {livereload: 35729},
                 files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/bower_components/**/*']
@@ -230,7 +240,7 @@ module.exports = function (_grunt) {
             })
         }],
         ['junk', '', function () {
-            globule.find('src/tscripts/**/*.{js,js.map}').forEach(function (file) {
+            globule.find('src/ts/**/*.{js,js.map}').forEach(function (file) {
                 fs.removeSync(file);
                 grunt.log.ok('Removed: ' + file);
             });

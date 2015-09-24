@@ -3,8 +3,8 @@ extends layouts/default
 mixin layout-action(id, name, js)
     tr
         td.pl.pr: +abtn(id='layout-' + id, data-layout-api=id, primary, xs, block).layout-action-button=name
-        td.pl.pr: pre.m-n.p-n: code.lang-javascript.bg-color-grey-50=js
-        td.pl.pr: pre.m-n.p-n: code.lang-html.bg-color-grey-50='<a href="#" data-toggle="' + id + '"></a>'
+        td.pl.pr: pre.m-n.p-n: code.lang-javascript.bg-color-grey-50=js ? js : 'app.layout.api("' + id + '")'
+        td.pl.pr: pre.m-n.p-n: code.lang-html.bg-color-grey-50='<a href="#" data-layout-api="' + id + '"></a>'
 
 block page-title
     | Layout API
@@ -24,18 +24,27 @@ block content
                     th.pl Javascript API
                     th.pl HTML5 data-toggle
                 tbody
-                    +layout-action('page-boxed', 'Page boxed', 'app.layout.setBoxed(true || false)')
-                    +layout-action('header-fixed', 'Header fixed', 'app.layout.setHeaderFixed(true || false)')
-                    +layout-action('footer-fixed', 'Footer fixed', 'app.layout.setFooterFixed(true || false)')
-                    +layout-action('sidebar-fixed', 'Sidebar fixed', 'app.layout.setSidebarFixed(true || false)')
-                    +layout-action('compact-sidebar', 'Compact sidebar', 'app.layout.setSidebarCompact(true || false)')
-                    +layout-action('hover-sidebar', 'Hover sidebar', 'app.layout.setSidebarHover(true || false)')
-                    +layout-action('reversed-sidebar', 'Reversed sidebar', 'app.layout.setSidebarReversed(true || false)')
-                    +layout-action('close-submenus', 'Close submenus', 'app.layout.closeSubmenus()')
-                    +layout-action('close-sidebar', 'Close sidebar', 'app.layout.closeSidebar()')
-                    +layout-action('open-sidebar', 'Open sidebar', 'app.layout.openSidebar()')
-                    +layout-action('hide-sidebar', 'Hide sidebar', 'app.layout.hideSidebar()')
-                    +layout-action('show-sidebar', 'Show sidebar', 'app.layout.showSidebar()')
+                    tr: td(colspan=3) Layout
+                    +layout-action('page-boxed', 'Page boxed')
+                    +layout-action('header-fixed', 'Header fixed')
+                    +layout-action('footer-fixed', 'Footer fixed')
+                    +layout-action('sidebar-fixed', 'Sidebar fixed')
+                    +layout-action('condensed-sidebar', 'Condensed sidebar')
+                    +layout-action('hover-sidebar', 'Hover sidebar')
+                    +layout-action('reversed-sidebar', 'Reversed sidebar')
+                    +layout-action('close-submenus', 'Close submenus')
+                    +layout-action('close-sidebar', 'Close sidebar')
+                    +layout-action('open-sidebar', 'Open sidebar')
+                    +layout-action('hide-sidebar', 'Hide sidebar')
+                    +layout-action('show-sidebar', 'Show sidebar')
+                    tr: td(colspan=3) Quick sidebar
+                    +layout-action('qs-toggle', 'Toggle quick sidebar')
+                    +layout-action('qs-open', 'Open quick sidebar', 'app.layout.api("qs-open", "optional-tab-id")')
+                    +layout-action('qs-close', 'Close quick sidebar')
+                    +layout-action('qs-pin', 'Pin quick sidebar')
+                    +layout-action('qs-unpin', 'Unpin quick sidebar')
+                    +layout-action('qs-next', 'Next tab')
+                    +layout-action('qs-prev', 'Previous tab')
 
 
 
