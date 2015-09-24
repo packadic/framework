@@ -6,13 +6,14 @@ include ../_base
 - var assetPath = rootPath + 'assets/';
 - var themeStyle = 'default';
 - var highlightJsStyle = 'tomorrow';
+- var includeHighlightJs = false;
 block vars
 doctype html
 <!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
 <!--[if IE 9]><html lang="en" class="ie9"><![endif]-->
 <!--[if !IE]><!-->
 html(lang="en")
-    <!--<![endif]-->
+<!--<![endif]-->
     head
         block head
             title
@@ -26,7 +27,8 @@ html(lang="en")
             block styles
                 +stylesheet('stylesheet')
                 +stylesheet('themes/theme-' +themeStyle)(id='theme-style')
-                +stylesheet('highlightjs/styles/' + highlightJsStyle, true)(id='hljs-style')
+                if includeHighlightJs
+                    +stylesheet('highlightjs/styles/' + highlightJsStyle, true)(id='hljs-style')
 
     body.page-loading(class=bodyClass)
         #page-loader
@@ -94,6 +96,9 @@ html(lang="en")
             +javascript(src='components/presets.js')
             +javascript(src='plugins/testPlugin.js')
             +javascript(src='plugins/testWidget.js')
+
+            if includeHighlightJs
+                +javascript(src='highlightjs/highlightjs.pack.min', true)
 
         block init-script
             script.
