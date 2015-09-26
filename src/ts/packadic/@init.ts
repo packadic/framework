@@ -1,6 +1,8 @@
 /// <reference path="./../types.d.ts" />
 
 
+console.groupCollapsed('Packadic pre-init logs');
+
 module packadic {
     export var app:Application;
     export var debug:Debug;
@@ -10,6 +12,8 @@ module packadic {
     /****************************/
 
     var configDefaults:any = {
+        baseUrl: location.origin,
+        assetPath: '/assets',
         vendor: {
             material: {
                 // These options set what will be started by $.material.init()

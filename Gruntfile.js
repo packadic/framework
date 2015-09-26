@@ -3,9 +3,11 @@ var util = require('util'),
 var fs = require('fs-extra');
 
 var _       = require('lodash'),
+    _s      = require('underscore.string'),
     exec    = require('child_process').execSync,
     grunt   = require('grunt'),
-    globule = require('globule');
+    globule = require('globule'),
+    xml2js  = require('xml2js');
 
 var docs = {};
 
@@ -17,6 +19,7 @@ function getVendorScripts(vendorScripts) {
     return scripts;
 }
 
+
 module.exports = function (_grunt) {
     grunt = _grunt;
     var target = grunt.option('target') || 'dev';
@@ -25,6 +28,7 @@ module.exports = function (_grunt) {
         'jquery/dist/jquery.js', 'jquery-migrate/jquery-migrate.js', 'jquery-ui/ui/widget.js', 'jquery-slimscroll/jquery.slimscroll.js', 'jcarousel/dist/jquery.jcarousel.js',
         'tether/dist/js/tether.js', 'bootstrap/dist/js/bootstrap.js', 'bootstrap-material-design/dist/js/material.js'
     ];
+
     grunt.log.subhead('Packadic Builder for Packadic ' + require('./bower.json').version);
     //inspect(docs);
     var config = {
@@ -59,19 +63,20 @@ module.exports = function (_grunt) {
             }
         },
         copy  : {
-            images       : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
-            bower        : {src: ['**/*.{js,css,woff*,ttf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
-            scss         : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
-            js           : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
-            ts_components: {src: ['**/*.ts'], cwd: 'src/ts/components', expand: true, dest: '<%= target.dest %>/assets/scripts/components'},
-            angular2_app: {src: ['**/*.{js,js.map,html,css}'], cwd: 'src/angular2', expand: true, dest: '<%= target.dest %>/angular2-app'},
+            images        : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
+            bower         : {src: ['**/*.{js,css,woff*,ttf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
+            scss          : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
+            js            : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
+            ts_components : {src: ['**/*.ts'], cwd: 'src/ts/components', expand: true, dest: '<%= target.dest %>/assets/scripts/components'},
+            angular2_app  : {src: ['**/*.{js,js.map,html,css}'], cwd: 'src/angular2', expand: true, dest: '<%= target.dest %>/angular2-app'},
             angular2_files: {src: ['**/*.{js,js.map,html}'], cwd: 'node_modules/angular2', expand: true, dest: '<%= target.dest %>/assets/angular2'}
         },
         jade  : {
             options  : {
                 pretty: true, data: function () {
                     return _.merge({}, {
-                        _: _,
+                        _       : _,
+                        _s      : _s,
                         _inspect: util.inspect,
                         material: require('./src/grunt/material-colors')
                     });
@@ -80,7 +85,7 @@ module.exports = function (_grunt) {
             test_page: {files: [{expand: true, cwd: 'src/views', src: ['test.jade', '!metalshark/**/*.jade', '!partials/**/*.jade', '!layouts/**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>'}]},
             views    : {files: [{expand: true, cwd: 'src/views', src: ['**/*.jade', '!{document,typedoc}.jade', '!metalshark/**/*.jade', '!partials/**/*.jade', '!layouts/**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>'}]},
             templates: {
-                options: {client: true, pretty: false, amd: true, namespace: false},
+                options: {client: true, amd: false, namespace: 'JST'},
                 files  : [{expand: true, cwd: 'src/templates', src: ['**/*.jade', '!**/_*.jade'], ext: '.js', dest: '<%= target.dest %>/assets/scripts/templates'}]
             }
         },
@@ -115,7 +120,8 @@ module.exports = function (_grunt) {
                         'src/ts/{components,plugins}/*.js'
                     ]
                 }
-            }
+            },
+            templates  : { files: { '<%= target.dest %>/assets/scripts/templates.min.js': [ '<%= target.dest %>/assets/scripts/templates/**/*.js' ] } }
         },
         subgrunt  : {typescript: {'src/clones/grunt-typescript': ['build']}},
         browserify: {
@@ -126,7 +132,7 @@ module.exports = function (_grunt) {
             }
         },
         ts        : {
-            options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true, sourceMap: target === 'dev'},
+            options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true, sourceMap: target === 'dev', experimentalDecorators: true},
             packadic  : {
                 options: {declaration: true, sourceMap: target === 'dev'},
                 src    : ['src/ts/packadic/**/*.ts'],
@@ -146,16 +152,16 @@ module.exports = function (_grunt) {
         /**/
         sassdoc: {styles: {src: ['src/styles', 'bower_components/bourbon/app/assets/stylesheets'], options: {dest: '<%= target.dest %>/docs/scss'}}},
         typedoc: {
-            options : {target: 'es5', mode: 'file', hideGenerator: '', experimentalDecorators: '', includeDeclarations: ''},
-            packadic: {
+            options   : {target: 'es5', mode: 'file', hideGenerator: '', experimentalDecorators: '', includeDeclarations: ''},
+            packadic  : {
                 options: {
-                    out: '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'docs/packadic.md',
+                    out                 : '<%= target.dest %>/docs/packadic', name: 'Packadic API Documentation', readme: 'docs/packadic.md',
                     ignoreCompilerErrors: '', excludeExternals: ''
                 },
-                src: ['src/ts/**/*.ts', '!src/ts/packadic.d.ts', '!src/ts/plugins/**/*.ts']
+                src    : ['src/ts/**/*.ts', '!src/ts/packadic.d.ts', '!src/ts/plugins/**/*.ts']
             },
             components: {src: ['src/ts/components/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/components', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}},
-            plugins: {src: ['src/ts/plugins/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/plugins', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}}
+            plugins   : {src: ['src/ts/plugins/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/plugins', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}}
         },
 
         /**/
@@ -184,11 +190,11 @@ module.exports = function (_grunt) {
         default_watch : {
             options      : {livereload: true},
             //tasks       : {files: ['src/tasks/**/*.ts', '!src/tasks/**/*.d.ts'], tasks: ['typescript:tasks']},
-            //templates   : {files: ['src/templates/**/*.jade'], tasks: ['jade:templates']},
+            templates    : {files: ['src/templates/**/*.jade'], tasks: ['jade:templates', 'uglify:templates']},
             //newerViews      : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:demo']},
             //views           : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:demo']},
             //grunt_typescript: {files: ['src/clones/grunt-typescript/src/**/*.ts'], tasks: ['subgrunt:typescript']},
-            //js          : {files: ['src/js/**/*.js'], tasks: ['copy:js']},
+            js          : {files: ['src/js/**/*.js'], tasks: ['copy:js']},
             styles       : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
             views        : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
             newerViews   : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
@@ -198,7 +204,7 @@ module.exports = function (_grunt) {
 
             jade_test_page: {files: ['src/views/test.jade'], tasks: ['jade:test_page']},
             bower         : {files: ['bower.json'], tasks: ['bower']},
-            angular2: {
+            angular2      : {
                 files: ['src/angular2/**/*.{ts,css,html}'],
                 tasks: ['ts:angular2', 'copy:angular2_app']
             },
@@ -215,6 +221,7 @@ module.exports = function (_grunt) {
 
     grunt.task.renameTask('watch', 'default_watch');
     grunt.loadTasks('tasks');
+
     grunt.initConfig(config);
 
     [
@@ -227,7 +234,7 @@ module.exports = function (_grunt) {
         // compile
         ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles']],
         ['scripts', 'Concat & uglify vendor scripts and compile typescript files',
-            ['clean:scripts', 'uglify:vendor', 'concat:vendor', 'jade:templates', 'ts:packadic', 'ts:components', 'ts:plugins',  'uglify:ts_packadic','copy_ts_scripts', 'copy:js']
+            ['clean:scripts', 'uglify:vendor', 'concat:vendor', 'jade:templates', 'ts:packadic', 'ts:components', 'ts:plugins', 'uglify:ts_packadic', 'copy_ts_scripts', 'copy:js']
         ],
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build

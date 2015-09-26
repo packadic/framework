@@ -1,0 +1,65 @@
+$code-block-top-height: 25px;
+
+.code-block {
+    width: 100%;
+    .code-block-top {
+
+        height: $code-block-top-height;
+    }
+
+    .code-block-information,
+    .code-block-actions {
+        float: left;
+        width: 50%;
+        height: $code-block-top-height;
+    }
+
+    .code-block-information {
+        font-size: 14px;
+        dl {
+            height: $code-block-top-height;
+            display: table;
+            table-layout: fixed;
+        }
+        dt, dd {
+            display: table-cell;
+            width: 25%; // http://stackoverflow.com/questions/10525744/css-table-cell-equal-width
+            padding: 3px 3px 4px 3px;
+        }
+        dt {
+        }
+        dd {
+        }
+    }
+
+    .code-block-actions {
+        text-align: right;
+        @include clearfix;
+
+        a.btn {
+
+        }
+    }
+
+    .code-block-content {
+        pre, code {
+        }
+        pre {
+            width: 100%;
+            code, span.token {
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+
+        code {
+            //padding: 0 !important;
+        }
+
+        pre[class*="language-"]:before,
+        pre[class*="language-"]:after {
+            //content: none !important;
+            //display: none !important;
+        }
+    }
+}

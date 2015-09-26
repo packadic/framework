@@ -19,8 +19,10 @@ interface Window {
     attachEvent(name:string, handler?:Function);
     packadic?:any;
     packadicConfig?:any;
+
 }
 declare var window:Window;
+declare var Prism:any;
 
 interface JQueryStatic {
     material?:any;

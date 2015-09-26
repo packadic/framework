@@ -15,7 +15,7 @@ var packadic;
                 theme: 'default'
             },
             'condensed-dark': {
-                layout: ['header-fixed', 'footer-fixed', 'page-edged', 'condensed-sidebar'],
+                layout: ['header-fixed', 'footer-fixed', 'page-edged', 'sidebar-condensed'],
                 theme: 'dark-sidebar'
             }
         };

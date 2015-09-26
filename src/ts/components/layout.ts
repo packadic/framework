@@ -6,6 +6,7 @@
 module packadic.components {
 
 
+
     var defaultConfig:any = {
         selectors: {
             'search': '.sidebar-search',

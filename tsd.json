@@ -25,6 +25,18 @@
         },
         "highlightjs/highlightjs.d.ts": {
             "commit": "7a3ca1f0b8a0960af9fc1838f3234cc9d6ce0645"
+        },
+        "vue/vue.d.ts": {
+            "commit": "32029fcb4e1a3ef8968711b545d77b584435729d"
+        },
+        "ace/ace.d.ts": {
+            "commit": "54f064352a3615443f7bff4198078db15e28247b"
+        },
+        "codemirror/codemirror.d.ts": {
+            "commit": "54f064352a3615443f7bff4198078db15e28247b"
+        },
+        "systemjs/systemjs.d.ts": {
+            "commit": "54f064352a3615443f7bff4198078db15e28247b"
         }
     }
 }

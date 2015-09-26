@@ -5,3 +5,7 @@
 /// <reference path="bootstrap/bootstrap.d.ts" />
 /// <reference path="async/async.d.ts" />
 /// <reference path="highlightjs/highlightjs.d.ts" />
+/// <reference path="vue/vue.d.ts" />
+/// <reference path="ace/ace.d.ts" />
+/// <reference path="codemirror/codemirror.d.ts" />
+/// <reference path="systemjs/systemjs.d.ts" />

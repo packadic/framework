@@ -81,7 +81,6 @@ module packadic {
             this.isInitialised = false;
             this.isBooted = false;
 
-            this.emit('make');
         }
 
         /**
@@ -101,6 +100,7 @@ module packadic {
             } else {
                 this.isInitialised = true;
             }
+            this.emit('pre-init');
             this.timers.init = new Date;
 
             if (this.DEBUG) {
@@ -137,13 +137,13 @@ module packadic {
             $(() => {
                 this.emit('boot', this);
                 this.timers.boot = new Date;
-                if(!isTouchDevice()) {
+                if (!isTouchDevice()) {
                     $body.tooltip(this.config('vendor.bootstrap.tooltip'));
                 }
                 $body.popover(this.config('vendor.bootstrap.popover'));
                 $.material.options = this.config('vendor.material');
                 $.material.init();
-                if(defined(window['hljs'])) {
+                if (defined(window['hljs'])) {
                     //hljs.initHighlight();
                 }
                 this.isBooted = true;
@@ -153,10 +153,44 @@ module packadic {
             return defer.promise;
         }
 
-
         public get debug():Debug {
             return debug;
         }
+
+
+
+        public getAssetPath(path:string = '', prefixBaseUrl:boolean = true):string {
+            path = util.str.startsWith(path, '/') ? path : '/' + path;
+            return (prefixBaseUrl ? this.config('baseUrl') : '') + this.config('assetPath') + path;
+        }
+
+
+
+        /****************************/
+        // Script/css module loader
+        /****************************/
+        protected _loaded:{[name:string]:boolean} = {};
+        public load(type:string, path:string, bower:boolean = false, pathSuffix:string=''):PromiseInterface<any[]> {
+            var defer:DeferredInterface<any> = util.promise.create();
+            path = util.str.endsWith(path, '.' + type) ? path : path + '.' + type;
+            var fullPath = this.getAssetPath((bower ? 'bower_components/' : 'scripts/') + path) + pathSuffix;
+            this._loaded[fullPath] = true;
+            //debug.log('loading', path);
+            System.import(fullPath).then(function(...args:any[]) {
+                //debug.log('loaded', path, args);
+                defer.resolve(args)
+            });
+            return defer.promise;
+        }
+
+        public loadJS(path:string, bower:boolean = false):PromiseInterface<any[]> {
+            return this.load('js', path, bower);
+        }
+
+        public loadCSS(path:string, bower:boolean = false):PromiseInterface<any[]> {
+            return this.load('css', path, bower, '!css');
+        }
+
 
         /****************************/
         // Events
@@ -185,8 +219,8 @@ module packadic {
             return this;
         }
 
-        public booted(fn:Function){
-            if(this.isBooted){
+        public booted(fn:Function) {
+            if (this.isBooted) {
                 fn([this]);
             } else {
                 this.once('booted', fn);

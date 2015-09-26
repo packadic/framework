@@ -19,6 +19,7 @@ module packadic.components {
         app:Application;
     }
 
+
     export interface IExtensionClass<T extends IExtension> {
         dependencies:string[];
         new(name:string, host:Components, app:Application):T;
@@ -116,6 +117,8 @@ module packadic.components {
         public all():{[name:string]:Component} {
             return this.components;
         }
+
+
 
         public getRegisteredNames():string[] {
             return Object.keys(this.getRegistered());

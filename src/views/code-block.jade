@@ -1,0 +1,69 @@
+extends layouts/default
+
+block vars
+    //- includeHighlightJs = true;
+
+block page-title
+    | Code Block
+
+block breadcrumb
+    +breadcrumb('code-block.html', true) Home
+
+block content
+
+    .row#document
+        .col-md-12
+            h3 Some code
+            code-block(language='php').
+                class FirstClass extends TheClass {
+                    public function __construct(){
+                        debug('asdf');
+                    }
+                }
+
+            h3 More code
+            code-block(language='php').
+                class MyTopClass extends BaseClass {
+                    protected $name;
+                    public function __construct($name){
+                        $this->name = $name;
+                    }
+                }
+
+//block prepend scripts
+    +javascript('CodeMirror/lib/codemirror', true)
+    +javascript('CodeMirror/mode/javascript/javascript', true)
+    +javascript('CodeMirror/mode/xml/xml', true)
+    +javascript('CodeMirror/mode/htmlmixed/htmlmixed', true)
+    +stylesheet('CodeMirror/lib/codemirror', true)
+    +stylesheet('CodeMirror/theme/twilight', true)
+block append script
+
+    script.
+        var app = packadic.Application.instance;
+        app.booted(function() {
+
+            var document = new Vue({
+                el  : '#document',
+                data: {}
+            });
+
+            console.log('vue document', document);
+        });
+        /*
+         return;
+         var template = packadic.getTemplate('code-block');
+         console.log('vue template', template);
+         var CodeBlock = Vue.extend({
+         template: template({
+
+         }),
+         props   : {
+         language: {
+         type    : String,
+         required: false
+         }
+         }
+         });
+         Vue.component('code-block', CodeBlock);
+        */

@@ -1,7 +1,10 @@
 /// <reference path="./../types.d.ts" />
+console.groupCollapsed('Packadic pre-init logs');
 var packadic;
 (function (packadic) {
     var configDefaults = {
+        baseUrl: location.origin,
+        assetPath: '/assets',
         vendor: {
             material: {
                 "input": true,
@@ -85,6 +88,7 @@ var packadic;
     var Application = (function () {
         function Application() {
             this.timers = { construct: null, init: null, boot: null };
+            this._loaded = {};
             this._events = new EventEmitter2({
                 wildcard: true,
                 delimiter: ':',
@@ -98,7 +102,6 @@ var packadic;
             this.timers.construct = new Date;
             this.isInitialised = false;
             this.isBooted = false;
-            this.emit('make');
         }
         Object.defineProperty(Application.prototype, "components", {
             get: function () {
@@ -127,6 +130,7 @@ var packadic;
             else {
                 this.isInitialised = true;
             }
+            this.emit('pre-init');
             this.timers.init = new Date;
             if (this.DEBUG) {
                 this.debug.enable();
@@ -176,6 +180,36 @@ var packadic;
             enumerable: true,
             configurable: true
         });
+        Application.prototype.getAssetPath = function (path, prefixBaseUrl) {
+            if (path === void 0) { path = ''; }
+            if (prefixBaseUrl === void 0) { prefixBaseUrl = true; }
+            path = packadic.util.str.startsWith(path, '/') ? path : '/' + path;
+            return (prefixBaseUrl ? this.config('baseUrl') : '') + this.config('assetPath') + path;
+        };
+        Application.prototype.load = function (type, path, bower, pathSuffix) {
+            if (bower === void 0) { bower = false; }
+            if (pathSuffix === void 0) { pathSuffix = ''; }
+            var defer = packadic.util.promise.create();
+            path = packadic.util.str.endsWith(path, '.' + type) ? path : path + '.' + type;
+            var fullPath = this.getAssetPath((bower ? 'bower_components/' : 'scripts/') + path) + pathSuffix;
+            this._loaded[fullPath] = true;
+            System.import(fullPath).then(function () {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    args[_i - 0] = arguments[_i];
+                }
+                defer.resolve(args);
+            });
+            return defer.promise;
+        };
+        Application.prototype.loadJS = function (path, bower) {
+            if (bower === void 0) { bower = false; }
+            return this.load('js', path, bower);
+        };
+        Application.prototype.loadCSS = function (path, bower) {
+            if (bower === void 0) { bower = false; }
+            return this.load('css', path, bower, '!css');
+        };
         Application.prototype.on = function (event, listener) {
             this._events.on(event, listener);
             return this;
@@ -684,6 +718,14 @@ var packadic;
         return text;
     }
     packadic.getRandomId = getRandomId;
+    function getTemplate(name) {
+        var namePath = 'src/templates/' + name;
+        if (!defined(window['JST'][namePath])) {
+            throw new Error('Template [' + name + '] not found');
+        }
+        return window['JST'][namePath];
+    }
+    packadic.getTemplate = getTemplate;
 })(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
@@ -1335,6 +1377,127 @@ var packadic;
 })(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
+    var vue;
+    (function (vue) {
+        var VueComponent = (function () {
+            function VueComponent() {
+            }
+            VueComponent.prototype.$add = function (key, val) { };
+            VueComponent.prototype.$addChild = function (options, constructor) { };
+            VueComponent.prototype.$after = function (target, cb) { };
+            VueComponent.prototype.$appendTo = function (target, cb) { };
+            VueComponent.prototype.$before = function (target, cb) { };
+            VueComponent.prototype.$broadcast = function (event) {
+                var args = [];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    args[_i - 1] = arguments[_i];
+                }
+            };
+            VueComponent.prototype.$compile = function (el) { return function () { }; };
+            VueComponent.prototype.$delete = function (key) { };
+            VueComponent.prototype.$destroy = function (remove) { };
+            VueComponent.prototype.$dispatch = function (event) {
+                var args = [];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    args[_i - 1] = arguments[_i];
+                }
+            };
+            VueComponent.prototype.$emit = function (event) {
+                var args = [];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    args[_i - 1] = arguments[_i];
+                }
+            };
+            VueComponent.prototype.$eval = function (text) { };
+            VueComponent.prototype.$get = function (exp) { };
+            VueComponent.prototype.$interpolate = function (text) { };
+            VueComponent.prototype.$log = function (path) { };
+            VueComponent.prototype.$mount = function (el) { };
+            VueComponent.prototype.$nextTick = function (fn) { };
+            VueComponent.prototype.$off = function (event, fn) { };
+            VueComponent.prototype.$on = function (event, fn) { };
+            VueComponent.prototype.$once = function (event, fn) { };
+            VueComponent.prototype.$remove = function (cb) { };
+            VueComponent.prototype.$set = function (exp, val) { };
+            VueComponent.prototype.$watch = function (exp, cb, options) { };
+            return VueComponent;
+        })();
+        vue.VueComponent = VueComponent;
+        function lifecycleHook(hook) {
+            return function (cls, name, desc) {
+                if ([
+                    'created', 'beforeCompile', 'compiled', 'ready', 'attached', 'detached', 'beforeDestroy', 'destroyed'
+                ].indexOf(hook) == -1)
+                    throw new Error('Unknown Lifecyle Hook: ' + hook);
+                if (!cls.hasOwnProperty('__hooks__'))
+                    cls.__hooks__ = {};
+                cls.__hooks__[name] = cls[name];
+                desc.value = void 0;
+                return desc;
+            };
+        }
+        vue.lifecycleHook = lifecycleHook;
+        function eventHook(hook) {
+            return function (cls, name, desc) {
+                if (!cls.hasOwnProperty('__events__'))
+                    cls.__events__ = {};
+                cls.__events__[name] = cls[name];
+                desc.value = void 0;
+                return desc;
+            };
+        }
+        vue.eventHook = eventHook;
+        function prop(options) {
+            return function (cls, name) {
+                if (!cls.hasOwnProperty('__props__'))
+                    cls.__props__ = {};
+                cls.__props__[name] = options;
+            };
+        }
+        vue.prop = prop;
+        function createComponent(name) {
+            return function (cls) {
+                var options = {
+                    data: (function () { return new cls(); }),
+                    methods: {},
+                    computed: {}
+                };
+                if (cls.hasOwnProperty('replace'))
+                    options.replace = cls.replace;
+                if (cls.hasOwnProperty('template'))
+                    options.template = cls.template;
+                var obj = new cls();
+                var proto = Object.getPrototypeOf(obj);
+                if (proto.hasOwnProperty('__props__'))
+                    options.props = proto.__props__;
+                if (proto.hasOwnProperty('__events__'))
+                    options.events = proto.__events__;
+                if (proto.hasOwnProperty('__hooks__'))
+                    Object.keys(proto.__hooks__).forEach(function (name) {
+                        options[name] = proto.__hooks__[name];
+                    });
+                Object.getOwnPropertyNames(proto).forEach(function (method) {
+                    if (['constructor'].indexOf(method) > -1)
+                        return;
+                    var desc = Object.getOwnPropertyDescriptor(proto, method);
+                    if (typeof desc.value === 'function')
+                        options.methods[method] = proto[method];
+                    else if (typeof desc.set === 'function')
+                        options.computed[method] = {
+                            get: desc.get,
+                            set: desc.set
+                        };
+                    else if (typeof desc.get === 'function')
+                        options.computed[method] = desc.get;
+                });
+                Vue.component(name, options);
+            };
+        }
+        vue.createComponent = createComponent;
+    })(vue = packadic.vue || (packadic.vue = {}));
+})(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
     var util;
     (function (util) {
         var JSON;
@@ -1389,6 +1552,36 @@ var packadic;
     (function (util) {
         util.str = s;
         util.arr = _;
+        function codeIndentFix(str) {
+            var fix = function (code, leading) {
+                if (leading === void 0) { leading = true; }
+                var txt = code;
+                if (leading) {
+                    txt = txt.replace(/^[\r\n]+/, "").replace(/\s+$/g, "");
+                }
+                if (/^\S/gm.test(txt)) {
+                    return code;
+                }
+                var mat, str, re = /^[\t ]+/gm, len, min = 1e3;
+                while (mat = re.exec(txt)) {
+                    len = mat[0].length;
+                    if (len < min) {
+                        min = len;
+                        str = mat[0];
+                    }
+                }
+                if (min == 1e3)
+                    return code;
+                console.log(str);
+                return txt.replace(new RegExp("^" + str, 'gm'), "");
+            };
+            return fix(str);
+        }
+        util.codeIndentFix = codeIndentFix;
+        function preCodeIndentFix(el) {
+            return codeIndentFix(el.textContent);
+        }
+        util.preCodeIndentFix = preCodeIndentFix;
         var num;
         (function (num) {
             function round(value, places) {
@@ -3125,5 +3318,26 @@ var packadic;
 (function () {
     packadic.debug = new packadic.Debug();
     packadic.app = packadic.Application.instance;
+    packadic.app.on('pre-init', function () {
+        console.groupEnd();
+    });
+    packadic.app.on('init', function (args) {
+        var app = args[0];
+        console.log('init app systemjs', app);
+        System.config({
+            defaultJSExtensions: true,
+            map: {
+                css: app.getAssetPath('scripts/systemjs/css-plugin.js')
+            },
+            meta: {
+                '*.css': {
+                    loader: 'css'
+                },
+                '*codemirror.js': { format: 'global', exports: 'CodeMirror' },
+                '*highlightjs/highlight.pack*.js': { format: 'global', exports: 'hljs' },
+                '*prism/prism*.js': { format: 'global', exports: 'Prism' }
+            }
+        });
+    });
 }.call(this));
 //# sourceMappingURL=packadic.js.map

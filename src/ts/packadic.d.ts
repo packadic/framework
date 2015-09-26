@@ -28,6 +28,13 @@ declare module packadic {
         init(opts?: any): Application;
         boot(): PromiseInterface<Application>;
         debug: Debug;
+        getAssetPath(path?: string, prefixBaseUrl?: boolean): string;
+        protected _loaded: {
+            [name: string]: boolean;
+        };
+        load(type: string, path: string, bower?: boolean, pathSuffix?: string): PromiseInterface<any[]>;
+        loadJS(path: string, bower?: boolean): PromiseInterface<any[]>;
+        loadCSS(path: string, bower?: boolean): PromiseInterface<any[]>;
         on(event: string, listener: Function): Application;
         once(event: string, listener: Function): Application;
         off(event: string, listener: Function): Application;
@@ -166,6 +173,7 @@ declare module packadic {
     function getViewPort(): any;
     function isTouchDevice(): boolean;
     function getRandomId(length?: number): string;
+    function getTemplate(name: any): any;
 }
 declare module packadic.plugins {
     function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
@@ -315,6 +323,48 @@ declare module packadic.storage {
         keys(): string[];
     }
 }
+declare module packadic.vue {
+    class VueComponent {
+        $: any;
+        $$: any;
+        $data: any;
+        $children: Array<Vue>;
+        $el: HTMLElement;
+        $options: any;
+        $parent: Vue;
+        $root: Vue;
+        $add(key: string, val: any): void;
+        $addChild(options?: any, constructor?: () => void): void;
+        $after(target: HTMLElement | string, cb: () => void): void;
+        $appendTo(target: HTMLElement | string, cb?: () => void): void;
+        $before(target: HTMLElement | string, cb?: () => void): void;
+        $broadcast(event: string, ...args: Array<any>): void;
+        $compile(el: HTMLElement): Function;
+        $delete(key: string): void;
+        $destroy(remove: boolean): void;
+        $dispatch(event: string, ...args: Array<any>): void;
+        $emit(event: string, ...args: Array<any>): void;
+        $eval(text: string): void;
+        $get(exp: string): void;
+        $interpolate(text: string): void;
+        $log(path?: string): void;
+        $mount(el: HTMLElement | string): void;
+        $nextTick(fn: () => void): void;
+        $off(event: string, fn: (...args: Array<any>) => void | boolean): void;
+        $on(event: string, fn: (...args: Array<any>) => void | boolean): void;
+        $once(event: string, fn: (...args: Array<any>) => void | boolean): void;
+        $remove(cb?: () => void): void;
+        $set(exp: string, val: any): void;
+        $watch(exp: string | (() => string), cb: (val: any, old?: any) => any, options?: {
+            deep?: boolean;
+            immediate?: boolean;
+        }): void;
+    }
+    function lifecycleHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
+    function eventHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
+    function prop(options: any): (cls: any, name: string) => void;
+    function createComponent(name: string): (cls: any) => void;
+}
 declare module packadic.util.JSON {
     function stringify(obj: any): any;
     function parse(str: string, date2obj?: any): any;
@@ -323,6 +373,8 @@ declare module packadic.util.JSON {
 declare module packadic.util {
     var str: UnderscoreStringStatic;
     var arr: _.LoDashStatic;
+    function codeIndentFix(str: string): string;
+    function preCodeIndentFix(el: HTMLElement): string;
     module num {
         function round(value: any, places: any): number;
     }

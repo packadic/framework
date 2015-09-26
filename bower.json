@@ -53,13 +53,16 @@
     "lunr.js": "~0.5.12",
     "svg.js": "~2.0.5",
     "fuse": "~1.2.2",
-    "prism": "~1.0.1",
+    "prism": "PrismJS/prism#gh-pages",
     "underscore.string": "~3.2.2",
     "jquery-ui": "~1.11.4",
     "tether": "~1.1.0",
     "jcarousel": "~0.3.3",
     "systemjs": "*",
-    "rxjs": "~3.1.2"
+    "rxjs": "~3.1.2",
+    "vue": "~0.12.15",
+    "ace-builds": "~1.2.0",
+    "CodeMirror": "~5.7.0"
   },
   "resolutions": {
     "jquery": "~1.11.2"

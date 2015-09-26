@@ -88,14 +88,21 @@ html(lang="en")
                     .scroll-to-top
                         i.fa.fa-level-up
 
+
         block scripts
-            +javascript(src='vendor.js')
-            +javascript(src='packadic.js')
-            +javascript(src='components/layout.js')
-            +javascript(src='components/quick_sidebar.js')
-            +javascript(src='components/presets.js')
-            +javascript(src='plugins/testPlugin.js')
-            +javascript(src='plugins/testWidget.js')
+            +javascript('reflect-metadata/Reflect', true)
+            +javascript('es6-module-loader/dist/es6-module-loader.js', true)
+            +javascript('system.js/dist/system.src', true)
+            +javascript('vue/dist/vue.js', true)
+            +javascript('vendor')
+            +javascript('packadic')
+            +javascript('templates.min.js')
+            +javascript('components/layout')
+            +javascript('components/quick_sidebar')
+            +javascript('components/presets')
+            +javascript('plugins/testPlugin')
+            +javascript('plugins/testWidget')
+            +javascript('components/code-block')
 
         block scripts-highlightjs
             if includeHighlightJs
@@ -103,16 +110,18 @@ html(lang="en")
 
         block init-script
             script.
-                // last
                 var app = packadic.Application.instance;
                 app.DEBUG = true;
-                app.init({
-                    hello: 'test'
-                });
-                app.boot().then(function (app) {
-                    $('#testPluginContainer').testPlugin({});
-                    $('#testWidgetContainer').testWidget({});
-                });
+                app
+                    .init({
+                        hello: 'test'
+                    })
+                    .boot()
+                    .then(function (app) {
+                        $('#testPluginContainer').testPlugin({});
+                        $('#testWidgetContainer').testWidget({});
+                    });
+
 
         block script
 
