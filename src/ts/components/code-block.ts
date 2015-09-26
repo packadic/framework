@@ -10,7 +10,61 @@ module packadic.components {
         static replace:boolean = true;
 
         @vue.prop({type: String, required: false, 'default': ''})language:string;
+        @vue.prop({type: String, required: false, 'default': ''})title:string;
+        @vue.prop({type: String, required: false, 'default': ''})description:string;
+        @vue.prop({type: Boolean, required: false, 'default': true})showTop:string;
         @vue.prop({type: String, required: false, 'default': 'prism'})theme:string;
+
+        lines:number = 0;
+        original:string = '';
+        code:string = '';
+        actionBtnClass:string = 'btn btn-sm blue-grey-light';
+        show:boolean = false;
+
+        client:ZeroClipboard;
+
+        get actions():any[] {
+            return [
+                {title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick }
+                //{title: 'Test', icon: 'fa-cog', onClick: this.onTestClick}
+            ];
+        }
+
+        onCopyClick(e){
+            console.log('onCopyClick', e.target.tagName, e);
+            //this.client.clip()
+        }
+
+        @vue.lifecycleHook('compiled')
+        compiled():void {
+            console.log('compiled');
+            this.initClipboard();
+        }
+
+        initClipboard():void {
+            if(defined(this.client)){
+                return;
+            }
+            packadic.getClipboard().then((Clipboard:typeof ZeroClipboard) => {
+                this.client = new Clipboard($(this.$el).find('a.btn')); // simple
+                this.client.on('ready', (event:any) => {
+                    this.client.on('copy', (event:any) => {
+                        var clipboard = event.clipboardData;
+                        clipboard.setData('text/plain', this.code);
+                        console.log(event);
+                    });
+
+                    this.client.on('aftercopy', (event:any) => {
+                        debug.log('aftercopy', event.data);
+                    });
+                });
+            });
+        }
+
+        @EventHook('init')
+        _init():void {
+            console.log('EventHook init code-block', this, arguments);
+        }
 
         @vue.lifecycleHook('ready')
         ready():void {
@@ -31,60 +85,31 @@ module packadic.components {
                 var $pre:JQuery = $(this.$el).find('pre');
                 var $code:JQuery = $(this.$el).find('code');
                 $code.ensureClass('language-' + this.language);
-                $code.attr('data-original', $code.text());
-                $code.attr('data-original-fixed', util.codeIndentFix(util.codeIndentFix($code.text())));
-                $code.html('').append($code.data('original-fixed'));
+                this.original = $code.text();
+                this.code = util.codeIndentFix(util.codeIndentFix(this.original));
+                this.lines = this.code.split('\n').length;
+                $code.html('').append(this.code);
                 Prism.highlightElement($code.get(0));
-
-                $code.css({ // fix, cannot be done in scss
-                  //  overflow: 'initial'
-                });
+            }).then(() => {
+                this.show = true;
             });
-            /*
-             app.loadCSS('highlightjs/styles/' + this.theme, true);
-             app.loadJS('highlightjs/highlight.pack.min', true).then(() => {
-             var hljs:HighlightJS = <HighlightJS> window[this.hljs];
-             var $code:JQuery = $(this.$el).find('.code-block-code');
-             var code:string = $code.text();
-             console.log('config tabs', code.split('\n'));
-             var highlighted:any;
-             console.log('code init', code, hljs.listLanguages().indexOf(this.language.toLowerCase()));
-             if(hljs.listLanguages().indexOf(this.language) !== -1){
-             highlighted = hljs.highlight(this.language.toLowerCase(), code);
-             } else {
-             highlighted = hljs.highlightAuto(code);
-             }
-             console.log('code rendered', highlighted);
-             $code.html(highlighted.value).ensureClass('hljs');
-             });
-             */
-
-
-            //var editorId = getRandomId();
-            //var $editor:JQuery = $(this.$el).find('.code-block-editor').attr('id', editorId);
-            //var editor:CodeMirror.EditorFromTextArea;
-            //console.log('this.$options.mode', this.mode);
-            //CMLoader.createEditor(editorId, {
-            //    mode: this.mode
-            //}).then(function (_editor:CodeMirror.EditorFromTextArea) {
-            //    editor = _editor
-            //
-            //    console.log('ready CodeBlock', this, editor)
-            //});
-            // Create one instance of ACE, and use the VirtualRenderer API to attach a new renderer to the 'editor2' div,
-            // then use the Editor, EditSession, & Document APIs to finish the task.
-
         }
 
+        @vue.lifecycleHook('attached')
+        attached():void {
+            console.log('attached');
+            $(this.$el).find('a.btn');
+        }
 
-        // the @lifecycleHook decorator supports the following hooks:
-        // created, beforeCompile, compiled, ready, attached, detached, beforeDestroy, destroyed
-        //@vue.lifecycleHook('compiled')
-        //compiled():void { }
+        @vue.lifecycleHook('detached')
+        detached():void {
+            console.log('detached');
+        }
 
-        // the @eventHook decorator registers the decorated method as event listener
-        //@vue.eventHook('listen.to.event')
-        //eventListenToEvent():boolean {}
+        @vue.lifecycleHook('beforeDestroy')
+        beforeDestroy():void {
+            this.show = false;
 
+        }
     }
 }

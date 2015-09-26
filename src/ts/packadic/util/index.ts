@@ -40,6 +40,16 @@ module packadic.util {
         return codeIndentFix(el.textContent);
     }
 
+
+    export function selectAllAndCopy(obj) {
+        var text_val=eval(obj);
+        text_val.focus();
+        text_val.select();
+        if (!document.all) return; // IE only
+        var r = text_val.createTextRange();
+        r.execCommand('copy');
+    }
+
     export module num {
         /**
          * Round a value to a precision

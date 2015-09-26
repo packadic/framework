@@ -1,5 +1,8 @@
 module packadic {
 
+    import DeferredInterface = packadic.util.promise.DeferredInterface;
+    import PromiseInterface = packadic.util.promise.PromiseInterface;
+
     var kindsOf:any = {};
     'Number String Boolean Function RegExp Array Date Error'.split(' ').forEach(function (k) {
         kindsOf['[object ' + k + ']'] = k.toLowerCase();
@@ -119,5 +122,24 @@ module packadic {
         return window['JST'][namePath];
     }
 
+
+    export var Clipboard:typeof ZeroClipboard;
+
+    export function getClipboard():PromiseInterface<any> {
+        var defer:DeferredInterface<any> = util.promise.create();
+        var app:Application = packadic.Application.instance;
+        if(defined(Clipboard)){
+            defer.resolve(Clipboard);
+        } else {
+            app.on('init', () => {
+                app.loadJS('zeroclipboard/dist/ZeroClipboard', true).then((z:any)=> {
+                    var Clipboard = <typeof ZeroClipboard> z[0];
+                    Clipboard.config({swfPath: app.getAssetPath('bower_components/zeroclipboard/dist/ZeroClipboard.swf')});
+                    defer.resolve(Clipboard);
+                })
+            });
+        }
+        return defer.promise;
+    }
 
 }

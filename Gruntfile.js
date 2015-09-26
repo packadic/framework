@@ -64,7 +64,7 @@ module.exports = function (_grunt) {
         },
         copy  : {
             images        : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
-            bower         : {src: ['**/*.{js,css,woff*,ttf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
+            bower         : {src: ['**/*.{js,css,woff*,ttf,swf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
             scss          : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
             js            : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
             ts_components : {src: ['**/*.ts'], cwd: 'src/ts/components', expand: true, dest: '<%= target.dest %>/assets/scripts/components'},

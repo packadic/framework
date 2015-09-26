@@ -1,13 +1,25 @@
-.code-block
-    .code-block-top
-        dl.code-block-information
-            dt Language:
-            dd php
-            dt Lines:
-            dd 123
-        .code-block-actions.pull-right
-            a(href="#").btn.blue-grey: i.fa.fa-copy
+.code-block(v-class='code-block-show: show')
+    .code-block-top(v-if='showTop')
+        .code-block-information
+            h4
+                span(v-text='title')
+                small(v-text='description')
+            dl
+                dt Language
+                dd(v-text='language')
+                dt Lines
+                dd(v-text='lines')
+
 
     .code-block-content
+        .code-block-actions
+            template(v-repeat='actions')
+                a.btn(
+                    href="javascript:;", data-toggle='tooltip', data-container='body', title='{{title}}',
+                    data-clipboard-text="Copy me!", class='code-block-action-button {{actionBtnClass}}',
+                    v-on='click: onClick'
+                )
+                    i.fa(class='{{icon}}')
+
         pre.line-numbers
             code.code-block-code: content

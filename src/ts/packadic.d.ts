@@ -9,10 +9,60 @@ declare module packadic {
     function callReadyCallbacks(): void;
 }
 declare module packadic {
+    module addons {
+        interface IAddon {
+            app: Application;
+        }
+        class Base {
+            app: Application;
+            constructor(app: Application);
+        }
+        class AddonManager {
+        }
+        class Directive {
+            el: HTMLElement;
+            vm: vuejs.Vue;
+            expression: string;
+            arg: any;
+            raw: string;
+            name: string;
+            bind(): void;
+            unbind(): void;
+            update(newValue: any, oldValue: any): void;
+        }
+        class ElementDirective extends Directive {
+        }
+        function createDirective(name: string): (cls: any) => void;
+        interface TwoWayFilter {
+            read(val: any): any;
+            write(val: any, oldVal: any): any;
+        }
+        interface FilterCallback extends vuejs.FilterCallback {
+            (value: any, begin?: any, end?: any): any;
+        }
+        function Filter(name?: string): MethodDecorator;
+        function FilterCollection(excludedFunctions?: string[]): (target: any) => void;
+        class SomeFilters {
+            testFilter(value: any): any;
+            changeit(val: any, old?: any): any;
+        }
+        class FilterColTest {
+            wtffilter(val: any, old?: any): any;
+            byefilter(val: any, old?: any): any;
+            hellofilter(val: any, old?: any): any;
+            excludethis(val: any, old?: any): any;
+        }
+        var filterColTest: FilterColTest;
+        var someFilters: SomeFilters;
+    }
+}
+declare module packadic {
     import PromiseInterface = packadic.util.promise.PromiseInterface;
     interface IApplication {
     }
-    class Application implements IApplication {
+    function EventHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
+    class Application extends Vue implements IApplication {
+        data: any;
         static defaults: any;
         protected static _instance: Application;
         DEBUG: boolean;
@@ -23,7 +73,7 @@ declare module packadic {
         isBooted: boolean;
         timers: any;
         components: components.Components;
-        constructor();
+        constructor(options?: {});
         static instance: Application;
         init(opts?: any): Application;
         boot(): PromiseInterface<Application>;
@@ -166,6 +216,7 @@ declare module packadic {
     }
 }
 declare module packadic {
+    import PromiseInterface = packadic.util.promise.PromiseInterface;
     function kindOf(value: any): any;
     function def(val: any, def: any): any;
     function defined(obj?: any): boolean;
@@ -174,6 +225,8 @@ declare module packadic {
     function isTouchDevice(): boolean;
     function getRandomId(length?: number): string;
     function getTemplate(name: any): any;
+    var Clipboard: typeof ZeroClipboard;
+    function getClipboard(): PromiseInterface<any>;
 }
 declare module packadic.plugins {
     function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
@@ -375,6 +428,7 @@ declare module packadic.util {
     var arr: _.LoDashStatic;
     function codeIndentFix(str: string): string;
     function preCodeIndentFix(el: HTMLElement): string;
+    function selectAllAndCopy(obj: any): void;
     module num {
         function round(value: any, places: any): number;
     }

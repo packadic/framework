@@ -9,6 +9,14 @@ module packadic {
 
     }
 
+    export function EventHook(hook:string) {
+        return (cls:any, name:string, desc:PropertyDescriptor):PropertyDescriptor => {
+            console.log('EventHook(' + hook + ')', cls, name, desc);
+            desc.value = void 0;
+            return desc;
+        }
+    }
+
     /**
      * The Application class is the main class initialising and booting all other components, plugins, etc
      *
@@ -26,7 +34,13 @@ module packadic {
      * });
      * ```
      */
-    export class Application implements IApplication {
+    export class Application extends Vue implements IApplication  {
+
+        /****************************/
+        // Vue data
+        /****************************/
+
+        public data:any = {};
 
         /**
          * Default configuration values, these will be set after initial construction using getConfigDefaults()
@@ -34,6 +48,7 @@ module packadic {
         public static defaults:any;
 
         protected static _instance:Application;
+
 
         /**
          * If true, the debug log will be enabled, with some other additions as well
@@ -64,7 +79,8 @@ module packadic {
             return packadic.components.Components.instance;
         }
 
-        constructor() {
+        constructor(options?: {}) {
+            super(options);
             this._events = new EventEmitter2({
                 wildcard: true,
                 delimiter: ':',
@@ -74,6 +90,7 @@ module packadic {
             $body.data('packadic', this);
             var self:Application = this;
             packadic.app = this;
+
 
             Application.defaults = getConfigDefaults();
 
@@ -111,6 +128,7 @@ module packadic {
             this._config = new ConfigObject($.extend({}, Application.defaults, opts));
             this.config = ConfigObject.makeProperty(this._config);
 
+
             this.components.loadAll();
 
             this.components.each((comp:packadic.components.Component) => {
@@ -125,6 +143,7 @@ module packadic {
             return this;
         }
 
+
         public boot():PromiseInterface<Application> {
             var defer:DeferredInterface<Application> = util.promise.create();
             if (this.isBooted) {
@@ -136,6 +155,9 @@ module packadic {
 
             $(() => {
                 this.emit('boot', this);
+
+                this.$mount('html');
+
                 this.timers.boot = new Date;
                 if (!isTouchDevice()) {
                     $body.tooltip(this.config('vendor.bootstrap.tooltip'));
@@ -143,9 +165,6 @@ module packadic {
                 $body.popover(this.config('vendor.bootstrap.popover'));
                 $.material.options = this.config('vendor.material');
                 $.material.init();
-                if (defined(window['hljs'])) {
-                    //hljs.initHighlight();
-                }
                 this.isBooted = true;
                 this.emit('booted', this);
                 defer.resolve(this);
@@ -197,6 +216,10 @@ module packadic {
         /****************************/
 
         public on(event:string, listener:Function):Application {
+            if(event === 'init' && this.isInitialised && listener(this)){
+                return;
+            }
+
             this._events.on(event, listener);
             return this;
         }

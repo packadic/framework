@@ -2,6 +2,9 @@
  * The storage module provides data storage providers
  */
 module packadic.storage {
+    import DeferredInterface = packadic.util.promise.DeferredInterface;
+    import PromiseInterface = packadic.util.promise.PromiseInterface;
+
 
     export var bags:{[name:string]:IStorageBag} = {};
 
@@ -369,6 +372,5 @@ module packadic.storage {
     if (typeof window.document.cookie !== 'undefined') {
         createBag('cookie', <IStorageProvider> new CookieStorage())
     }
-
 
 }

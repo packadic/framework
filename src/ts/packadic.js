@@ -82,11 +82,169 @@ var packadic;
     }
     packadic.callReadyCallbacks = callReadyCallbacks;
 })(packadic || (packadic = {}));
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
+    switch (arguments.length) {
+        case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
+        case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
+        case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
+    }
+};
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var Base = (function () {
+            function Base(app) {
+                this.app = app;
+            }
+            return Base;
+        })();
+        addons.Base = Base;
+        var AddonManager = (function () {
+            function AddonManager() {
+            }
+            return AddonManager;
+        })();
+        addons.AddonManager = AddonManager;
+        var Directive = (function () {
+            function Directive() {
+            }
+            Directive.prototype.bind = function () { };
+            Directive.prototype.unbind = function () { };
+            Directive.prototype.update = function (newValue, oldValue) { };
+            return Directive;
+        })();
+        addons.Directive = Directive;
+        var ElementDirective = (function (_super) {
+            __extends(ElementDirective, _super);
+            function ElementDirective() {
+                _super.apply(this, arguments);
+            }
+            return ElementDirective;
+        })(Directive);
+        addons.ElementDirective = ElementDirective;
+        function createDirective(name) {
+            return function (cls) {
+                var definition = {
+                    isLiteral: false,
+                    twoWay: false,
+                    acceptStatement: false,
+                    deep: false
+                };
+                Object.keys(definition).forEach(function (defName) {
+                    if (cls.hasOwnProperty(defName)) {
+                        definition[defName] = cls[defName];
+                    }
+                });
+                var obj = new cls();
+                var proto = Object.getPrototypeOf(obj);
+            };
+        }
+        addons.createDirective = createDirective;
+        function Filter(name) {
+            return function (target, propertyKey, descriptor) {
+                name = name || propertyKey;
+                var originalMethod = descriptor.value;
+                descriptor.value = function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i - 0] = arguments[_i];
+                    }
+                    console.log("The method args are: " + JSON.stringify(args));
+                    var result = originalMethod.apply(this, args);
+                    console.log("The return value is: " + result);
+                    return result;
+                };
+                Vue.filter(name, target);
+                return descriptor;
+            };
+        }
+        addons.Filter = Filter;
+        function FilterCollection(excludedFunctions) {
+            if (excludedFunctions === void 0) { excludedFunctions = []; }
+            return function (target) {
+                var proto = Object.getPrototypeOf(target);
+                var filters = {};
+                Object.getOwnPropertyNames(proto).forEach(function (method) {
+                    if (['constructor'].concat(excludedFunctions).indexOf(method) > -1) {
+                        return;
+                    }
+                    var desc = Object.getOwnPropertyDescriptor(proto, method);
+                    if (typeof desc.value === 'function') {
+                        Vue.filter(method, proto[method]);
+                    }
+                });
+            };
+        }
+        addons.FilterCollection = FilterCollection;
+        var SomeFilters = (function () {
+            function SomeFilters() {
+            }
+            SomeFilters.prototype.testFilter = function (value) {
+                return 'success' + value;
+            };
+            SomeFilters.prototype.changeit = function (val, old) {
+                return val + old;
+            };
+            Object.defineProperty(SomeFilters.prototype, "testFilter",
+                __decorate([
+                    Filter('test')
+                ], SomeFilters.prototype, "testFilter", Object.getOwnPropertyDescriptor(SomeFilters.prototype, "testFilter")));
+            Object.defineProperty(SomeFilters.prototype, "changeit",
+                __decorate([
+                    Filter()
+                ], SomeFilters.prototype, "changeit", Object.getOwnPropertyDescriptor(SomeFilters.prototype, "changeit")));
+            return SomeFilters;
+        })();
+        addons.SomeFilters = SomeFilters;
+        var FilterColTest = (function () {
+            function FilterColTest() {
+            }
+            FilterColTest.prototype.wtffilter = function (val, old) {
+                return val + old;
+            };
+            FilterColTest.prototype.byefilter = function (val, old) {
+                return val + old;
+            };
+            FilterColTest.prototype.hellofilter = function (val, old) {
+                return val + old;
+            };
+            FilterColTest.prototype.excludethis = function (val, old) {
+                return val + old;
+            };
+            FilterColTest = __decorate([
+                FilterCollection(['excludethis'])
+            ], FilterColTest);
+            return FilterColTest;
+        })();
+        addons.FilterColTest = FilterColTest;
+        addons.filterColTest = new FilterColTest();
+        addons.someFilters = new SomeFilters();
+        addons.someFilters.changeit('as');
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
     var $body = $('body');
-    var Application = (function () {
-        function Application() {
+    function EventHook(hook) {
+        return function (cls, name, desc) {
+            console.log('EventHook(' + hook + ')', cls, name, desc);
+            desc.value = void 0;
+            return desc;
+        };
+    }
+    packadic.EventHook = EventHook;
+    var Application = (function (_super) {
+        __extends(Application, _super);
+        function Application(options) {
+            _super.call(this, options);
+            this.data = {};
             this.timers = { construct: null, init: null, boot: null };
             this._loaded = {};
             this._events = new EventEmitter2({
@@ -158,6 +316,7 @@ var packadic;
             }
             $(function () {
                 _this.emit('boot', _this);
+                _this.$mount('html');
                 _this.timers.boot = new Date;
                 if (!packadic.isTouchDevice()) {
                     $body.tooltip(_this.config('vendor.bootstrap.tooltip'));
@@ -165,8 +324,6 @@ var packadic;
                 $body.popover(_this.config('vendor.bootstrap.popover'));
                 $.material.options = _this.config('vendor.material');
                 $.material.init();
-                if (packadic.defined(window['hljs'])) {
-                }
                 _this.isBooted = true;
                 _this.emit('booted', _this);
                 defer.resolve(_this);
@@ -211,6 +368,9 @@ var packadic;
             return this.load('css', path, bower, '!css');
         };
         Application.prototype.on = function (event, listener) {
+            if (event === 'init' && this.isInitialised && listener(this)) {
+                return;
+            }
             this._events.on(event, listener);
             return this;
         };
@@ -242,7 +402,7 @@ var packadic;
             }
         };
         return Application;
-    })();
+    })(Vue);
     packadic.Application = Application;
 })(packadic || (packadic = {}));
 var packadic;
@@ -726,6 +886,24 @@ var packadic;
         return window['JST'][namePath];
     }
     packadic.getTemplate = getTemplate;
+    function getClipboard() {
+        var defer = packadic.util.promise.create();
+        var app = packadic.Application.instance;
+        if (defined(packadic.Clipboard)) {
+            defer.resolve(packadic.Clipboard);
+        }
+        else {
+            app.on('init', function () {
+                app.loadJS('zeroclipboard/dist/ZeroClipboard', true).then(function (z) {
+                    var Clipboard = z[0];
+                    Clipboard.config({ swfPath: app.getAssetPath('bower_components/zeroclipboard/dist/ZeroClipboard.swf') });
+                    defer.resolve(Clipboard);
+                });
+            });
+        }
+        return defer.promise;
+    }
+    packadic.getClipboard = getClipboard;
 })(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
@@ -1582,6 +1760,16 @@ var packadic;
             return codeIndentFix(el.textContent);
         }
         util.preCodeIndentFix = preCodeIndentFix;
+        function selectAllAndCopy(obj) {
+            var text_val = eval(obj);
+            text_val.focus();
+            text_val.select();
+            if (!document.all)
+                return;
+            var r = text_val.createTextRange();
+            r.execCommand('copy');
+        }
+        util.selectAllAndCopy = selectAllAndCopy;
         var num;
         (function (num) {
             function round(value, places) {

@@ -9,3 +9,4 @@
 /// <reference path="ace/ace.d.ts" />
 /// <reference path="codemirror/codemirror.d.ts" />
 /// <reference path="systemjs/systemjs.d.ts" />
+/// <reference path="zeroclipboard/zeroclipboard.d.ts" />

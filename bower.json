@@ -62,7 +62,16 @@
     "rxjs": "~3.1.2",
     "vue": "~0.12.15",
     "ace-builds": "~1.2.0",
-    "CodeMirror": "~5.7.0"
+    "CodeMirror": "~5.7.0",
+    "vue-touch": "~0.1.1",
+    "vue-element": "~1.0.1",
+    "vue-bootstrap": "*",
+    "vue-grid": "~0.1.2",
+    "vue-router": "~0.6.1",
+    "vue-validator": "~1.4.4",
+    "vue-resource": "~0.1.16",
+    "vue-panel": "~3.0.0",
+    "zeroclipboard": "~2.2.0"
   },
   "resolutions": {
     "jquery": "~1.11.2"
