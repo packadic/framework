@@ -1266,7 +1266,14 @@ block append scripts
             app.booted(function() {
                 var doc = new Vue({
                     data: {
-                        show: true
+                        breadcrumbs: {
+                            home: true,
+                            items: [
+                                {name: 'Stuff' },
+                                {name: 'Code Block', href: 'code-block.html'}
+                            ]
+                        }
+
                     }
                 });
                 doc.$addChild(packadic.addons.components.CodeBlock);

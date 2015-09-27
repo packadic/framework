@@ -71,7 +71,7 @@ html(lang="en")
                                 .page-title
                                     h1
                                         block page-title
-                            ul.page-breadcrumb.breadcrumb
+                            ul.page-breadcrumb.breadcrumb(v-breadcrumbs="breadcrumbs || {}")
                                 block breadcrumb
                             .page-content-seperator
                             block page-content

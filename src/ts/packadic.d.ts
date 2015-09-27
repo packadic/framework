@@ -24,7 +24,7 @@ declare module packadic.addons {
         }
         class ElementDirective extends Directive {
         }
-        function createDirective(name: string): (cls: any) => void;
+        function createDirective(name: string, isElementDirective?: boolean): (cls: any) => void;
     }
     module filters {
         interface FilterCallback extends vuejs.FilterCallback {
@@ -399,9 +399,20 @@ declare module packadic.util.JSON {
 declare module packadic.util {
     var str: UnderscoreStringStatic;
     var arr: _.LoDashStatic;
+    interface OpenWindowOptions {
+        width?: number;
+        height?: number;
+        url?: string;
+        target?: string;
+        features?: string;
+        replace?: boolean;
+        content?: string;
+        cb?: Function;
+    }
+    var openWindowDefaults: OpenWindowOptions;
+    function openWindow(opts?: OpenWindowOptions): Window;
     function codeIndentFix(str: string): string;
     function preCodeIndentFix(el: HTMLElement): string;
-    function selectAllAndCopy(obj: any): void;
     module num {
         function round(value: any, places: any): number;
     }
@@ -560,22 +571,39 @@ declare module packadic.addons.components {
         client: ZeroClipboard;
         isrdy: boolean;
         actions: any[];
+        created(): void;
+        ready(): void;
+        beforeDestroy(): void;
         maximize(): void;
         minimize(): void;
+        tryMaximize(): void;
+        onOpenInWindowClick(e: any): void;
         onMinimizeToggleClick(e: any): void;
         onDecreaseLinesClick(e: any): void;
         onIncreaseLinesClick(e: any): void;
-        onCopyClick(e: any): void;
-        created(): void;
-        ready(): void;
         setCodeContent(code: string, fixIndent?: boolean): void;
-        attached(): void;
-        detached(): void;
-        beforeDestroy(): void;
         initClipboard(): void;
         getHeightBetweenLines(one: number, two: number): number;
         initScrollContent(): void;
         destroyScrollContent(): void;
+    }
+}
+declare module packadic.addons.directives {
+    class BreadcrumbsDirective extends Directive {
+        deep: boolean;
+        $el: JQuery;
+        $items: JQuery;
+        bind(): void;
+        unbind(): void;
+        update(value: any): void;
+        _getInfoContent(value?: any): void;
+    }
+    class BreadcrumbElementDirective extends ElementDirective {
+        deep: boolean;
+        $el: JQuery;
+        bind(): void;
+        unbind(): void;
+        update(value: any): void;
     }
 }
 declare module packadic.addons.filters {

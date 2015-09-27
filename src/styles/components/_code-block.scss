@@ -73,6 +73,10 @@ $code-block-code-bg: #f5f2f0;
             a.btn {
                 @include btn-sm;
                 font-size: 11px;
+                opacity: 0.3;
+                &:hover {
+                    opacity: 0.9;
+                }
             }
         }
 
@@ -95,10 +99,12 @@ $code-block-code-bg: #f5f2f0;
 
 
     &.code-block-minimized {
+        cursor: pointer; // clicking op the code-block will open it
         .code-block-content {
             display: none;
         }
         //opacity: 1;
         //transition: opacity 300ms linear;
     }
+
 }

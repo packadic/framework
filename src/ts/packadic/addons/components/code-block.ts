@@ -31,56 +31,22 @@ module packadic.addons.components {
 
         isrdy:boolean = false;
 
-
         get actions():any[] {
             return [
-                {title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick},
-                {title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick},
-                {title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick},
-                {title: 'Minimize/maximize', icon: 'fa-plus', onClick: this.onMinimizeToggleClick}
+                {id: 'cb-copy', title: 'Copy to clipboard', icon: 'fa-copy', onClick: $.noop },
+                {id: 'cb-open', title: 'Open in window', icon: 'fa-external-link', onClick: this.onOpenInWindowClick},
+                {id: 'cb-more', title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick},
+                {id: 'cb-less', title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick},
+                {id: 'cb-minmax', title: 'Minimize/maximize', icon: 'fa-chevron-up', onClick: this.onMinimizeToggleClick}
             ];
         }
 
-        maximize(){
-            this.minimized = false;
-            this.initScrollContent();
-        }
-
-        minimize(){
-            this.minimized = true;
-            this.destroyScrollContent();
-        }
-
-        onMinimizeToggleClick(e) {
-            if (this.$get('minimized')) {
-                this.$set('minimized', false);
-                this.initScrollContent();
-            } else {
-                this.$set('minimized', true);
-                this.destroyScrollContent();
-            }
-        }
-
-        onDecreaseLinesClick(e) {
-            if (this.$get('toManyLines') + 5 >= this.$get('lineChangeStep')) {
-                this.$set('toManyLines', <number> this.$get('toManyLines') - <number> this.$get('lineChangeStep'));
-                this.initScrollContent();
-            }
-        }
-
-        onIncreaseLinesClick(e) {
-            this.$set('toManyLines', <number> this.$get('toManyLines') + <number> this.$get('lineChangeStep'));
-            this.initScrollContent();
-        }
-
-        onCopyClick(e) {
-            console.log('onCopyClick', e.target.tagName, e);
-        }
 
         @lifecycleHook('created')
         created():void {
             this.initClipboard();
         }
+
 
         @lifecycleHook('ready')
         ready():void {
@@ -121,7 +87,71 @@ module packadic.addons.components {
             });
         }
 
-        setCodeContent(code:string, fixIndent:boolean=false){
+
+        @lifecycleHook('beforeDestroy')
+        beforeDestroy():void {
+            this.show = false;
+        }
+
+
+        maximize() {
+            this.minimized = false;
+            this.initScrollContent();
+        }
+
+        minimize() {
+            this.minimized = true;
+            this.destroyScrollContent();
+        }
+
+        tryMaximize() {
+            if (this.minimized) {
+                this.maximize();
+            }
+        }
+
+
+        onOpenInWindowClick(e) {
+            var win:Window = util.openWindow({
+                height: screen.height / 2,
+                width: screen.width / 2
+            });
+
+            this.destroyScrollContent();
+            var $body = $(this.$$.content).find('pre').clone();
+            var $head = $('head').find('link').clone();
+            win.document.body.innerHTML = cre().append($body).html();
+            win.document.head.innerHTML = cre().append($head).html();
+            win.document.body.style.margin = '0';
+            win.document.body.getElementsByTagName('pre').item(0).style.margin = '0';
+            win.document.body.getElementsByTagName('pre').item(0).style['padding-top'] = '0';
+            this.initScrollContent();
+        }
+
+        onMinimizeToggleClick(e) {
+            if (this.$get('minimized')) {
+                this.$set('minimized', false);
+                this.initScrollContent();
+            } else {
+                this.$set('minimized', true);
+                this.destroyScrollContent();
+            }
+        }
+
+        onDecreaseLinesClick(e) {
+            var targetLineCount:number = <number> this.$get('toManyLines') - <number> this.$get('lineChangeStep');
+            if (targetLineCount > 0) {
+                this.$set('toManyLines', targetLineCount);
+                this.initScrollContent();
+            }
+        }
+
+        onIncreaseLinesClick(e) {
+            this.$set('toManyLines', <number> this.$get('toManyLines') + <number> this.$get('lineChangeStep'));
+            this.initScrollContent();
+        }
+
+        setCodeContent(code:string, fixIndent:boolean = false) {
             var $pre:JQuery = $(this.$$.pre);
             var $code:JQuery = $(this.$$.code);
             $code.ensureClass('language-' + this.language);
@@ -135,67 +165,51 @@ module packadic.addons.components {
             this.initScrollContent();
         }
 
-
-        @lifecycleHook('attached')
-        attached():void {
-            console.log('attached');
-            $(this.$el).find('a.btn');
-        }
-
-        @lifecycleHook('detached')
-        detached():void {
-            console.log('detached');
-        }
-
-        @lifecycleHook('beforeDestroy')
-        beforeDestroy():void {
-            this.show = false;
-        }
-
         initClipboard():void {
             if (defined(this.client)) {
                 return;
             }
             packadic.getClipboard().then((Clipboard:typeof ZeroClipboard) => {
-                this.client = new Clipboard($(this.$el).find('a.btn')); // simple
+                this.client = new Clipboard($(this.$$.actions).find('a.btn#cb-copy'));
                 this.client.on('ready', (event:any) => {
                     this.client.on('copy', (event:any) => {
                         var clipboard = event.clipboardData;
                         clipboard.setData('text/plain', this.code);
-                        console.log(event);
+                        //console.log(event);
                     });
 
                     this.client.on('aftercopy', (event:any) => {
-                        debug.log('aftercopy', event.data);
+                        //debug.log('aftercopy', event.data);
                     });
                 });
             });
         }
 
-        public getHeightBetweenLines(one:number, two:number):number {
-            var $lineRows = $(this.$el).find('.line-numbers-rows')
+        getHeightBetweenLines(one:number, two:number):number {
+            var $lineRows = $(this.$$.content).find('.line-numbers-rows');
             var $first = $lineRows.children('span').first();
             var $last = $first.nextAll().slice(one, two).last();
-            console.log($lineRows, $first, $last);
             return $last.position().top - $first.position().top;
         }
+
 
         initScrollContent() {
             if (this.lines <= this.toManyLines) {
                 return;
             }
             this.destroyScrollContent();
-            var $el = $(this.$el).find('code.code-block-code');
-            plugins.makeSlimScroll($el.parent(), {
-                height: this.getHeightBetweenLines(0, this.toManyLines),
-                allowPageScroll: true
+            var $pre = $(this.$$.pre);
+            plugins.makeSlimScroll($pre, {
+                height: this.getHeightBetweenLines(0, this.$get('toManyLines')),
+                allowPageScroll: true,
+                size: '10px'
             });
         }
 
         destroyScrollContent() {
-            var $el = $(this.$el).find('code.code-block-code');
-            plugins.destroySlimScroll($el);
-            $(this.$el).find('.slimScrollBar, .slimScrollRail').remove();
+            var $pre = $(this.$$.pre);
+            plugins.destroySlimScroll($pre);
+            $(this.$$.content).find('.slimScrollBar, .slimScrollRail').remove();
         }
     }
 }

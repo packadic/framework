@@ -26,7 +26,7 @@ module packadic.addons {
 
         }
 
-        export function createDirective(name:string):(cls:any)=>void {
+        export function createDirective(name:string, isElementDirective:boolean=false):(cls:any)=>void {
             return (cls:any):void => {
 
                 let definition:any = {
@@ -42,10 +42,33 @@ module packadic.addons {
                     }
                 });
 
-                // create object and get prototype
                 let obj:any = new cls();
                 let proto:any = Object.getPrototypeOf(obj);
 
+                Object.getOwnPropertyNames(proto).forEach((method:string):void => {
+                    if (['constructor'].indexOf(method) > -1)
+                        return;
+
+                    let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
+
+                    if (typeof desc.value === 'function') {
+                        definition[method] = proto[method];
+                    } else if (typeof desc.set === 'function') {
+                        definition[method] = {
+                            get: desc.get,
+                            set: desc.set
+                        };
+                    } else if (typeof desc.get === 'function') {
+                        definition[method] = desc.get;
+                    }
+
+                });
+
+                if(isElementDirective){
+                    Vue.elementDirective(name, definition);
+                } else {
+                    Vue.directive(name, definition);
+                }
             }
         }
 

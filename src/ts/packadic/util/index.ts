@@ -3,34 +3,50 @@ module packadic.util {
     export var str:UnderscoreStringStatic = s;
     export var arr:_.LoDashStatic = _;
 
+    export interface OpenWindowOptions {
+        width?:number;
+        height?:number;
+        url?:string;
+        target?:string;
+        features?:string;
+        replace?:boolean;
+        content?:string;
+        cb?:Function;
+    }
+
+    export var openWindowDefaults:OpenWindowOptions = {
+        width: 600,
+        height: 600
+    };
+
+    export function openWindow(opts:OpenWindowOptions={}):Window{
+        opts = $.extend({}, openWindowDefaults, opts);
+        var win = window.open('', '', 'width=' + opts.width + ', height=' + opts.height);
+        if(defined(opts.content)) {
+            win.document.write(opts.content);
+        }
+        return win;
+    }
+
     export function codeIndentFix(str:string) {
         var fix = (code:string, leading:boolean = true) => {
             var txt = code;
             if (leading) {
-                txt = txt.replace(/^[\r\n]+/, "").replace(/\s+$/g, "")	// strip leading newline
+                txt = txt.replace(/^[\r\n]+/, "").replace(/\s+$/g, "");	// strip leading newline
             }
-
-
             if (/^\S/gm.test(txt)) {
                 return code;
             }
-
             var mat, str, re = /^[\t ]+/gm, len, min = 1e3;
-
             while (mat = re.exec(txt)) {
                 len = mat[0].length;
-
                 if (len < min) {
                     min = len;
                     str = mat[0];
                 }
             }
-
-
             if (min == 1e3)
                 return code;
-
-            console.log(str);
             return txt.replace(new RegExp("^" + str, 'gm'), "");
         };
         return fix(str);
@@ -38,16 +54,6 @@ module packadic.util {
 
     export function preCodeIndentFix(el:HTMLElement) {
         return codeIndentFix(el.textContent);
-    }
-
-
-    export function selectAllAndCopy(obj) {
-        var text_val=eval(obj);
-        text_val.focus();
-        text_val.select();
-        if (!document.all) return; // IE only
-        var r = text_val.createTextRange();
-        r.execCommand('copy');
     }
 
     export module num {

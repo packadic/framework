@@ -110,7 +110,8 @@ var packadic;
                 return ElementDirective;
             })(Directive);
             directives.ElementDirective = ElementDirective;
-            function createDirective(name) {
+            function createDirective(name, isElementDirective) {
+                if (isElementDirective === void 0) { isElementDirective = false; }
                 return function (cls) {
                     var definition = {
                         isLiteral: false,
@@ -125,6 +126,29 @@ var packadic;
                     });
                     var obj = new cls();
                     var proto = Object.getPrototypeOf(obj);
+                    Object.getOwnPropertyNames(proto).forEach(function (method) {
+                        if (['constructor'].indexOf(method) > -1)
+                            return;
+                        var desc = Object.getOwnPropertyDescriptor(proto, method);
+                        if (typeof desc.value === 'function') {
+                            definition[method] = proto[method];
+                        }
+                        else if (typeof desc.set === 'function') {
+                            definition[method] = {
+                                get: desc.get,
+                                set: desc.set
+                            };
+                        }
+                        else if (typeof desc.get === 'function') {
+                            definition[method] = desc.get;
+                        }
+                    });
+                    if (isElementDirective) {
+                        Vue.elementDirective(name, definition);
+                    }
+                    else {
+                        Vue.directive(name, definition);
+                    }
                 };
             }
             directives.createDirective = createDirective;
@@ -1550,6 +1574,20 @@ var packadic;
     (function (util) {
         util.str = s;
         util.arr = _;
+        util.openWindowDefaults = {
+            width: 600,
+            height: 600
+        };
+        function openWindow(opts) {
+            if (opts === void 0) { opts = {}; }
+            opts = $.extend({}, util.openWindowDefaults, opts);
+            var win = window.open('', '', 'width=' + opts.width + ', height=' + opts.height);
+            if (packadic.defined(opts.content)) {
+                win.document.write(opts.content);
+            }
+            return win;
+        }
+        util.openWindow = openWindow;
         function codeIndentFix(str) {
             var fix = function (code, leading) {
                 if (leading === void 0) { leading = true; }
@@ -1570,7 +1608,6 @@ var packadic;
                 }
                 if (min == 1e3)
                     return code;
-                console.log(str);
                 return txt.replace(new RegExp("^" + str, 'gm'), "");
             };
             return fix(str);
@@ -1580,16 +1617,6 @@ var packadic;
             return codeIndentFix(el.textContent);
         }
         util.preCodeIndentFix = preCodeIndentFix;
-        function selectAllAndCopy(obj) {
-            var text_val = eval(obj);
-            text_val.focus();
-            text_val.select();
-            if (!document.all)
-                return;
-            var r = text_val.createTextRange();
-            r.execCommand('copy');
-        }
-        util.selectAllAndCopy = selectAllAndCopy;
         var num;
         (function (num) {
             function round(value, places) {
@@ -3352,46 +3379,16 @@ var packadic;
                 Object.defineProperty(CodeBlock.prototype, "actions", {
                     get: function () {
                         return [
-                            { title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick },
-                            { title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick },
-                            { title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick },
-                            { title: 'Minimize/maximize', icon: 'fa-plus', onClick: this.onMinimizeToggleClick }
+                            { id: 'cb-copy', title: 'Copy to clipboard', icon: 'fa-copy', onClick: $.noop },
+                            { id: 'cb-open', title: 'Open in window', icon: 'fa-external-link', onClick: this.onOpenInWindowClick },
+                            { id: 'cb-more', title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick },
+                            { id: 'cb-less', title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick },
+                            { id: 'cb-minmax', title: 'Minimize/maximize', icon: 'fa-chevron-up', onClick: this.onMinimizeToggleClick }
                         ];
                     },
                     enumerable: true,
                     configurable: true
                 });
-                CodeBlock.prototype.maximize = function () {
-                    this.minimized = false;
-                    this.initScrollContent();
-                };
-                CodeBlock.prototype.minimize = function () {
-                    this.minimized = true;
-                    this.destroyScrollContent();
-                };
-                CodeBlock.prototype.onMinimizeToggleClick = function (e) {
-                    if (this.$get('minimized')) {
-                        this.$set('minimized', false);
-                        this.initScrollContent();
-                    }
-                    else {
-                        this.$set('minimized', true);
-                        this.destroyScrollContent();
-                    }
-                };
-                CodeBlock.prototype.onDecreaseLinesClick = function (e) {
-                    if (this.$get('toManyLines') + 5 >= this.$get('lineChangeStep')) {
-                        this.$set('toManyLines', this.$get('toManyLines') - this.$get('lineChangeStep'));
-                        this.initScrollContent();
-                    }
-                };
-                CodeBlock.prototype.onIncreaseLinesClick = function (e) {
-                    this.$set('toManyLines', this.$get('toManyLines') + this.$get('lineChangeStep'));
-                    this.initScrollContent();
-                };
-                CodeBlock.prototype.onCopyClick = function (e) {
-                    console.log('onCopyClick', e.target.tagName, e);
-                };
                 CodeBlock.prototype.created = function () {
                     this.initClipboard();
                 };
@@ -3429,6 +3426,58 @@ var packadic;
                         _this.isrdy = true;
                     });
                 };
+                CodeBlock.prototype.beforeDestroy = function () {
+                    this.show = false;
+                };
+                CodeBlock.prototype.maximize = function () {
+                    this.minimized = false;
+                    this.initScrollContent();
+                };
+                CodeBlock.prototype.minimize = function () {
+                    this.minimized = true;
+                    this.destroyScrollContent();
+                };
+                CodeBlock.prototype.tryMaximize = function () {
+                    if (this.minimized) {
+                        this.maximize();
+                    }
+                };
+                CodeBlock.prototype.onOpenInWindowClick = function (e) {
+                    var win = packadic.util.openWindow({
+                        height: screen.height / 2,
+                        width: screen.width / 2
+                    });
+                    this.destroyScrollContent();
+                    var $body = $(this.$$.content).find('pre').clone();
+                    var $head = $('head').find('link').clone();
+                    win.document.body.innerHTML = packadic.cre().append($body).html();
+                    win.document.head.innerHTML = packadic.cre().append($head).html();
+                    win.document.body.style.margin = '0';
+                    win.document.body.getElementsByTagName('pre').item(0).style.margin = '0';
+                    win.document.body.getElementsByTagName('pre').item(0).style['padding-top'] = '0';
+                    this.initScrollContent();
+                };
+                CodeBlock.prototype.onMinimizeToggleClick = function (e) {
+                    if (this.$get('minimized')) {
+                        this.$set('minimized', false);
+                        this.initScrollContent();
+                    }
+                    else {
+                        this.$set('minimized', true);
+                        this.destroyScrollContent();
+                    }
+                };
+                CodeBlock.prototype.onDecreaseLinesClick = function (e) {
+                    var targetLineCount = this.$get('toManyLines') - this.$get('lineChangeStep');
+                    if (targetLineCount > 0) {
+                        this.$set('toManyLines', targetLineCount);
+                        this.initScrollContent();
+                    }
+                };
+                CodeBlock.prototype.onIncreaseLinesClick = function (e) {
+                    this.$set('toManyLines', this.$get('toManyLines') + this.$get('lineChangeStep'));
+                    this.initScrollContent();
+                };
                 CodeBlock.prototype.setCodeContent = function (code, fixIndent) {
                     if (fixIndent === void 0) { fixIndent = false; }
                     var $pre = $(this.$$.pre);
@@ -3441,40 +3490,27 @@ var packadic;
                     Prism.highlightElement($code.get(0));
                     this.initScrollContent();
                 };
-                CodeBlock.prototype.attached = function () {
-                    console.log('attached');
-                    $(this.$el).find('a.btn');
-                };
-                CodeBlock.prototype.detached = function () {
-                    console.log('detached');
-                };
-                CodeBlock.prototype.beforeDestroy = function () {
-                    this.show = false;
-                };
                 CodeBlock.prototype.initClipboard = function () {
                     var _this = this;
                     if (packadic.defined(this.client)) {
                         return;
                     }
                     packadic.getClipboard().then(function (Clipboard) {
-                        _this.client = new Clipboard($(_this.$el).find('a.btn'));
+                        _this.client = new Clipboard($(_this.$$.actions).find('a.btn#cb-copy'));
                         _this.client.on('ready', function (event) {
                             _this.client.on('copy', function (event) {
                                 var clipboard = event.clipboardData;
                                 clipboard.setData('text/plain', _this.code);
-                                console.log(event);
                             });
                             _this.client.on('aftercopy', function (event) {
-                                packadic.debug.log('aftercopy', event.data);
                             });
                         });
                     });
                 };
                 CodeBlock.prototype.getHeightBetweenLines = function (one, two) {
-                    var $lineRows = $(this.$el).find('.line-numbers-rows');
+                    var $lineRows = $(this.$$.content).find('.line-numbers-rows');
                     var $first = $lineRows.children('span').first();
                     var $last = $first.nextAll().slice(one, two).last();
-                    console.log($lineRows, $first, $last);
                     return $last.position().top - $first.position().top;
                 };
                 CodeBlock.prototype.initScrollContent = function () {
@@ -3482,16 +3518,17 @@ var packadic;
                         return;
                     }
                     this.destroyScrollContent();
-                    var $el = $(this.$el).find('code.code-block-code');
-                    addons.plugins.makeSlimScroll($el.parent(), {
-                        height: this.getHeightBetweenLines(0, this.toManyLines),
-                        allowPageScroll: true
+                    var $pre = $(this.$$.pre);
+                    addons.plugins.makeSlimScroll($pre, {
+                        height: this.getHeightBetweenLines(0, this.$get('toManyLines')),
+                        allowPageScroll: true,
+                        size: '10px'
                     });
                 };
                 CodeBlock.prototype.destroyScrollContent = function () {
-                    var $el = $(this.$el).find('code.code-block-code');
-                    addons.plugins.destroySlimScroll($el);
-                    $(this.$el).find('.slimScrollBar, .slimScrollRail').remove();
+                    var $pre = $(this.$$.pre);
+                    addons.plugins.destroySlimScroll($pre);
+                    $(this.$$.content).find('.slimScrollBar, .slimScrollRail').remove();
                 };
                 CodeBlock.template = packadic.getTemplate('code-block')({});
                 CodeBlock.replace = true;
@@ -3527,14 +3564,6 @@ var packadic;
                     __decorate([
                         components.lifecycleHook('ready')
                     ], CodeBlock.prototype, "ready", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "ready")));
-                Object.defineProperty(CodeBlock.prototype, "attached",
-                    __decorate([
-                        components.lifecycleHook('attached')
-                    ], CodeBlock.prototype, "attached", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "attached")));
-                Object.defineProperty(CodeBlock.prototype, "detached",
-                    __decorate([
-                        components.lifecycleHook('detached')
-                    ], CodeBlock.prototype, "detached", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "detached")));
                 Object.defineProperty(CodeBlock.prototype, "beforeDestroy",
                     __decorate([
                         components.lifecycleHook('beforeDestroy')
@@ -3546,6 +3575,69 @@ var packadic;
             })(components.Component);
             components.CodeBlock = CodeBlock;
         })(components = addons.components || (addons.components = {}));
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var directives;
+        (function (directives) {
+            var BreadcrumbsDirective = (function (_super) {
+                __extends(BreadcrumbsDirective, _super);
+                function BreadcrumbsDirective() {
+                    _super.apply(this, arguments);
+                    this.deep = true;
+                }
+                BreadcrumbsDirective.prototype.bind = function () {
+                    this.$el = $(this.el);
+                };
+                BreadcrumbsDirective.prototype.unbind = function () {
+                };
+                BreadcrumbsDirective.prototype.update = function (value) {
+                    this.$items = this.$el.find('li');
+                    packadic.debug.log('breadcrumb directive', this.$items);
+                    return;
+                    packadic.util.openWindow({
+                        content: this._getInfoContent(value)
+                    });
+                };
+                BreadcrumbsDirective.prototype._getInfoContent = function (value) {
+                    if (value === void 0) { value = ''; }
+                    return;
+                    'name - ' + this.name + '<br>' +
+                        'raw - ' + this.raw + '<br>' +
+                        'expression - ' + this.expression + '<br>' +
+                        'argument - ' + this.arg + '<br>' +
+                        'vm name - ' + this.vm.name + '<br>' +
+                        'value - ' + value;
+                };
+                BreadcrumbsDirective = __decorate([
+                    directives.createDirective('breadcrumbs')
+                ], BreadcrumbsDirective);
+                return BreadcrumbsDirective;
+            })(directives.Directive);
+            directives.BreadcrumbsDirective = BreadcrumbsDirective;
+            var BreadcrumbElementDirective = (function (_super) {
+                __extends(BreadcrumbElementDirective, _super);
+                function BreadcrumbElementDirective() {
+                    _super.apply(this, arguments);
+                    this.deep = true;
+                }
+                BreadcrumbElementDirective.prototype.bind = function () {
+                    this.$el = $(this.el);
+                };
+                BreadcrumbElementDirective.prototype.unbind = function () {
+                };
+                BreadcrumbElementDirective.prototype.update = function (value) {
+                };
+                BreadcrumbElementDirective = __decorate([
+                    directives.createDirective('breadcrumb', true)
+                ], BreadcrumbElementDirective);
+                return BreadcrumbElementDirective;
+            })(directives.ElementDirective);
+            directives.BreadcrumbElementDirective = BreadcrumbElementDirective;
+        })(directives = addons.directives || (addons.directives = {}));
     })(addons = packadic.addons || (packadic.addons = {}));
 })(packadic || (packadic = {}));
 var packadic;

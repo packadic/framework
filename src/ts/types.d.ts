@@ -1,5 +1,6 @@
 /// <reference path="./types/tsd.d.ts" />
 /// <reference path="./packadic/definitions/underscore.string.d.ts" />
+/// <reference path="./packadic/definitions/vue.d.ts" />
 
 /*
 interface WebpackRequireEnsureCallback {

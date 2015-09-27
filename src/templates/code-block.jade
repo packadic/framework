@@ -1,4 +1,4 @@
-.code-block(v-class='code-block-show: show, code-block-minimized: minimized', v-el='block')
+.code-block(v-class='code-block-show: show, code-block-minimized: minimized', v-el='block', v-on='click: tryMaximize')
     .code-block-top(v-if='showTop')
         .code-block-information
             h4
@@ -17,7 +17,7 @@
                 a.btn(
                     href="javascript:;", data-toggle='tooltip', data-container='body', title='{{title}}',
                     data-clipboard-text="Copy me!", class='code-block-action-button {{actionBtnClass}}',
-                    v-on='click: onClick'
+                    v-on='click: onClick', id='{{id}}'
                 )
                     i.fa(class='{{icon}}')
 
