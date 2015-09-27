@@ -1,3 +1,9 @@
+
+
+/**
+ * The application class
+ */
+
 module packadic {
 
     import DeferredInterface = packadic.util.promise.DeferredInterface;
@@ -123,6 +129,7 @@ module packadic {
             if (this.DEBUG) {
                 this.debug.enable();
                 this.debug.setStartDate(this.timers.construct);
+                Vue.config.debug = this.debug.isEnabled()
             }
 
             this._config = new ConfigObject($.extend({}, Application.defaults, opts));
@@ -135,14 +142,13 @@ module packadic {
                 this[comp.name] = comp;
             });
 
-            plugins.registerHelperPlugins();
+            addons.plugins.registerHelperPlugins();
 
             callReadyCallbacks();
 
             this.emit('init', this);
             return this;
         }
-
 
         public boot():PromiseInterface<Application> {
             var defer:DeferredInterface<Application> = util.promise.create();
@@ -176,8 +182,6 @@ module packadic {
             return debug;
         }
 
-
-
         public getAssetPath(path:string = '', prefixBaseUrl:boolean = true):string {
             path = util.str.startsWith(path, '/') ? path : '/' + path;
             return (prefixBaseUrl ? this.config('baseUrl') : '') + this.config('assetPath') + path;
@@ -189,6 +193,7 @@ module packadic {
         // Script/css module loader
         /****************************/
         protected _loaded:{[name:string]:boolean} = {};
+
         public load(type:string, path:string, bower:boolean = false, pathSuffix:string=''):PromiseInterface<any[]> {
             var defer:DeferredInterface<any> = util.promise.create();
             path = util.str.endsWith(path, '.' + type) ? path : path + '.' + type;

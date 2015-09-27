@@ -18,9 +18,9 @@ var packadic;
                 console.log('TestPlugin create');
             };
             return TestPlugin;
-        })(plugins.Plugin);
+        })(Plugin);
         plugins.TestPlugin = TestPlugin;
-        plugins.Plugin.register('testPlugin', TestPlugin);
+        Plugin.register('testPlugin', TestPlugin);
     })(plugins = packadic.plugins || (packadic.plugins = {}));
 })(packadic || (packadic = {}));
 //# sourceMappingURL=testPlugin.js.map

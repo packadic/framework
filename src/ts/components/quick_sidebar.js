@@ -102,7 +102,7 @@ var packadic;
             QuickSidebarTabs.prototype.initContentScroll = function ($content) {
                 $content = packadic.defined($content) ? $($content) : this.getTabContent(this.getActive());
                 this.destroyContentScroll($content);
-                packadic.plugins.makeSlimScroll($content, {
+                packadic.addons.plugins.makeSlimScroll($content, {
                     height: this.getContentScrollHeight(),
                     wheelStep: packadic.isTouchDevice() ? 60 : 20
                 });
@@ -116,7 +116,7 @@ var packadic;
             };
             QuickSidebarTabs.prototype.destroyContentScroll = function ($content) {
                 $content = packadic.defined($content) ? $($content) : this.getTabContent(this.getActive());
-                packadic.plugins.destroySlimScroll($content);
+                packadic.addons.plugins.destroySlimScroll($content);
                 this.find('.slimScrollBar, .slimScrollRail').remove();
                 return this;
             };
@@ -124,7 +124,7 @@ var packadic;
                 this.find('.qs-tab.active').removeClass('active');
                 var $activeTabContent = this.find('.qs-content.active').removeClass('active');
                 if ($activeTabContent.length) {
-                    packadic.plugins.destroySlimScroll($activeTabContent);
+                    packadic.addons.plugins.destroySlimScroll($activeTabContent);
                     this.find('.slimScrollBar, .slimScrollRail').remove();
                 }
                 return this;

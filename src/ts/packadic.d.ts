@@ -8,17 +8,9 @@ declare module packadic {
     function ready(fn: Function): void;
     function callReadyCallbacks(): void;
 }
-declare module packadic {
-    module addons {
-        interface IAddon {
-            app: Application;
-        }
-        class Base {
-            app: Application;
-            constructor(app: Application);
-        }
-        class AddonManager {
-        }
+declare module packadic.addons {
+    var namespacePrefix: string;
+    module directives {
         class Directive {
             el: HTMLElement;
             vm: vuejs.Vue;
@@ -33,27 +25,128 @@ declare module packadic {
         class ElementDirective extends Directive {
         }
         function createDirective(name: string): (cls: any) => void;
-        interface TwoWayFilter {
-            read(val: any): any;
-            write(val: any, oldVal: any): any;
-        }
+    }
+    module filters {
         interface FilterCallback extends vuejs.FilterCallback {
             (value: any, begin?: any, end?: any): any;
         }
         function Filter(name?: string): MethodDecorator;
         function FilterCollection(excludedFunctions?: string[]): (target: any) => void;
-        class SomeFilters {
-            testFilter(value: any): any;
-            changeit(val: any, old?: any): any;
+    }
+    module components {
+        function createComponent(name: string): (cls: any) => void;
+        class Component {
+            $: any;
+            $$: any;
+            $data: any;
+            $children: Array<Vue>;
+            $el: HTMLElement;
+            $options: any;
+            $parent: Vue;
+            $root: Vue;
+            $add(key: string, val: any): void;
+            $addChild(options?: any, constructor?: () => void): void;
+            $after(target: HTMLElement | string, cb: () => void): void;
+            $appendTo(target: HTMLElement | string, cb?: () => void): void;
+            $before(target: HTMLElement | string, cb?: () => void): void;
+            $broadcast(event: string, ...args: Array<any>): void;
+            $compile(el: HTMLElement): Function;
+            $delete(key: string): void;
+            $destroy(remove: boolean): void;
+            $dispatch(event: string, ...args: Array<any>): void;
+            $emit(event: string, ...args: Array<any>): void;
+            $eval(text: string): void;
+            $get(exp: string): any;
+            $interpolate(text: string): void;
+            $log(path?: string): void;
+            $mount(el: HTMLElement | string): void;
+            $nextTick(fn: () => void): void;
+            $off(event: string, fn: (...args: Array<any>) => void | boolean): void;
+            $on(event: string, fn: (...args: Array<any>) => void | boolean): void;
+            $once(event: string, fn: (...args: Array<any>) => void | boolean): void;
+            $remove(cb?: () => void): void;
+            $set(exp: string, val: any): void;
+            $watch(exp: string | (() => string), cb: (val: any, old?: any) => any, options?: {
+                deep?: boolean;
+                immediate?: boolean;
+            }): void;
         }
-        class FilterColTest {
-            wtffilter(val: any, old?: any): any;
-            byefilter(val: any, old?: any): any;
-            hellofilter(val: any, old?: any): any;
-            excludethis(val: any, old?: any): any;
+        function lifecycleHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
+        function eventHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
+        function prop(options: any): (cls: any, name: string) => void;
+    }
+    module widgets {
+        function createWidget(name: string, proto: any): void;
+        function extendWidget(name: string, parent: any, proto: Widget): void;
+        class Widget {
+            _create(): any;
+            _destroy(): void;
+            _init(): any;
+            _delay(fn: any, delay: number): number;
+            _focusable(element: JQuery): any;
+            _getCreateEventData(): Object;
+            _getCreateOptions(): Object;
+            _hide(element: JQuery, option: Object, callback: Function): any;
+            _hoverable(element: JQuery): any;
+            _off(element: JQuery, eventName: string): any;
+            _on(element: JQuery | string, handlers: Object): any;
+            _setOption(key: string, value: Object): any;
+            _setOptions(options: Object): any;
+            _show(element: JQuery, option: Object, callback: Function): any;
+            _super(...arg: any[]): void;
+            _superApply(args: any): void;
+            _trigger(type: String, args?: any[], data?: Object): any;
+            destroy(): void;
+            disable(): void;
+            enable(): void;
+            instance(): Object;
+            option(arg: any): any;
+            element: JQuery;
+            document: JQuery;
+            namespace: string;
+            options: any;
+            uuid: number;
+            version: string;
+            widgetEventPrefix: string;
+            widgetFullName: string;
+            widgetName: string;
+            window: JQuery;
+            protected bindings: JQuery;
+            protected eventNamespace: string;
+            constructor();
+            app: Application;
         }
-        var filterColTest: FilterColTest;
-        var someFilters: SomeFilters;
+    }
+    module plugins {
+        interface IPluginRegisterOptions {
+            'namespace'?: string;
+            'class'?: any;
+            'name'?: string;
+            'callback'?: Function;
+            'loadPath'?: string;
+        }
+        class Plugin {
+            options: any;
+            app: Application;
+            static defaults: any;
+            VERSION: string;
+            NAMESPACE: string;
+            enabled: boolean;
+            protected _options: any;
+            protected $window: JQuery;
+            protected $document: JQuery;
+            protected $body: JQuery;
+            protected $element: JQuery;
+            constructor(element: any, options: any, ns: string);
+            instance(): Plugin;
+            protected _create(): void;
+            protected _destroy(): void;
+            destroy(): void;
+            _trigger(name: string, extraParameters?: any[] | Object): Plugin;
+            _on(name: string, cb: any): Plugin;
+            _on(name: string, sel?: string, cb?: any): Plugin;
+            static register(name: string, pluginClass: any): void;
+        }
     }
 }
 declare module packadic {
@@ -228,84 +321,6 @@ declare module packadic {
     var Clipboard: typeof ZeroClipboard;
     function getClipboard(): PromiseInterface<any>;
 }
-declare module packadic.plugins {
-    function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
-    function initHighlight(): void;
-    function makeSlimScroll(el: any, opts?: any): void;
-    function destroySlimScroll(el: any): void;
-    function registerHelperPlugins(): void;
-}
-declare module packadic.plugins {
-    class Widget {
-        _create(): any;
-        _destroy(): void;
-        _init(): any;
-        _delay(fn: any, delay: number): number;
-        _focusable(element: JQuery): any;
-        _getCreateEventData(): Object;
-        _getCreateOptions(): Object;
-        _hide(element: JQuery, option: Object, callback: Function): any;
-        _hoverable(element: JQuery): any;
-        _off(element: JQuery, eventName: string): any;
-        _on(element: JQuery | string, handlers: Object): any;
-        _setOption(key: string, value: Object): any;
-        _setOptions(options: Object): any;
-        _show(element: JQuery, option: Object, callback: Function): any;
-        _super(...arg: any[]): void;
-        _superApply(args: any): void;
-        _trigger(type: String, args?: any[], data?: Object): any;
-        destroy(): void;
-        disable(): void;
-        enable(): void;
-        instance(): Object;
-        option(arg: any): any;
-        element: JQuery;
-        document: JQuery;
-        namespace: string;
-        options: any;
-        uuid: number;
-        version: string;
-        widgetEventPrefix: string;
-        widgetFullName: string;
-        widgetName: string;
-        window: JQuery;
-        protected bindings: JQuery;
-        protected eventNamespace: string;
-        constructor();
-        app: Application;
-        static register(name: string, proto: any): void;
-        static extend(name: string, parent: any, proto: Widget): void;
-    }
-    interface IPluginRegisterOptions {
-        'namespace'?: string;
-        'class'?: any;
-        'name'?: string;
-        'callback'?: Function;
-        'loadPath'?: string;
-    }
-    class Plugin {
-        options: any;
-        app: Application;
-        static defaults: any;
-        VERSION: string;
-        NAMESPACE: string;
-        enabled: boolean;
-        protected _options: any;
-        protected $window: JQuery;
-        protected $document: JQuery;
-        protected $body: JQuery;
-        protected $element: JQuery;
-        constructor(element: any, options: any, ns: string);
-        instance(): Plugin;
-        protected _create(): void;
-        protected _destroy(): void;
-        destroy(): void;
-        _trigger(name: string, extraParameters?: any[] | Object): Plugin;
-        _on(name: string, cb: any): Plugin;
-        _on(name: string, sel?: string, cb?: any): Plugin;
-        static register(name: string, pluginClass: any): void;
-    }
-}
 declare module packadic.storage {
     var bags: {
         [name: string]: IStorageBag;
@@ -375,48 +390,6 @@ declare module packadic.storage {
         hasItem(sKey: any): boolean;
         keys(): string[];
     }
-}
-declare module packadic.vue {
-    class VueComponent {
-        $: any;
-        $$: any;
-        $data: any;
-        $children: Array<Vue>;
-        $el: HTMLElement;
-        $options: any;
-        $parent: Vue;
-        $root: Vue;
-        $add(key: string, val: any): void;
-        $addChild(options?: any, constructor?: () => void): void;
-        $after(target: HTMLElement | string, cb: () => void): void;
-        $appendTo(target: HTMLElement | string, cb?: () => void): void;
-        $before(target: HTMLElement | string, cb?: () => void): void;
-        $broadcast(event: string, ...args: Array<any>): void;
-        $compile(el: HTMLElement): Function;
-        $delete(key: string): void;
-        $destroy(remove: boolean): void;
-        $dispatch(event: string, ...args: Array<any>): void;
-        $emit(event: string, ...args: Array<any>): void;
-        $eval(text: string): void;
-        $get(exp: string): void;
-        $interpolate(text: string): void;
-        $log(path?: string): void;
-        $mount(el: HTMLElement | string): void;
-        $nextTick(fn: () => void): void;
-        $off(event: string, fn: (...args: Array<any>) => void | boolean): void;
-        $on(event: string, fn: (...args: Array<any>) => void | boolean): void;
-        $once(event: string, fn: (...args: Array<any>) => void | boolean): void;
-        $remove(cb?: () => void): void;
-        $set(exp: string, val: any): void;
-        $watch(exp: string | (() => string), cb: (val: any, old?: any) => any, options?: {
-            deep?: boolean;
-            immediate?: boolean;
-        }): void;
-    }
-    function lifecycleHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
-    function eventHook(hook: string): (cls: any, name: string, desc: PropertyDescriptor) => PropertyDescriptor;
-    function prop(options: any): (cls: any, name: string) => void;
-    function createComponent(name: string): (cls: any) => void;
 }
 declare module packadic.util.JSON {
     function stringify(obj: any): any;
@@ -564,5 +537,80 @@ declare module packadic.util.version {
         toString(): string;
         parseRange(range: any): any;
         test(version: any): any;
+    }
+}
+declare module packadic.addons.components {
+    class CodeBlock extends Component {
+        static template: string;
+        static replace: boolean;
+        language: string;
+        title: string;
+        description: string;
+        showTop: boolean;
+        theme: string;
+        toManyLines: number;
+        lineChangeStep: number;
+        fixCodeIndent: boolean;
+        show: boolean;
+        minimized: boolean;
+        lines: number;
+        original: string;
+        code: string;
+        actionBtnClass: string;
+        client: ZeroClipboard;
+        isrdy: boolean;
+        actions: any[];
+        maximize(): void;
+        minimize(): void;
+        onMinimizeToggleClick(e: any): void;
+        onDecreaseLinesClick(e: any): void;
+        onIncreaseLinesClick(e: any): void;
+        onCopyClick(e: any): void;
+        created(): void;
+        ready(): void;
+        setCodeContent(code: string, fixIndent?: boolean): void;
+        attached(): void;
+        detached(): void;
+        beforeDestroy(): void;
+        initClipboard(): void;
+        getHeightBetweenLines(one: number, two: number): number;
+        initScrollContent(): void;
+        destroyScrollContent(): void;
+    }
+}
+declare module packadic.addons.filters {
+    class SomeFilters {
+        testFilter(value: any): any;
+        changeit(val: any, old?: any): any;
+    }
+    class FilterColTest {
+        wtffilter(val: any, old?: any): any;
+        byefilter(val: any, old?: any): any;
+        hellofilter(val: any, old?: any): any;
+        excludethis(val: any, old?: any): any;
+    }
+    var filterColTest: FilterColTest;
+    var someFilters: SomeFilters;
+}
+declare module packadic.addons.plugins {
+    import PromiseInterface = packadic.util.promise.PromiseInterface;
+    function notify(opts?: any): PromiseInterface<PNotify>;
+    function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
+    function makeSlimScroll(el: any, opts?: any): void;
+    function destroySlimScroll(el: any): void;
+    function registerHelperPlugins(): void;
+}
+declare module packadic.addons.plugins {
+    class TestPlugin extends Plugin {
+        protected _create(): void;
+    }
+}
+declare module packadic.addons.widgets {
+    class TestWidget extends Widget {
+        version: string;
+        widgetEventPrefix: string;
+        options: any;
+        constructor();
+        _create(): any;
     }
 }

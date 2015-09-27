@@ -14,6 +14,8 @@ $code-block-code-bg: #f5f2f0;
         transition: opacity 300ms linear;
     }
 
+
+
     .code-block-top {
         height: $code-block-top-height;
         overflow: hidden;
@@ -89,5 +91,14 @@ $code-block-code-bg: #f5f2f0;
 
 
 
+    }
+
+
+    &.code-block-minimized {
+        .code-block-content {
+            display: none;
+        }
+        //opacity: 1;
+        //transition: opacity 300ms linear;
     }
 }

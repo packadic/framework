@@ -140,7 +140,7 @@ module packadic.components {
             $content = defined($content) ? $($content) : this.getTabContent(this.getActive());
 
             this.destroyContentScroll($content);
-            plugins.makeSlimScroll($content, {
+            addons.plugins.makeSlimScroll($content, {
                 height: this.getContentScrollHeight(),
                 wheelStep: isTouchDevice() ? 60 : 20
             });
@@ -155,7 +155,7 @@ module packadic.components {
         public destroyContentScroll($content?:JQuery|string):QuickSidebarTabs {
             $content = defined($content) ? $($content) : this.getTabContent(this.getActive());
 
-            plugins.destroySlimScroll($content);
+            addons.plugins.destroySlimScroll($content);
             this.find('.slimScrollBar, .slimScrollRail').remove();
             return this;
         }
@@ -167,7 +167,7 @@ module packadic.components {
             var $activeTabContent = this.find('.qs-content.active').removeClass('active');
 
             if ($activeTabContent.length) {
-                plugins.destroySlimScroll($activeTabContent);
+                addons.plugins.destroySlimScroll($activeTabContent);
                 this.find('.slimScrollBar, .slimScrollRail').remove();
             }
 

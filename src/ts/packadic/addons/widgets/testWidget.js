@@ -21,9 +21,9 @@ var packadic;
                 console.log('TestWidget create');
             };
             return TestWidget;
-        })(plugins.Widget);
+        })(Widget);
         plugins.TestWidget = TestWidget;
-        plugins.Widget.register('testWidget', TestWidget);
+        Widget.register('testWidget', TestWidget);
     })(plugins = packadic.plugins || (packadic.plugins = {}));
 })(packadic || (packadic = {}));
 //# sourceMappingURL=testWidget.js.map

@@ -10,3 +10,4 @@
 /// <reference path="codemirror/codemirror.d.ts" />
 /// <reference path="systemjs/systemjs.d.ts" />
 /// <reference path="zeroclipboard/zeroclipboard.d.ts" />
+/// <reference path="jquery.pnotify/jquery.pnotify.d.ts" />

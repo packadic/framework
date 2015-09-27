@@ -343,13 +343,13 @@ var packadic;
                 });
             };
             LayoutComponent.prototype._initFixed = function () {
-                packadic.plugins.destroySlimScroll(el.sidebarMenu);
+                packadic.addons.plugins.destroySlimScroll(el.sidebarMenu);
                 if (!this.isSidebarFixed()) {
                     return;
                 }
                 if (packadic.getViewPort().width >= this.getBreakpoint('md')) {
                     el.sidebarMenu.attr("data-height", this.calculateViewportHeight());
-                    packadic.plugins.makeSlimScroll(el.sidebarMenu, {
+                    packadic.addons.plugins.makeSlimScroll(el.sidebarMenu, {
                         position: this.isSidebarReversed() ? 'left' : 'right',
                         allowPageScroll: false
                     });

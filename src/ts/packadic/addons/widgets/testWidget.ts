@@ -1,6 +1,5 @@
-/// <reference path="./../types.d.ts" />
-/// <reference path="./../packadic.d.ts" />
-module packadic.plugins {
+
+module packadic.addons.widgets {
     export class TestWidget extends Widget {
 
         public version:string = '1.0.0';
@@ -18,5 +17,5 @@ module packadic.plugins {
 
     }
 
-    Widget.register('testWidget', TestWidget);
+    createWidget('testWidget', TestWidget);
 }

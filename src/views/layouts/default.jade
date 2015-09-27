@@ -20,7 +20,6 @@ html(lang="en")
                 block title
                     |  !{typeof config !== 'undefined' ? config.title : 'Default'}
             block meta
-
                 meta(charset="UTF-8")
                 meta(name="viewport", content="width=device-width, initial-scale=1")
                 meta(http-equiv="X-UA-Compatible", content="IE=edge")
@@ -91,18 +90,18 @@ html(lang="en")
 
         block scripts
             +javascript('reflect-metadata/Reflect', true)
-            +javascript('es6-module-loader/dist/es6-module-loader.js', true)
+            +javascript('es6-module-loader/dist/es6-module-loader', true)
             +javascript('system.js/dist/system.src', true)
-            +javascript('vue/dist/vue.js', true)
+            +javascript('vue.dev') //+javascript('vue/dist/vue', true)
             +javascript('vendor')
-            +javascript('packadic')
             +javascript('templates.min.js')
+            +javascript('packadic')
+            //+javascript('pnotify')
+
             +javascript('components/layout')
             +javascript('components/quick_sidebar')
             +javascript('components/presets')
-            +javascript('plugins/testPlugin')
-            +javascript('plugins/testWidget')
-            +javascript('components/code-block')
+            //+javascript('components/code-block')
 
         block scripts-highlightjs
             if includeHighlightJs
@@ -118,8 +117,8 @@ html(lang="en")
                     })
                     .boot()
                     .then(function (app) {
-                        $('#testPluginContainer').testPlugin({});
-                        $('#testWidgetContainer').testWidget({});
+                        //$('#testPluginContainer').testPlugin({});
+                        //$('#testWidgetContainer').testWidget({});
                     });
 
 

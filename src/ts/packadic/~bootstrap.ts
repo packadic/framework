@@ -20,7 +20,8 @@
                 },
                 '*codemirror.js': { format: 'global', exports: 'CodeMirror'},
                 '*highlightjs/highlight.pack*.js': { format: 'global', exports: 'hljs'},
-                '*prism/prism*.js': { format: 'global', exports: 'Prism'}
+                '*prism/prism*.js': { format: 'global', exports: 'Prism'},
+                '*pnotify*.js': { format: 'global', exports: 'PNotify'}
             }
         })
     });

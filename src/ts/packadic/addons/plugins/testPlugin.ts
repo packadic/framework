@@ -1,6 +1,5 @@
-/// <reference path="./../types.d.ts" />
-/// <reference path="./../packadic.d.ts" />
-module packadic.plugins {
+
+module packadic.addons.plugins {
     export class TestPlugin extends Plugin {
 
         protected _create() {

@@ -1,4 +1,27 @@
-module packadic.plugins {
+
+
+module packadic.addons.plugins {
+
+
+
+    import DeferredInterface = packadic.util.promise.DeferredInterface;
+    import PromiseInterface = packadic.util.promise.PromiseInterface;
+
+
+    export function notify(opts:any={}):PromiseInterface<PNotify>{
+        var defer:DeferredInterface<PNotify> = util.promise.create();
+        app.booted(() => {
+            app.loadJS('pnotify/src/pnotify.core', true).then((pn:any) => {
+                opts = $.extend({}, app.config('vendor.pnotify'), opts);
+                console.log('pnotify opts', opts, pn);
+                var notify:PNotify = new pn(opts);
+                console.log('pnotify instance', notify);
+                defer.resolve(notify);
+            })
+        });
+        return defer.promise;
+    }
+
 
     declare var hljs:HighlightJS;
 
@@ -25,15 +48,6 @@ module packadic.plugins {
         defer.resolve(highlighted);
 
         return defer.promise;
-    }
-
-    export function initHighlight() {
-        if (!defined(hljs)) {
-            return console.warn('Cannot call highlight function in packadic.plugins, hljs is not defined');
-        }
-        //require(['highlightjs', 'css!highlightjs-css/' + this.config('vendor.highlightjs.theme')], function (hljs:HighlightJS) {
-        hljs.initHighlighting();
-        //});
     }
 
 
@@ -157,7 +171,5 @@ module packadic.plugins {
             return $this.on.apply($this, [isTouchDevice() ? 'touchend' : 'click'].concat(args));
         }
     }
-
-
 
 }

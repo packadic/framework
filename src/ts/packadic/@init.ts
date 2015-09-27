@@ -4,6 +4,7 @@
 console.groupCollapsed('Packadic pre-init logs');
 
 module packadic {
+
     export var app:Application;
     export var debug:Debug;
 
@@ -15,8 +16,10 @@ module packadic {
         baseUrl: location.origin,
         assetPath: '/assets',
         vendor: {
+            pnotify: {
+                title: 'Default', text: 'Default text', styling: 'bootstrap3'
+            },
             material: {
-                // These options set what will be started by $.material.init()
                 "input": true,
                 "ripples": true,
                 "checkbox": true,
@@ -24,15 +27,7 @@ module packadic {
                 "radio": true,
                 "arrive": true,
                 "autofill": false,
-
-                "withRipples": [
-                    ".btn:not(.btn-link)",
-                    ".card-image",
-                    ".navbar a:not(.withoutripple)",
-                    ".dropdown-menu a",
-                    ".nav-tabs a:not(.withoutripple)",
-                    ".withripple"
-                ].join(","),
+                "withRipples": [ ".btn:not(.btn-link)", ".card-image", ".navbar a:not(.withoutripple)", ".dropdown-menu a", ".nav-tabs a:not(.withoutripple)", ".withripple" ].join(","),
                 "inputElements": "input.form-control, textarea.form-control, select.form-control",
                 "checkboxElements": ".checkbox > label > input[type=checkbox]",
                 "togglebuttonElements": ".togglebutton > label > input[type=checkbox]",
@@ -71,10 +66,10 @@ module packadic {
         configDefaults = _.merge(configDefaults, obj)
     }
 
+
     /****************************/
     // Application ready callbacks
     /****************************/
-
 
     var isReady:boolean = false;
 
@@ -91,6 +86,7 @@ module packadic {
         }
     }
 
+
     /**
      * @private
      */
@@ -103,6 +99,4 @@ module packadic {
         });
         isReady = true;
     }
-
-
 }

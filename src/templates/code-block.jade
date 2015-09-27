@@ -1,4 +1,4 @@
-.code-block(v-class='code-block-show: show')
+.code-block(v-class='code-block-show: show, code-block-minimized: minimized', v-el='block')
     .code-block-top(v-if='showTop')
         .code-block-information
             h4
@@ -11,7 +11,7 @@
                 dd(v-text='lines')
 
 
-    .code-block-content
+    .code-block-content(v-el='content')
         .code-block-actions
             template(v-repeat='actions')
                 a.btn(
@@ -21,5 +21,5 @@
                 )
                     i.fa(class='{{icon}}')
 
-        pre.line-numbers
-            code.code-block-code: content
+        pre.line-numbers(v-el='pre')
+            code.code-block-code(v-el='code'): content

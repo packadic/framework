@@ -404,14 +404,14 @@ module packadic.components {
 
         protected _initFixed() {
 
-            plugins.destroySlimScroll(el.sidebarMenu);
+            addons.plugins.destroySlimScroll(el.sidebarMenu);
 
             if (!this.isSidebarFixed()) {
                 return;
             }
             if (getViewPort().width >= this.getBreakpoint('md')) {
                 el.sidebarMenu.attr("data-height", this.calculateViewportHeight());
-                plugins.makeSlimScroll(el.sidebarMenu, {
+                addons.plugins.makeSlimScroll(el.sidebarMenu, {
                     position: this.isSidebarReversed() ? 'left' : 'right', // position of the scroll bar
                     allowPageScroll: false
                 });

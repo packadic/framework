@@ -6,6 +6,9 @@ var packadic;
         baseUrl: location.origin,
         assetPath: '/assets',
         vendor: {
+            pnotify: {
+                title: 'Default', text: 'Default text', styling: 'bootstrap3'
+            },
             material: {
                 "input": true,
                 "ripples": true,
@@ -14,14 +17,7 @@ var packadic;
                 "radio": true,
                 "arrive": true,
                 "autofill": false,
-                "withRipples": [
-                    ".btn:not(.btn-link)",
-                    ".card-image",
-                    ".navbar a:not(.withoutripple)",
-                    ".dropdown-menu a",
-                    ".nav-tabs a:not(.withoutripple)",
-                    ".withripple"
-                ].join(","),
+                "withRipples": [".btn:not(.btn-link)", ".card-image", ".navbar a:not(.withoutripple)", ".dropdown-menu a", ".nav-tabs a:not(.withoutripple)", ".withripple"].join(","),
                 "inputElements": "input.form-control, textarea.form-control, select.form-control",
                 "checkboxElements": ".checkbox > label > input[type=checkbox]",
                 "togglebuttonElements": ".togglebutton > label > input[type=checkbox]",
@@ -87,148 +83,451 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
-    switch (arguments.length) {
-        case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
-        case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
-        case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
-    }
-};
 var packadic;
 (function (packadic) {
     var addons;
     (function (addons) {
-        var Base = (function () {
-            function Base(app) {
-                this.app = app;
-            }
-            return Base;
-        })();
-        addons.Base = Base;
-        var AddonManager = (function () {
-            function AddonManager() {
-            }
-            return AddonManager;
-        })();
-        addons.AddonManager = AddonManager;
-        var Directive = (function () {
-            function Directive() {
-            }
-            Directive.prototype.bind = function () { };
-            Directive.prototype.unbind = function () { };
-            Directive.prototype.update = function (newValue, oldValue) { };
-            return Directive;
-        })();
-        addons.Directive = Directive;
-        var ElementDirective = (function (_super) {
-            __extends(ElementDirective, _super);
-            function ElementDirective() {
-                _super.apply(this, arguments);
-            }
-            return ElementDirective;
-        })(Directive);
-        addons.ElementDirective = ElementDirective;
-        function createDirective(name) {
-            return function (cls) {
-                var definition = {
-                    isLiteral: false,
-                    twoWay: false,
-                    acceptStatement: false,
-                    deep: false
+        addons.namespacePrefix = 'packadic.';
+        var directives;
+        (function (directives) {
+            var Directive = (function () {
+                function Directive() {
+                }
+                Directive.prototype.bind = function () {
                 };
-                Object.keys(definition).forEach(function (defName) {
-                    if (cls.hasOwnProperty(defName)) {
-                        definition[defName] = cls[defName];
+                Directive.prototype.unbind = function () {
+                };
+                Directive.prototype.update = function (newValue, oldValue) {
+                };
+                return Directive;
+            })();
+            directives.Directive = Directive;
+            var ElementDirective = (function (_super) {
+                __extends(ElementDirective, _super);
+                function ElementDirective() {
+                    _super.apply(this, arguments);
+                }
+                return ElementDirective;
+            })(Directive);
+            directives.ElementDirective = ElementDirective;
+            function createDirective(name) {
+                return function (cls) {
+                    var definition = {
+                        isLiteral: false,
+                        twoWay: false,
+                        acceptStatement: false,
+                        deep: false
+                    };
+                    Object.keys(definition).forEach(function (defName) {
+                        if (cls.hasOwnProperty(defName)) {
+                            definition[defName] = cls[defName];
+                        }
+                    });
+                    var obj = new cls();
+                    var proto = Object.getPrototypeOf(obj);
+                };
+            }
+            directives.createDirective = createDirective;
+        })(directives = addons.directives || (addons.directives = {}));
+        var filters;
+        (function (filters_1) {
+            function Filter(name) {
+                return function (target, propertyKey, descriptor) {
+                    name = name || propertyKey;
+                    var originalMethod = descriptor.value;
+                    descriptor.value = function () {
+                        var args = [];
+                        for (var _i = 0; _i < arguments.length; _i++) {
+                            args[_i - 0] = arguments[_i];
+                        }
+                        console.log("The method args are: " + JSON.stringify(args));
+                        var result = originalMethod.apply(this, args);
+                        console.log("The return value is: " + result);
+                        return result;
+                    };
+                    Vue.filter(name, target);
+                    return descriptor;
+                };
+            }
+            filters_1.Filter = Filter;
+            function FilterCollection(excludedFunctions) {
+                if (excludedFunctions === void 0) { excludedFunctions = []; }
+                return function (target) {
+                    var proto = Object.getPrototypeOf(target);
+                    var filters = {};
+                    Object.getOwnPropertyNames(proto).forEach(function (method) {
+                        if (['constructor'].concat(excludedFunctions).indexOf(method) > -1) {
+                            return;
+                        }
+                        var desc = Object.getOwnPropertyDescriptor(proto, method);
+                        if (typeof desc.value === 'function') {
+                            Vue.filter(method, proto[method]);
+                        }
+                    });
+                };
+            }
+            filters_1.FilterCollection = FilterCollection;
+        })(filters = addons.filters || (addons.filters = {}));
+        var components;
+        (function (components) {
+            function createComponent(name) {
+                return function (cls) {
+                    var options = {
+                        data: (function () {
+                            return new cls();
+                        }),
+                        methods: {},
+                        computed: {}
+                    };
+                    if (cls.hasOwnProperty('replace'))
+                        options.replace = cls.replace;
+                    if (cls.hasOwnProperty('template'))
+                        options.template = cls.template;
+                    var obj = new cls();
+                    var proto = Object.getPrototypeOf(obj);
+                    if (proto.hasOwnProperty('__props__'))
+                        options.props = proto.__props__;
+                    if (proto.hasOwnProperty('__events__'))
+                        options.events = proto.__events__;
+                    if (proto.hasOwnProperty('__hooks__'))
+                        Object.keys(proto.__hooks__).forEach(function (name) {
+                            options[name] = proto.__hooks__[name];
+                        });
+                    Object.getOwnPropertyNames(proto).forEach(function (method) {
+                        if (['constructor'].indexOf(method) > -1)
+                            return;
+                        var desc = Object.getOwnPropertyDescriptor(proto, method);
+                        if (typeof desc.value === 'function')
+                            options.methods[method] = proto[method];
+                        else if (typeof desc.set === 'function')
+                            options.computed[method] = {
+                                get: desc.get,
+                                set: desc.set
+                            };
+                        else if (typeof desc.get === 'function')
+                            options.computed[method] = desc.get;
+                    });
+                    Vue.component(name, options);
+                };
+            }
+            components.createComponent = createComponent;
+            var Component = (function () {
+                function Component() {
+                }
+                Component.prototype.$add = function (key, val) {
+                };
+                Component.prototype.$addChild = function (options, constructor) {
+                };
+                Component.prototype.$after = function (target, cb) {
+                };
+                Component.prototype.$appendTo = function (target, cb) {
+                };
+                Component.prototype.$before = function (target, cb) {
+                };
+                Component.prototype.$broadcast = function (event) {
+                    var args = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        args[_i - 1] = arguments[_i];
                     }
+                };
+                Component.prototype.$compile = function (el) {
+                    return function () {
+                    };
+                };
+                Component.prototype.$delete = function (key) {
+                };
+                Component.prototype.$destroy = function (remove) {
+                };
+                Component.prototype.$dispatch = function (event) {
+                    var args = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        args[_i - 1] = arguments[_i];
+                    }
+                };
+                Component.prototype.$emit = function (event) {
+                    var args = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        args[_i - 1] = arguments[_i];
+                    }
+                };
+                Component.prototype.$eval = function (text) {
+                };
+                Component.prototype.$get = function (exp) {
+                };
+                Component.prototype.$interpolate = function (text) {
+                };
+                Component.prototype.$log = function (path) {
+                };
+                Component.prototype.$mount = function (el) {
+                };
+                Component.prototype.$nextTick = function (fn) {
+                };
+                Component.prototype.$off = function (event, fn) {
+                };
+                Component.prototype.$on = function (event, fn) {
+                };
+                Component.prototype.$once = function (event, fn) {
+                };
+                Component.prototype.$remove = function (cb) {
+                };
+                Component.prototype.$set = function (exp, val) {
+                };
+                Component.prototype.$watch = function (exp, cb, options) {
+                };
+                return Component;
+            })();
+            components.Component = Component;
+            function lifecycleHook(hook) {
+                return function (cls, name, desc) {
+                    if ([
+                        'created', 'beforeCompile', 'compiled', 'ready', 'attached', 'detached', 'beforeDestroy', 'destroyed'
+                    ].indexOf(hook) == -1)
+                        throw new Error('Unknown Lifecyle Hook: ' + hook);
+                    if (!cls.hasOwnProperty('__hooks__'))
+                        cls.__hooks__ = {};
+                    cls.__hooks__[name] = cls[name];
+                    desc.value = void 0;
+                    return desc;
+                };
+            }
+            components.lifecycleHook = lifecycleHook;
+            function eventHook(hook) {
+                return function (cls, name, desc) {
+                    if (!cls.hasOwnProperty('__events__'))
+                        cls.__events__ = {};
+                    cls.__events__[name] = cls[name];
+                    desc.value = void 0;
+                    return desc;
+                };
+            }
+            components.eventHook = eventHook;
+            function prop(options) {
+                return function (cls, name) {
+                    if (!cls.hasOwnProperty('__props__'))
+                        cls.__props__ = {};
+                    cls.__props__[name] = options;
+                };
+            }
+            components.prop = prop;
+        })(components = addons.components || (addons.components = {}));
+        var widgets;
+        (function (widgets) {
+            function createWidget(name, proto) {
+                proto = new proto();
+                $.widget(addons.namespacePrefix + name, proto);
+                console.log('Widget', name, 'registered', proto);
+            }
+            widgets.createWidget = createWidget;
+            function extendWidget(name, parent, proto) {
+                $.widget(addons.namespacePrefix + name, parent, proto);
+                console.log('Widget', name, 'extended', Widget);
+            }
+            widgets.extendWidget = extendWidget;
+            var Widget = (function () {
+                function Widget() {
+                    var myPrototype = Widget.prototype;
+                    $.each(myPrototype, function (propertyName, value) {
+                        delete myPrototype[propertyName];
+                    });
+                }
+                Widget.prototype._create = function () {
+                    return undefined;
+                };
+                Widget.prototype._destroy = function () {
+                };
+                Widget.prototype._init = function () {
+                    return undefined;
+                };
+                Widget.prototype._delay = function (fn, delay) {
+                    return undefined;
+                };
+                Widget.prototype._focusable = function (element) {
+                    return undefined;
+                };
+                Widget.prototype._getCreateEventData = function () {
+                    return undefined;
+                };
+                Widget.prototype._getCreateOptions = function () {
+                    return undefined;
+                };
+                Widget.prototype._hide = function (element, option, callback) {
+                    return undefined;
+                };
+                Widget.prototype._hoverable = function (element) {
+                    return undefined;
+                };
+                Widget.prototype._off = function (element, eventName) {
+                    return undefined;
+                };
+                Widget.prototype._on = function (element, handlers) {
+                    return undefined;
+                };
+                Widget.prototype._setOption = function (key, value) {
+                    return undefined;
+                };
+                Widget.prototype._setOptions = function (options) {
+                    return undefined;
+                };
+                Widget.prototype._show = function (element, option, callback) {
+                    return undefined;
+                };
+                Widget.prototype._super = function () {
+                    var arg = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        arg[_i - 0] = arguments[_i];
+                    }
+                };
+                Widget.prototype._superApply = function (args) {
+                };
+                Widget.prototype._trigger = function (type, args, data) {
+                    return undefined;
+                };
+                Widget.prototype.destroy = function () {
+                };
+                Widget.prototype.disable = function () {
+                };
+                Widget.prototype.enable = function () {
+                };
+                Widget.prototype.instance = function () {
+                    return undefined;
+                };
+                Widget.prototype.option = function (arg) {
+                    return undefined;
+                };
+                Object.defineProperty(Widget.prototype, "app", {
+                    get: function () {
+                        return packadic.Application.instance;
+                    },
+                    enumerable: true,
+                    configurable: true
                 });
-                var obj = new cls();
-                var proto = Object.getPrototypeOf(obj);
-            };
-        }
-        addons.createDirective = createDirective;
-        function Filter(name) {
-            return function (target, propertyKey, descriptor) {
-                name = name || propertyKey;
-                var originalMethod = descriptor.value;
-                descriptor.value = function () {
+                return Widget;
+            })();
+            widgets.Widget = Widget;
+        })(widgets = addons.widgets || (addons.widgets = {}));
+        var plugins;
+        (function (plugins) {
+            var Plugin = (function () {
+                function Plugin(element, options, ns) {
+                    this.VERSION = '0.0.0';
+                    this.NAMESPACE = 'packadic.';
+                    this.enabled = true;
+                    this._options = options;
+                    this.$window = $(window);
+                    this.$document = $(document);
+                    this.$body = $(document.body);
+                    this.$element = $(element);
+                    this.NAMESPACE = ns;
+                    this._trigger('create');
+                    this._create();
+                    this._trigger('created');
+                }
+                Object.defineProperty(Plugin.prototype, "options", {
+                    get: function () {
+                        return this._options;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(Plugin.prototype, "app", {
+                    get: function () {
+                        return packadic.Application.instance;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Plugin.prototype.instance = function () {
+                    return this;
+                };
+                Plugin.prototype._create = function () {
+                };
+                Plugin.prototype._destroy = function () {
+                };
+                Plugin.prototype.destroy = function () {
+                    this._trigger('destroy');
+                    this._destroy();
+                    this._trigger('destroyed');
+                };
+                Plugin.prototype._trigger = function (name, extraParameters) {
+                    var e = $.Event(name + '.' + this.NAMESPACE);
+                    this.$element.trigger(e, extraParameters);
+                    return this;
+                };
+                Plugin.prototype._on = function () {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i - 0] = arguments[_i];
                     }
-                    console.log("The method args are: " + JSON.stringify(args));
-                    var result = originalMethod.apply(this, args);
-                    console.log("The return value is: " + result);
-                    return result;
+                    args[0] = args[0] + '.' + this.NAMESPACE;
+                    packadic.debug.log('plugin _on ', this, args);
+                    this.$element.on.apply(this.$element, args);
+                    return this;
                 };
-                Vue.filter(name, target);
-                return descriptor;
+                Plugin.register = function (name, pluginClass) {
+                    registerPlugin(name, pluginClass);
+                    console.log('Plugin', name, 'registered', pluginClass);
+                };
+                Plugin.defaults = {};
+                return Plugin;
+            })();
+            plugins.Plugin = Plugin;
+            var defaultRegOpts = {
+                loadPath: 'app/plugins/',
+                callback: $.noop()
             };
-        }
-        addons.Filter = Filter;
-        function FilterCollection(excludedFunctions) {
-            if (excludedFunctions === void 0) { excludedFunctions = []; }
-            return function (target) {
-                var proto = Object.getPrototypeOf(target);
-                var filters = {};
-                Object.getOwnPropertyNames(proto).forEach(function (method) {
-                    if (['constructor'].concat(excludedFunctions).indexOf(method) > -1) {
-                        return;
-                    }
-                    var desc = Object.getOwnPropertyDescriptor(proto, method);
-                    if (typeof desc.value === 'function') {
-                        Vue.filter(method, proto[method]);
-                    }
-                });
-            };
-        }
-        addons.FilterCollection = FilterCollection;
-        var SomeFilters = (function () {
-            function SomeFilters() {
+            function makeRegOptions(name, pluginClass, regOpts) {
+                regOpts = $.extend(true, this.defaultRegOpts, { 'class': pluginClass }, regOpts);
+                if (typeof regOpts.namespace !== 'string') {
+                    regOpts.namespace = name;
+                }
+                regOpts.namespace = addons.namespacePrefix + regOpts.namespace;
+                return regOpts;
             }
-            SomeFilters.prototype.testFilter = function (value) {
-                return 'success' + value;
-            };
-            SomeFilters.prototype.changeit = function (val, old) {
-                return val + old;
-            };
-            Object.defineProperty(SomeFilters.prototype, "testFilter",
-                __decorate([
-                    Filter('test')
-                ], SomeFilters.prototype, "testFilter", Object.getOwnPropertyDescriptor(SomeFilters.prototype, "testFilter")));
-            Object.defineProperty(SomeFilters.prototype, "changeit",
-                __decorate([
-                    Filter()
-                ], SomeFilters.prototype, "changeit", Object.getOwnPropertyDescriptor(SomeFilters.prototype, "changeit")));
-            return SomeFilters;
-        })();
-        addons.SomeFilters = SomeFilters;
-        var FilterColTest = (function () {
-            function FilterColTest() {
+            function registerPlugin(name, pluginClass) {
+                var regOpts = makeRegOptions(name, pluginClass);
+                function jQueryPlugin(options) {
+                    var args = [];
+                    for (var _i = 1; _i < arguments.length; _i++) {
+                        args[_i - 1] = arguments[_i];
+                    }
+                    var all = this.each(function () {
+                        var $this = $(this);
+                        var data = $this.data(regOpts.namespace);
+                        var opts = $.extend({}, pluginClass.defaults, $this.data(), typeof options == 'object' && options);
+                        if (!data) {
+                            $this.data(regOpts.namespace, (data = new pluginClass(packadic.app, this, opts, regOpts.namespace)));
+                        }
+                        if (packadic.kindOf(options) === 'string') {
+                            data[options].call(data, args);
+                        }
+                        if (packadic.kindOf(regOpts.callback) === 'function') {
+                            regOpts.callback.apply(this, [data, opts]);
+                        }
+                    });
+                    if (packadic.kindOf(options) === 'string' && options === 'instance' && all.length > 0) {
+                        if (all.length === 1) {
+                            return $(all[0]).data(regOpts.namespace);
+                        }
+                        else {
+                            var instances = [];
+                            all.each(function () {
+                                instances.push($(this).data(regOpts.namespace));
+                            });
+                            return instances;
+                        }
+                    }
+                    return all;
+                }
+                var old = $.fn[name];
+                $.fn[name] = jQueryPlugin;
+                $.fn[name].Constructor = pluginClass;
             }
-            FilterColTest.prototype.wtffilter = function (val, old) {
-                return val + old;
-            };
-            FilterColTest.prototype.byefilter = function (val, old) {
-                return val + old;
-            };
-            FilterColTest.prototype.hellofilter = function (val, old) {
-                return val + old;
-            };
-            FilterColTest.prototype.excludethis = function (val, old) {
-                return val + old;
-            };
-            FilterColTest = __decorate([
-                FilterCollection(['excludethis'])
-            ], FilterColTest);
-            return FilterColTest;
-        })();
-        addons.FilterColTest = FilterColTest;
-        addons.filterColTest = new FilterColTest();
-        addons.someFilters = new SomeFilters();
-        addons.someFilters.changeit('as');
+        })(plugins = addons.plugins || (addons.plugins = {}));
     })(addons = packadic.addons || (packadic.addons = {}));
 })(packadic || (packadic = {}));
+/**
+ * The application class
+ */
 var packadic;
 (function (packadic) {
     var $body = $('body');
@@ -293,6 +592,7 @@ var packadic;
             if (this.DEBUG) {
                 this.debug.enable();
                 this.debug.setStartDate(this.timers.construct);
+                Vue.config.debug = this.debug.isEnabled();
             }
             this._config = new packadic.ConfigObject($.extend({}, Application.defaults, opts));
             this.config = packadic.ConfigObject.makeProperty(this._config);
@@ -300,7 +600,7 @@ var packadic;
             this.components.each(function (comp) {
                 _this[comp.name] = comp;
             });
-            packadic.plugins.registerHelperPlugins();
+            packadic.addons.plugins.registerHelperPlugins();
             packadic.callReadyCallbacks();
             this.emit('init', this);
             return this;
@@ -907,365 +1207,6 @@ var packadic;
 })(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
-    var plugins;
-    (function (plugins) {
-        function highlight(code, lang, wrap, wrapPre) {
-            if (wrap === void 0) { wrap = false; }
-            if (wrapPre === void 0) { wrapPre = false; }
-            if (!packadic.defined(hljs)) {
-                console.warn('Cannot call highlight function in packadic.plugins, hljs is not defined');
-                return;
-            }
-            var defer = packadic.util.promise.create();
-            var highlighted;
-            if (lang && hljs.getLanguage(lang)) {
-                highlighted = hljs.highlight(lang, code).value;
-            }
-            else {
-                highlighted = hljs.highlightAuto(code).value;
-            }
-            if (wrap) {
-                highlighted = '<code class="hljs">' + highlighted + '</code>';
-            }
-            if (wrapPre) {
-                highlighted = '<pre>' + highlighted + '</pre>';
-            }
-            defer.resolve(highlighted);
-            return defer.promise;
-        }
-        plugins.highlight = highlight;
-        function initHighlight() {
-            if (!packadic.defined(hljs)) {
-                return console.warn('Cannot call highlight function in packadic.plugins, hljs is not defined');
-            }
-            hljs.initHighlighting();
-        }
-        plugins.initHighlight = initHighlight;
-        function makeSlimScroll(el, opts) {
-            if (opts === void 0) { opts = {}; }
-            var $el = typeof (el) === 'string' ? $(el) : el;
-            $el.each(function () {
-                if ($(this).attr("data-initialized")) {
-                    return;
-                }
-                var height;
-                if ($(this).attr("data-height")) {
-                    height = $(this).attr("data-height");
-                }
-                else {
-                    height = $(this).css('height');
-                }
-                var o = packadic.app.config('vendor.slimscroll');
-                $(this).slimScroll(_.merge(o, {
-                    color: ($(this).attr("data-handle-color") ? $(this).attr("data-handle-color") : o.color),
-                    wrapperClass: ($(this).attr("data-wrapper-class") ? $(this).attr("data-wrapper-class") : o.wrapperClass),
-                    railColor: ($(this).attr("data-rail-color") ? $(this).attr("data-rail-color") : o.railColor),
-                    height: height,
-                    alwaysVisible: ($(this).attr("data-always-visible") == "1" ? true : o.alwaysVisible),
-                    railVisible: ($(this).attr("data-rail-visible") == "1" ? true : o.railVisible)
-                }, opts));
-                $(this).attr("data-initialized", "1");
-            });
-        }
-        plugins.makeSlimScroll = makeSlimScroll;
-        function destroySlimScroll(el) {
-            var $el = typeof (el) === 'string' ? $(el) : el;
-            $el.each(function () {
-                if ($(this).attr("data-initialized") === "1") {
-                    $(this).removeAttr("data-initialized");
-                    $(this).removeAttr("style");
-                    var attrList = {};
-                    if ($(this).attr("data-handle-color")) {
-                        attrList["data-handle-color"] = $(this).attr("data-handle-color");
-                    }
-                    if ($(this).attr("data-wrapper-class")) {
-                        attrList["data-wrapper-class"] = $(this).attr("data-wrapper-class");
-                    }
-                    if ($(this).attr("data-rail-color")) {
-                        attrList["data-rail-color"] = $(this).attr("data-rail-color");
-                    }
-                    if ($(this).attr("data-always-visible")) {
-                        attrList["data-always-visible"] = $(this).attr("data-always-visible");
-                    }
-                    if ($(this).attr("data-rail-visible")) {
-                        attrList["data-rail-visible"] = $(this).attr("data-rail-visible");
-                    }
-                    $(this).slimScroll({
-                        wrapperClass: ($(this).attr("data-wrapper-class") ? $(this).attr("data-wrapper-class") : 'slimScrollDiv'),
-                        destroy: true
-                    });
-                    var the = $(this);
-                    $.each(attrList, function (key, value) {
-                        the.attr(key, value);
-                    });
-                }
-            });
-        }
-        plugins.destroySlimScroll = destroySlimScroll;
-        function registerHelperPlugins() {
-            if (packadic.kindOf($.fn.prefixedData) === 'function') {
-                return;
-            }
-            $.fn.prefixedData = function (prefix) {
-                var origData = $(this).first().data();
-                var data = {};
-                for (var p in origData) {
-                    var pattern = new RegExp("^" + prefix + "[A-Z]+");
-                    if (origData.hasOwnProperty(p) && pattern.test(p)) {
-                        var shortName = p[prefix.length].toLowerCase() + p.substr(prefix.length + 1);
-                        data[shortName] = origData[p];
-                    }
-                }
-                return data;
-            };
-            $.fn.removeAttributes = function () {
-                return this.each(function () {
-                    var attributes = $.map(this.attributes, function (item) {
-                        return item.name;
-                    });
-                    var img = $(this);
-                    $.each(attributes, function (i, item) {
-                        img.removeAttr(item);
-                    });
-                });
-            };
-            $.fn.ensureClass = function (clas, has) {
-                if (has === void 0) { has = true; }
-                var $this = $(this);
-                if (has === true && $this.hasClass(clas) === false) {
-                    $this.addClass(clas);
-                }
-                else if (has === false && $this.hasClass(clas) === true) {
-                    $this.removeClass(clas);
-                }
-                return this;
-            };
-            $.fn.onClick = function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i - 0] = arguments[_i];
-                }
-                var $this = $(this);
-                return $this.on.apply($this, [packadic.isTouchDevice() ? 'touchend' : 'click'].concat(args));
-            };
-        }
-        plugins.registerHelperPlugins = registerHelperPlugins;
-    })(plugins = packadic.plugins || (packadic.plugins = {}));
-})(packadic || (packadic = {}));
-var packadic;
-(function (packadic) {
-    var plugins;
-    (function (plugins) {
-        var Widget = (function () {
-            function Widget() {
-                var myPrototype = Widget.prototype;
-                $.each(myPrototype, function (propertyName, value) {
-                    delete myPrototype[propertyName];
-                });
-            }
-            Widget.prototype._create = function () {
-                return undefined;
-            };
-            Widget.prototype._destroy = function () {
-            };
-            Widget.prototype._init = function () {
-                return undefined;
-            };
-            Widget.prototype._delay = function (fn, delay) {
-                return undefined;
-            };
-            Widget.prototype._focusable = function (element) {
-                return undefined;
-            };
-            Widget.prototype._getCreateEventData = function () {
-                return undefined;
-            };
-            Widget.prototype._getCreateOptions = function () {
-                return undefined;
-            };
-            Widget.prototype._hide = function (element, option, callback) {
-                return undefined;
-            };
-            Widget.prototype._hoverable = function (element) {
-                return undefined;
-            };
-            Widget.prototype._off = function (element, eventName) {
-                return undefined;
-            };
-            Widget.prototype._on = function (element, handlers) {
-                return undefined;
-            };
-            Widget.prototype._setOption = function (key, value) {
-                return undefined;
-            };
-            Widget.prototype._setOptions = function (options) {
-                return undefined;
-            };
-            Widget.prototype._show = function (element, option, callback) {
-                return undefined;
-            };
-            Widget.prototype._super = function () {
-                var arg = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    arg[_i - 0] = arguments[_i];
-                }
-            };
-            Widget.prototype._superApply = function (args) {
-            };
-            Widget.prototype._trigger = function (type, args, data) {
-                return undefined;
-            };
-            Widget.prototype.destroy = function () {
-            };
-            Widget.prototype.disable = function () {
-            };
-            Widget.prototype.enable = function () {
-            };
-            Widget.prototype.instance = function () {
-                return undefined;
-            };
-            Widget.prototype.option = function (arg) {
-                return undefined;
-            };
-            Object.defineProperty(Widget.prototype, "app", {
-                get: function () {
-                    return packadic.Application.instance;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Widget.register = function (name, proto) {
-                proto = new proto();
-                $.widget(namespacePrefix + name, proto);
-                console.log('Widget', name, 'registered', proto);
-            };
-            Widget.extend = function (name, parent, proto) {
-                $.widget(namespacePrefix + name, parent, proto);
-                console.log('Widget', name, 'extended', Widget);
-            };
-            return Widget;
-        })();
-        plugins.Widget = Widget;
-        var Plugin = (function () {
-            function Plugin(element, options, ns) {
-                this.VERSION = '0.0.0';
-                this.NAMESPACE = 'packadic.';
-                this.enabled = true;
-                this._options = options;
-                this.$window = $(window);
-                this.$document = $(document);
-                this.$body = $(document.body);
-                this.$element = $(element);
-                this.NAMESPACE = ns;
-                this._trigger('create');
-                this._create();
-                this._trigger('created');
-            }
-            Object.defineProperty(Plugin.prototype, "options", {
-                get: function () {
-                    return this._options;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Object.defineProperty(Plugin.prototype, "app", {
-                get: function () {
-                    return packadic.Application.instance;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Plugin.prototype.instance = function () {
-                return this;
-            };
-            Plugin.prototype._create = function () {
-            };
-            Plugin.prototype._destroy = function () {
-            };
-            Plugin.prototype.destroy = function () {
-                this._trigger('destroy');
-                this._destroy();
-                this._trigger('destroyed');
-            };
-            Plugin.prototype._trigger = function (name, extraParameters) {
-                var e = $.Event(name + '.' + this.NAMESPACE);
-                this.$element.trigger(e, extraParameters);
-                return this;
-            };
-            Plugin.prototype._on = function () {
-                var args = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    args[_i - 0] = arguments[_i];
-                }
-                args[0] = args[0] + '.' + this.NAMESPACE;
-                packadic.debug.log('plugin _on ', this, args);
-                this.$element.on.apply(this.$element, args);
-                return this;
-            };
-            Plugin.register = function (name, pluginClass) {
-                registerPlugin(name, pluginClass);
-                console.log('Plugin', name, 'registered', pluginClass);
-            };
-            Plugin.defaults = {};
-            return Plugin;
-        })();
-        plugins.Plugin = Plugin;
-        var namespacePrefix = 'packadic.';
-        var defaultRegOpts = {
-            loadPath: 'app/plugins/',
-            callback: $.noop()
-        };
-        function makeRegOptions(name, pluginClass, regOpts) {
-            regOpts = $.extend(true, this.defaultRegOpts, { 'class': pluginClass }, regOpts);
-            if (typeof regOpts.namespace !== 'string') {
-                regOpts.namespace = name;
-            }
-            regOpts.namespace = namespacePrefix + regOpts.namespace;
-            return regOpts;
-        }
-        function registerPlugin(name, pluginClass) {
-            var regOpts = makeRegOptions(name, pluginClass);
-            function jQueryPlugin(options) {
-                var args = [];
-                for (var _i = 1; _i < arguments.length; _i++) {
-                    args[_i - 1] = arguments[_i];
-                }
-                var all = this.each(function () {
-                    var $this = $(this);
-                    var data = $this.data(regOpts.namespace);
-                    var opts = $.extend({}, pluginClass.defaults, $this.data(), typeof options == 'object' && options);
-                    if (!data) {
-                        $this.data(regOpts.namespace, (data = new pluginClass(packadic.app, this, opts, regOpts.namespace)));
-                    }
-                    if (packadic.kindOf(options) === 'string') {
-                        data[options].call(data, args);
-                    }
-                    if (packadic.kindOf(regOpts.callback) === 'function') {
-                        regOpts.callback.apply(this, [data, opts]);
-                    }
-                });
-                if (packadic.kindOf(options) === 'string' && options === 'instance' && all.length > 0) {
-                    if (all.length === 1) {
-                        return $(all[0]).data(regOpts.namespace);
-                    }
-                    else {
-                        var instances = [];
-                        all.each(function () {
-                            instances.push($(this).data(regOpts.namespace));
-                        });
-                        return instances;
-                    }
-                }
-                return all;
-            }
-            var old = $.fn[name];
-            $.fn[name] = jQueryPlugin;
-            $.fn[name].Constructor = pluginClass;
-        }
-    })(plugins = packadic.plugins || (packadic.plugins = {}));
-})(packadic || (packadic = {}));
-var packadic;
-(function (packadic) {
     var storage;
     (function (storage) {
         storage.bags = {};
@@ -1552,127 +1493,6 @@ var packadic;
             createBag('cookie', new CookieStorage());
         }
     })(storage = packadic.storage || (packadic.storage = {}));
-})(packadic || (packadic = {}));
-var packadic;
-(function (packadic) {
-    var vue;
-    (function (vue) {
-        var VueComponent = (function () {
-            function VueComponent() {
-            }
-            VueComponent.prototype.$add = function (key, val) { };
-            VueComponent.prototype.$addChild = function (options, constructor) { };
-            VueComponent.prototype.$after = function (target, cb) { };
-            VueComponent.prototype.$appendTo = function (target, cb) { };
-            VueComponent.prototype.$before = function (target, cb) { };
-            VueComponent.prototype.$broadcast = function (event) {
-                var args = [];
-                for (var _i = 1; _i < arguments.length; _i++) {
-                    args[_i - 1] = arguments[_i];
-                }
-            };
-            VueComponent.prototype.$compile = function (el) { return function () { }; };
-            VueComponent.prototype.$delete = function (key) { };
-            VueComponent.prototype.$destroy = function (remove) { };
-            VueComponent.prototype.$dispatch = function (event) {
-                var args = [];
-                for (var _i = 1; _i < arguments.length; _i++) {
-                    args[_i - 1] = arguments[_i];
-                }
-            };
-            VueComponent.prototype.$emit = function (event) {
-                var args = [];
-                for (var _i = 1; _i < arguments.length; _i++) {
-                    args[_i - 1] = arguments[_i];
-                }
-            };
-            VueComponent.prototype.$eval = function (text) { };
-            VueComponent.prototype.$get = function (exp) { };
-            VueComponent.prototype.$interpolate = function (text) { };
-            VueComponent.prototype.$log = function (path) { };
-            VueComponent.prototype.$mount = function (el) { };
-            VueComponent.prototype.$nextTick = function (fn) { };
-            VueComponent.prototype.$off = function (event, fn) { };
-            VueComponent.prototype.$on = function (event, fn) { };
-            VueComponent.prototype.$once = function (event, fn) { };
-            VueComponent.prototype.$remove = function (cb) { };
-            VueComponent.prototype.$set = function (exp, val) { };
-            VueComponent.prototype.$watch = function (exp, cb, options) { };
-            return VueComponent;
-        })();
-        vue.VueComponent = VueComponent;
-        function lifecycleHook(hook) {
-            return function (cls, name, desc) {
-                if ([
-                    'created', 'beforeCompile', 'compiled', 'ready', 'attached', 'detached', 'beforeDestroy', 'destroyed'
-                ].indexOf(hook) == -1)
-                    throw new Error('Unknown Lifecyle Hook: ' + hook);
-                if (!cls.hasOwnProperty('__hooks__'))
-                    cls.__hooks__ = {};
-                cls.__hooks__[name] = cls[name];
-                desc.value = void 0;
-                return desc;
-            };
-        }
-        vue.lifecycleHook = lifecycleHook;
-        function eventHook(hook) {
-            return function (cls, name, desc) {
-                if (!cls.hasOwnProperty('__events__'))
-                    cls.__events__ = {};
-                cls.__events__[name] = cls[name];
-                desc.value = void 0;
-                return desc;
-            };
-        }
-        vue.eventHook = eventHook;
-        function prop(options) {
-            return function (cls, name) {
-                if (!cls.hasOwnProperty('__props__'))
-                    cls.__props__ = {};
-                cls.__props__[name] = options;
-            };
-        }
-        vue.prop = prop;
-        function createComponent(name) {
-            return function (cls) {
-                var options = {
-                    data: (function () { return new cls(); }),
-                    methods: {},
-                    computed: {}
-                };
-                if (cls.hasOwnProperty('replace'))
-                    options.replace = cls.replace;
-                if (cls.hasOwnProperty('template'))
-                    options.template = cls.template;
-                var obj = new cls();
-                var proto = Object.getPrototypeOf(obj);
-                if (proto.hasOwnProperty('__props__'))
-                    options.props = proto.__props__;
-                if (proto.hasOwnProperty('__events__'))
-                    options.events = proto.__events__;
-                if (proto.hasOwnProperty('__hooks__'))
-                    Object.keys(proto.__hooks__).forEach(function (name) {
-                        options[name] = proto.__hooks__[name];
-                    });
-                Object.getOwnPropertyNames(proto).forEach(function (method) {
-                    if (['constructor'].indexOf(method) > -1)
-                        return;
-                    var desc = Object.getOwnPropertyDescriptor(proto, method);
-                    if (typeof desc.value === 'function')
-                        options.methods[method] = proto[method];
-                    else if (typeof desc.set === 'function')
-                        options.computed[method] = {
-                            get: desc.get,
-                            set: desc.set
-                        };
-                    else if (typeof desc.get === 'function')
-                        options.computed[method] = desc.get;
-                });
-                Vue.component(name, options);
-            };
-        }
-        vue.createComponent = createComponent;
-    })(vue = packadic.vue || (packadic.vue = {}));
 })(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
@@ -3503,6 +3323,487 @@ var packadic;
         })(version = util.version || (util.version = {}));
     })(util = packadic.util || (packadic.util = {}));
 })(packadic || (packadic = {}));
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") return Reflect.decorate(decorators, target, key, desc);
+    switch (arguments.length) {
+        case 2: return decorators.reduceRight(function(o, d) { return (d && d(o)) || o; }, target);
+        case 3: return decorators.reduceRight(function(o, d) { return (d && d(target, key)), void 0; }, void 0);
+        case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
+    }
+};
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var components;
+        (function (components) {
+            var CodeBlock = (function (_super) {
+                __extends(CodeBlock, _super);
+                function CodeBlock() {
+                    _super.apply(this, arguments);
+                    this.show = false;
+                    this.minimized = false;
+                    this.lines = 0;
+                    this.original = '';
+                    this.code = '';
+                    this.actionBtnClass = 'btn btn-sm blue-grey-light';
+                    this.isrdy = false;
+                }
+                Object.defineProperty(CodeBlock.prototype, "actions", {
+                    get: function () {
+                        return [
+                            { title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick },
+                            { title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick },
+                            { title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick },
+                            { title: 'Minimize/maximize', icon: 'fa-plus', onClick: this.onMinimizeToggleClick }
+                        ];
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                CodeBlock.prototype.maximize = function () {
+                    this.minimized = false;
+                    this.initScrollContent();
+                };
+                CodeBlock.prototype.minimize = function () {
+                    this.minimized = true;
+                    this.destroyScrollContent();
+                };
+                CodeBlock.prototype.onMinimizeToggleClick = function (e) {
+                    if (this.$get('minimized')) {
+                        this.$set('minimized', false);
+                        this.initScrollContent();
+                    }
+                    else {
+                        this.$set('minimized', true);
+                        this.destroyScrollContent();
+                    }
+                };
+                CodeBlock.prototype.onDecreaseLinesClick = function (e) {
+                    if (this.$get('toManyLines') + 5 >= this.$get('lineChangeStep')) {
+                        this.$set('toManyLines', this.$get('toManyLines') - this.$get('lineChangeStep'));
+                        this.initScrollContent();
+                    }
+                };
+                CodeBlock.prototype.onIncreaseLinesClick = function (e) {
+                    this.$set('toManyLines', this.$get('toManyLines') + this.$get('lineChangeStep'));
+                    this.initScrollContent();
+                };
+                CodeBlock.prototype.onCopyClick = function (e) {
+                    console.log('onCopyClick', e.target.tagName, e);
+                };
+                CodeBlock.prototype.created = function () {
+                    this.initClipboard();
+                };
+                CodeBlock.prototype.ready = function () {
+                    var _this = this;
+                    if (this.isrdy) {
+                        return;
+                    }
+                    packadic.app.loadCSS('prism/themes/' + this.theme, true);
+                    packadic.app.loadJS('prism/prism', true).then(function () {
+                        var defer = packadic.util.promise.create();
+                        async.parallel([
+                            function (d) {
+                                packadic.app.loadJS('prism/components/prism-' + _this.language, true).then(d);
+                            },
+                            function (d) {
+                                packadic.app.loadJS('prism/plugins/line-numbers/prism-line-numbers', true).then(d);
+                            },
+                            function (d) {
+                                packadic.app.loadCSS('prism/plugins/line-numbers/prism-line-numbers', true).then(d);
+                            },
+                            function (d) {
+                                packadic.app.loadJS('prism/plugins/remove-initial-line-feed/prism-remove-initial-line-feed', true).then(d);
+                            }
+                        ], function (err) {
+                            defer.resolve();
+                        });
+                        return defer.promise;
+                    }).then(function () {
+                        var $code = $(_this.$$.code);
+                        var code = $code.text();
+                        _this.setCodeContent(code, _this.fixCodeIndent);
+                    }).then(function () {
+                        _this.show = true;
+                        _this.isrdy = true;
+                    });
+                };
+                CodeBlock.prototype.setCodeContent = function (code, fixIndent) {
+                    if (fixIndent === void 0) { fixIndent = false; }
+                    var $pre = $(this.$$.pre);
+                    var $code = $(this.$$.code);
+                    $code.ensureClass('language-' + this.language);
+                    this.original = code;
+                    this.code = fixIndent ? packadic.util.codeIndentFix(packadic.util.codeIndentFix(code)) : code;
+                    this.lines = this.code.split('\n').length;
+                    $code.html('').append(this.code);
+                    Prism.highlightElement($code.get(0));
+                    this.initScrollContent();
+                };
+                CodeBlock.prototype.attached = function () {
+                    console.log('attached');
+                    $(this.$el).find('a.btn');
+                };
+                CodeBlock.prototype.detached = function () {
+                    console.log('detached');
+                };
+                CodeBlock.prototype.beforeDestroy = function () {
+                    this.show = false;
+                };
+                CodeBlock.prototype.initClipboard = function () {
+                    var _this = this;
+                    if (packadic.defined(this.client)) {
+                        return;
+                    }
+                    packadic.getClipboard().then(function (Clipboard) {
+                        _this.client = new Clipboard($(_this.$el).find('a.btn'));
+                        _this.client.on('ready', function (event) {
+                            _this.client.on('copy', function (event) {
+                                var clipboard = event.clipboardData;
+                                clipboard.setData('text/plain', _this.code);
+                                console.log(event);
+                            });
+                            _this.client.on('aftercopy', function (event) {
+                                packadic.debug.log('aftercopy', event.data);
+                            });
+                        });
+                    });
+                };
+                CodeBlock.prototype.getHeightBetweenLines = function (one, two) {
+                    var $lineRows = $(this.$el).find('.line-numbers-rows');
+                    var $first = $lineRows.children('span').first();
+                    var $last = $first.nextAll().slice(one, two).last();
+                    console.log($lineRows, $first, $last);
+                    return $last.position().top - $first.position().top;
+                };
+                CodeBlock.prototype.initScrollContent = function () {
+                    if (this.lines <= this.toManyLines) {
+                        return;
+                    }
+                    this.destroyScrollContent();
+                    var $el = $(this.$el).find('code.code-block-code');
+                    addons.plugins.makeSlimScroll($el.parent(), {
+                        height: this.getHeightBetweenLines(0, this.toManyLines),
+                        allowPageScroll: true
+                    });
+                };
+                CodeBlock.prototype.destroyScrollContent = function () {
+                    var $el = $(this.$el).find('code.code-block-code');
+                    addons.plugins.destroySlimScroll($el);
+                    $(this.$el).find('.slimScrollBar, .slimScrollRail').remove();
+                };
+                CodeBlock.template = packadic.getTemplate('code-block')({});
+                CodeBlock.replace = true;
+                __decorate([
+                    components.prop({ type: String, required: false, 'default': '', twoWay: true })
+                ], CodeBlock.prototype, "language");
+                __decorate([
+                    components.prop({ type: String, required: false, 'default': '', twoWay: true })
+                ], CodeBlock.prototype, "title");
+                __decorate([
+                    components.prop({ type: String, required: false, 'default': '', twoWay: true })
+                ], CodeBlock.prototype, "description");
+                __decorate([
+                    components.prop({ type: Boolean, required: false, 'default': true, twoWay: true })
+                ], CodeBlock.prototype, "showTop");
+                __decorate([
+                    components.prop({ type: String, required: false, 'default': 'prism' })
+                ], CodeBlock.prototype, "theme");
+                __decorate([
+                    components.prop({ type: Number, required: false, 'default': 30 })
+                ], CodeBlock.prototype, "toManyLines");
+                __decorate([
+                    components.prop({ type: Number, required: false, 'default': 10 })
+                ], CodeBlock.prototype, "lineChangeStep");
+                __decorate([
+                    components.prop({ type: Boolean, required: false, 'default': true })
+                ], CodeBlock.prototype, "fixCodeIndent");
+                Object.defineProperty(CodeBlock.prototype, "created",
+                    __decorate([
+                        components.lifecycleHook('created')
+                    ], CodeBlock.prototype, "created", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "created")));
+                Object.defineProperty(CodeBlock.prototype, "ready",
+                    __decorate([
+                        components.lifecycleHook('ready')
+                    ], CodeBlock.prototype, "ready", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "ready")));
+                Object.defineProperty(CodeBlock.prototype, "attached",
+                    __decorate([
+                        components.lifecycleHook('attached')
+                    ], CodeBlock.prototype, "attached", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "attached")));
+                Object.defineProperty(CodeBlock.prototype, "detached",
+                    __decorate([
+                        components.lifecycleHook('detached')
+                    ], CodeBlock.prototype, "detached", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "detached")));
+                Object.defineProperty(CodeBlock.prototype, "beforeDestroy",
+                    __decorate([
+                        components.lifecycleHook('beforeDestroy')
+                    ], CodeBlock.prototype, "beforeDestroy", Object.getOwnPropertyDescriptor(CodeBlock.prototype, "beforeDestroy")));
+                CodeBlock = __decorate([
+                    components.createComponent('code-block')
+                ], CodeBlock);
+                return CodeBlock;
+            })(components.Component);
+            components.CodeBlock = CodeBlock;
+        })(components = addons.components || (addons.components = {}));
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var filters;
+        (function (filters) {
+            var SomeFilters = (function () {
+                function SomeFilters() {
+                }
+                SomeFilters.prototype.testFilter = function (value) {
+                    return 'success' + value;
+                };
+                SomeFilters.prototype.changeit = function (val, old) {
+                    return val + old;
+                };
+                Object.defineProperty(SomeFilters.prototype, "testFilter",
+                    __decorate([
+                        filters.Filter('test')
+                    ], SomeFilters.prototype, "testFilter", Object.getOwnPropertyDescriptor(SomeFilters.prototype, "testFilter")));
+                Object.defineProperty(SomeFilters.prototype, "changeit",
+                    __decorate([
+                        filters.Filter()
+                    ], SomeFilters.prototype, "changeit", Object.getOwnPropertyDescriptor(SomeFilters.prototype, "changeit")));
+                return SomeFilters;
+            })();
+            filters.SomeFilters = SomeFilters;
+            var FilterColTest = (function () {
+                function FilterColTest() {
+                }
+                FilterColTest.prototype.wtffilter = function (val, old) {
+                    return val + old;
+                };
+                FilterColTest.prototype.byefilter = function (val, old) {
+                    return val + old;
+                };
+                FilterColTest.prototype.hellofilter = function (val, old) {
+                    return val + old;
+                };
+                FilterColTest.prototype.excludethis = function (val, old) {
+                    return val + old;
+                };
+                FilterColTest = __decorate([
+                    filters.FilterCollection(['excludethis'])
+                ], FilterColTest);
+                return FilterColTest;
+            })();
+            filters.FilterColTest = FilterColTest;
+            filters.filterColTest = new FilterColTest();
+            filters.someFilters = new SomeFilters();
+            filters.someFilters.changeit('as');
+        })(filters = addons.filters || (addons.filters = {}));
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var plugins;
+        (function (plugins) {
+            function notify(opts) {
+                if (opts === void 0) { opts = {}; }
+                var defer = packadic.util.promise.create();
+                packadic.app.booted(function () {
+                    packadic.app.loadJS('pnotify/src/pnotify.core', true).then(function (pn) {
+                        opts = $.extend({}, packadic.app.config('vendor.pnotify'), opts);
+                        console.log('pnotify opts', opts, pn);
+                        var notify = new pn(opts);
+                        console.log('pnotify instance', notify);
+                        defer.resolve(notify);
+                    });
+                });
+                return defer.promise;
+            }
+            plugins.notify = notify;
+            function highlight(code, lang, wrap, wrapPre) {
+                if (wrap === void 0) { wrap = false; }
+                if (wrapPre === void 0) { wrapPre = false; }
+                if (!packadic.defined(hljs)) {
+                    console.warn('Cannot call highlight function in packadic.plugins, hljs is not defined');
+                    return;
+                }
+                var defer = packadic.util.promise.create();
+                var highlighted;
+                if (lang && hljs.getLanguage(lang)) {
+                    highlighted = hljs.highlight(lang, code).value;
+                }
+                else {
+                    highlighted = hljs.highlightAuto(code).value;
+                }
+                if (wrap) {
+                    highlighted = '<code class="hljs">' + highlighted + '</code>';
+                }
+                if (wrapPre) {
+                    highlighted = '<pre>' + highlighted + '</pre>';
+                }
+                defer.resolve(highlighted);
+                return defer.promise;
+            }
+            plugins.highlight = highlight;
+            function makeSlimScroll(el, opts) {
+                if (opts === void 0) { opts = {}; }
+                var $el = typeof (el) === 'string' ? $(el) : el;
+                $el.each(function () {
+                    if ($(this).attr("data-initialized")) {
+                        return;
+                    }
+                    var height;
+                    if ($(this).attr("data-height")) {
+                        height = $(this).attr("data-height");
+                    }
+                    else {
+                        height = $(this).css('height');
+                    }
+                    var o = packadic.app.config('vendor.slimscroll');
+                    $(this).slimScroll(_.merge(o, {
+                        color: ($(this).attr("data-handle-color") ? $(this).attr("data-handle-color") : o.color),
+                        wrapperClass: ($(this).attr("data-wrapper-class") ? $(this).attr("data-wrapper-class") : o.wrapperClass),
+                        railColor: ($(this).attr("data-rail-color") ? $(this).attr("data-rail-color") : o.railColor),
+                        height: height,
+                        alwaysVisible: ($(this).attr("data-always-visible") == "1" ? true : o.alwaysVisible),
+                        railVisible: ($(this).attr("data-rail-visible") == "1" ? true : o.railVisible)
+                    }, opts));
+                    $(this).attr("data-initialized", "1");
+                });
+            }
+            plugins.makeSlimScroll = makeSlimScroll;
+            function destroySlimScroll(el) {
+                var $el = typeof (el) === 'string' ? $(el) : el;
+                $el.each(function () {
+                    if ($(this).attr("data-initialized") === "1") {
+                        $(this).removeAttr("data-initialized");
+                        $(this).removeAttr("style");
+                        var attrList = {};
+                        if ($(this).attr("data-handle-color")) {
+                            attrList["data-handle-color"] = $(this).attr("data-handle-color");
+                        }
+                        if ($(this).attr("data-wrapper-class")) {
+                            attrList["data-wrapper-class"] = $(this).attr("data-wrapper-class");
+                        }
+                        if ($(this).attr("data-rail-color")) {
+                            attrList["data-rail-color"] = $(this).attr("data-rail-color");
+                        }
+                        if ($(this).attr("data-always-visible")) {
+                            attrList["data-always-visible"] = $(this).attr("data-always-visible");
+                        }
+                        if ($(this).attr("data-rail-visible")) {
+                            attrList["data-rail-visible"] = $(this).attr("data-rail-visible");
+                        }
+                        $(this).slimScroll({
+                            wrapperClass: ($(this).attr("data-wrapper-class") ? $(this).attr("data-wrapper-class") : 'slimScrollDiv'),
+                            destroy: true
+                        });
+                        var the = $(this);
+                        $.each(attrList, function (key, value) {
+                            the.attr(key, value);
+                        });
+                    }
+                });
+            }
+            plugins.destroySlimScroll = destroySlimScroll;
+            function registerHelperPlugins() {
+                if (packadic.kindOf($.fn.prefixedData) === 'function') {
+                    return;
+                }
+                $.fn.prefixedData = function (prefix) {
+                    var origData = $(this).first().data();
+                    var data = {};
+                    for (var p in origData) {
+                        var pattern = new RegExp("^" + prefix + "[A-Z]+");
+                        if (origData.hasOwnProperty(p) && pattern.test(p)) {
+                            var shortName = p[prefix.length].toLowerCase() + p.substr(prefix.length + 1);
+                            data[shortName] = origData[p];
+                        }
+                    }
+                    return data;
+                };
+                $.fn.removeAttributes = function () {
+                    return this.each(function () {
+                        var attributes = $.map(this.attributes, function (item) {
+                            return item.name;
+                        });
+                        var img = $(this);
+                        $.each(attributes, function (i, item) {
+                            img.removeAttr(item);
+                        });
+                    });
+                };
+                $.fn.ensureClass = function (clas, has) {
+                    if (has === void 0) { has = true; }
+                    var $this = $(this);
+                    if (has === true && $this.hasClass(clas) === false) {
+                        $this.addClass(clas);
+                    }
+                    else if (has === false && $this.hasClass(clas) === true) {
+                        $this.removeClass(clas);
+                    }
+                    return this;
+                };
+                $.fn.onClick = function () {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i - 0] = arguments[_i];
+                    }
+                    var $this = $(this);
+                    return $this.on.apply($this, [packadic.isTouchDevice() ? 'touchend' : 'click'].concat(args));
+                };
+            }
+            plugins.registerHelperPlugins = registerHelperPlugins;
+        })(plugins = addons.plugins || (addons.plugins = {}));
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var plugins;
+        (function (plugins) {
+            var TestPlugin = (function (_super) {
+                __extends(TestPlugin, _super);
+                function TestPlugin() {
+                    _super.apply(this, arguments);
+                }
+                TestPlugin.prototype._create = function () {
+                    console.log('TestPlugin create');
+                };
+                return TestPlugin;
+            })(plugins.Plugin);
+            plugins.TestPlugin = TestPlugin;
+            plugins.Plugin.register('testPlugin', TestPlugin);
+        })(plugins = addons.plugins || (addons.plugins = {}));
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
+    var addons;
+    (function (addons) {
+        var widgets;
+        (function (widgets) {
+            var TestWidget = (function (_super) {
+                __extends(TestWidget, _super);
+                function TestWidget() {
+                    _super.call(this);
+                    this.version = '1.0.0';
+                    this.widgetEventPrefix = 'test.';
+                    this.options = { 'test': 'yes' };
+                }
+                TestWidget.prototype._create = function () {
+                    console.log('TestWidget create');
+                };
+                return TestWidget;
+            })(widgets.Widget);
+            widgets.TestWidget = TestWidget;
+            widgets.createWidget('testWidget', TestWidget);
+        })(widgets = addons.widgets || (addons.widgets = {}));
+    })(addons = packadic.addons || (packadic.addons = {}));
+})(packadic || (packadic = {}));
 (function () {
     packadic.debug = new packadic.Debug();
     packadic.app = packadic.Application.instance;
@@ -3523,7 +3824,8 @@ var packadic;
                 },
                 '*codemirror.js': { format: 'global', exports: 'CodeMirror' },
                 '*highlightjs/highlight.pack*.js': { format: 'global', exports: 'hljs' },
-                '*prism/prism*.js': { format: 'global', exports: 'Prism' }
+                '*prism/prism*.js': { format: 'global', exports: 'Prism' },
+                '*pnotify*.js': { format: 'global', exports: 'PNotify' }
             }
         });
     });
