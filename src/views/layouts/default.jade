@@ -14,7 +14,7 @@ doctype html
 <!--[if !IE]><!-->
 html(lang="en")
     <!--<![endif]-->
-    head
+    head(v-el='head')
         block head
             title
                 block title
@@ -26,14 +26,13 @@ html(lang="en")
             block styles
                 +stylesheet('stylesheet')
                 +stylesheet('themes/theme-' +themeStyle)(id='theme-style')
-                if includeHighlightJs
-                    +stylesheet('highlightjs/styles/' + highlightJsStyle, true)(id='hljs-style')
+                +stylesheet('animate')
 
-    body.page-loading(class=bodyClass)
+    body.page-loading(class=bodyClass, v-el='body')
         #page-loader
             .loader.loader-page
 
-        .page-header.navbar(class=pageHeaderClass)
+        .page-header.navbar(class=pageHeaderClass, v-el='header')
             block page-header
                 .page-header-inner
                     block header-logo
@@ -57,9 +56,9 @@ html(lang="en")
         block page-container
             .page-container
                 .page-sidebar-wrapper
-                    .page-sidebar.navbar-collapse.collapse
+                    .page-sidebar.navbar-collapse.collapse(v-el='sidebar')
                         block page-sidebar
-                            ul.page-sidebar-menu(class=sidebarClass)
+                            ul.page-sidebar-menu(class=sidebarClass, v-el='sidebar-menu')
                                 block page-sidebar-menu
                                     include ../partials/sidebar-items
 
@@ -69,17 +68,19 @@ html(lang="en")
                         .page-content
                             .page-head
                                 .page-title
-                                    h1
+                                    h1(v-el='page-title')
                                         block page-title
-                            ul.page-breadcrumb.breadcrumb(v-breadcrumbs="breadcrumbs || {}")
+                            ul.page-breadcrumb.breadcrumb(v-el='breadcrumbs', v-breadcrumbs="breadcrumbs")
                                 block breadcrumb
                             .page-content-seperator
                             block page-content
-                                .page-content-inner
+                                .page-content-inner(v-el='content')
                                     block content
+
+
         block page-footer
-            .page-footer
-                .page-footer-inner
+            .page-footer(v-el='footer')
+                .page-footer-inner(v-el='footer-content')
                     block page-footer-inner
                         - var year = (new Date()).getFullYear()
                         | Copyright Packadic
@@ -89,40 +90,51 @@ html(lang="en")
 
 
         block scripts
-            +javascript('reflect-metadata/Reflect', true)
-            +javascript('es6-module-loader/dist/es6-module-loader', true)
-            +javascript('system.js/dist/system.src', true)
-            +javascript('vue.dev') //+javascript('vue/dist/vue', true)
-            +javascript('vendor')
-            +javascript('templates.min.js')
-            +javascript('packadic')
-            //+javascript('pnotify')
+            if _target === 'dist'
+                +javascript('reflect-metadata/Reflect', true)
+                +javascript('es6-module-loader/dist/es6-module-loader', true)
+                +javascript('system.js/dist/system.src', true)
+                +javascript('vue/dist/vue', true)
+                +javascript('vendor.min')
+                +javascript('noty.min')
+                +javascript('templates.min.js')
+                +javascript('packadic.min')
 
-            +javascript('components/layout')
-            +javascript('components/quick_sidebar')
-            +javascript('components/presets')
-            //+javascript('components/code-block')
+            else
+                +javascript('reflect-metadata/Reflect', true)
+                +javascript('es6-module-loader/dist/es6-module-loader', true)
+                +javascript('system.js/dist/system.src', true)
+                +javascript('vue.dev') //+javascript('vue/dist/vue', true)
+                +javascript('vendor')
+                +javascript('noty')
+                +javascript('templates.min.js')
+                +javascript('packadic')
 
-        block scripts-highlightjs
-            if includeHighlightJs
-                +javascript('highlightjs/highlight.pack.min', true)
+            +javascript('extensions/layout')
+            +javascript('extensions/quick_sidebar')
+            +javascript('extensions/presets')
+            +javascript('extensions/notifications')
 
         block init-script
+
+            if _target !== 'dist'
+                script.
+                    var app = packadic.Application.instance;
+                    app.DEBUG = true;
+
+
+        block boot-script
             script.
                 var app = packadic.Application.instance;
-                app.DEBUG = true;
-                app
-                    .init({
-                        hello: 'test'
-                    })
-                    .boot()
-                    .then(function (app) {
-                        //$('#testPluginContainer').testPlugin({});
-                        //$('#testWidgetContainer').testWidget({});
-                    });
-
+                if(!app.isInitialised){
+                    app.init();
+                }
+                app.boot().then(function (app) {
+                    app.debug.log('BOOTED FROM boot-script');
+                });
 
         block script
+
 
         block quick-sidebar
             include ../partials/quick-sidebar

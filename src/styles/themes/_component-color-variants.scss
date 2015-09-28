@@ -8,6 +8,8 @@ $component-color-variants: (
     progress: true,
 );
 
+
+
 @mixin make-color-variant($color-name) {
     $light: material-color($color-name, '300');
     $normal: material-color($color-name, '500');

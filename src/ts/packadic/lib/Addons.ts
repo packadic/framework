@@ -1,6 +1,142 @@
-module packadic.addons {
+module packadic {
 
     export var namespacePrefix:string = 'packadic.';
+
+    export function directive(name:string, isElementDirective:boolean=false):(cls:any)=>void {
+        return (cls:any):void => {
+
+            let definition:any = {
+                isLiteral: false,
+                twoWay: false,
+                acceptStatement: false,
+                deep: false
+            };
+
+            Object.keys(definition).forEach((defName:string) => {
+                if (cls.hasOwnProperty(defName)) {
+                    definition[defName] = cls[defName];
+                }
+            });
+
+            let obj:any = new cls();
+            let proto:any = Object.getPrototypeOf(obj);
+
+            Object.getOwnPropertyNames(proto).forEach((method:string):void => {
+                if (['constructor'].indexOf(method) > -1)
+                    return;
+
+                let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
+
+                if (typeof desc.value === 'function') {
+                    definition[method] = proto[method];
+                } else if (typeof desc.set === 'function') {
+                    definition[method] = {
+                        get: desc.get,
+                        set: desc.set
+                    };
+                } else if (typeof desc.get === 'function') {
+                    definition[method] = desc.get;
+                }
+
+            });
+
+            if(isElementDirective){
+                Vue.elementDirective(name, definition);
+            } else {
+                Vue.directive(name, definition);
+            }
+        }
+    }
+
+    export function filter(name?:string):MethodDecorator {
+        return (target:filters.FilterCallback, propertyKey:string, descriptor:TypedPropertyDescriptor<any>) => {
+            name = name || propertyKey;
+            var originalMethod = descriptor.value;
+            descriptor.value = function (...args:any[]) {
+                console.log("The method args are: " + JSON.stringify(args)); // pre
+                var result = originalMethod.apply(this, args);               // run and store the result
+                console.log("The return value is: " + result);               // post
+                return result;                                               // return the result of the original method
+            };
+            Vue.filter(name, target);
+            return descriptor;
+        }
+    }
+
+    export function component(name:string):(cls:any)=>void {
+        return (cls:any):void => {
+
+            let options:any = {
+                data: (():any => {
+                    return new cls();
+                }),
+                methods: {},
+                computed: {}
+            };
+
+            // check for replace and template
+            if (cls.hasOwnProperty('replace'))
+                options.replace = cls.replace;
+
+            if (cls.hasOwnProperty('template'))
+                options.template = cls.template;
+
+            // create object and get prototype
+            let obj:any = new cls();
+            let proto:any = Object.getPrototypeOf(obj);
+
+            if (proto.hasOwnProperty('__props__'))
+                options.props = proto.__props__;
+
+            if (proto.hasOwnProperty('__events__'))
+                options.events = proto.__events__;
+
+            if (proto.hasOwnProperty('__hooks__'))
+                Object.keys(proto.__hooks__).forEach((name:string):void => {
+                    options[name] = proto.__hooks__[name];
+                });
+
+            // get methods
+            Object.getOwnPropertyNames(proto).forEach((method:string):void => {
+
+                // skip the constructor and the internal option keeper
+                if (['constructor'].indexOf(method) > -1)
+                    return;
+
+                let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
+
+                // normal methods
+                if (typeof desc.value === 'function')
+                    options.methods[method] = proto[method];
+
+                // if getter and setter are defied, pass the function as computed property
+                else if (typeof desc.set === 'function')
+                    options.computed[method] = {
+                        get: desc.get,
+                        set: desc.set
+                    };
+
+                // if the method only has a getter, just put the getter to the component
+                else if (typeof desc.get === 'function')
+                    options.computed[method] = desc.get;
+            });
+
+            // create a Vue component
+            Vue.component(name, options);
+        };
+    }
+
+    export function widget(name:string, proto:any) {
+        proto = new proto();
+        $.widget(namespacePrefix + name, proto);
+        console.log('Widget', name, 'registered', proto);
+    }
+
+    export function plugin(name:string, regOpts:any = {}):(cls:typeof plugins.Plugin)=>void {
+        return (cls:typeof plugins.Plugin):void => {
+            plugins.registerPlugin(name, cls, regOpts);
+        };
+    }
 
     export module directives {
 
@@ -11,6 +147,23 @@ module packadic.addons {
             arg:any;
             raw:string;
             name:string;
+
+
+            constructor() {
+                // remove all members, they are only needed at compile time.
+                var myPrototype = (<Function>Directive).prototype;
+                $.each(myPrototype, (propertyName, value)=> {
+                    delete myPrototype[propertyName];
+                });
+            }
+
+            // methods: http://vuejs.org/api/instance-methods.html
+            $set(exp:string, val:any):void {
+            }
+            $delete(key:string):void {}
+
+            set(value:any):void {}
+            on(event:string, handler:Function):void {}
 
             bind():void {
             }
@@ -26,51 +179,6 @@ module packadic.addons {
 
         }
 
-        export function createDirective(name:string, isElementDirective:boolean=false):(cls:any)=>void {
-            return (cls:any):void => {
-
-                let definition:any = {
-                    isLiteral: false,
-                    twoWay: false,
-                    acceptStatement: false,
-                    deep: false
-                };
-
-                Object.keys(definition).forEach((defName:string) => {
-                    if (cls.hasOwnProperty(defName)) {
-                        definition[defName] = cls[defName];
-                    }
-                });
-
-                let obj:any = new cls();
-                let proto:any = Object.getPrototypeOf(obj);
-
-                Object.getOwnPropertyNames(proto).forEach((method:string):void => {
-                    if (['constructor'].indexOf(method) > -1)
-                        return;
-
-                    let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
-
-                    if (typeof desc.value === 'function') {
-                        definition[method] = proto[method];
-                    } else if (typeof desc.set === 'function') {
-                        definition[method] = {
-                            get: desc.get,
-                            set: desc.set
-                        };
-                    } else if (typeof desc.get === 'function') {
-                        definition[method] = desc.get;
-                    }
-
-                });
-
-                if(isElementDirective){
-                    Vue.elementDirective(name, definition);
-                } else {
-                    Vue.directive(name, definition);
-                }
-            }
-        }
 
     }
 
@@ -78,21 +186,6 @@ module packadic.addons {
 
         export interface FilterCallback extends vuejs.FilterCallback {
             (value:any, begin?:any, end?:any): any;
-        }
-
-        export function Filter(name?:string):MethodDecorator {
-            return (target:FilterCallback, propertyKey:string, descriptor:TypedPropertyDescriptor<any>) => {
-                name = name || propertyKey;
-                var originalMethod = descriptor.value;
-                descriptor.value = function (...args:any[]) {
-                    console.log("The method args are: " + JSON.stringify(args)); // pre
-                    var result = originalMethod.apply(this, args);               // run and store the result
-                    console.log("The return value is: " + result);               // post
-                    return result;                                               // return the result of the original method
-                };
-                Vue.filter(name, target);
-                return descriptor;
-            }
         }
 
         export function FilterCollection(excludedFunctions:string[] = []) {
@@ -119,71 +212,7 @@ module packadic.addons {
 
     export module components {
 
-
         // register a class as component in vue
-        export function createComponent(name:string):(cls:any)=>void {
-            return (cls:any):void => {
-
-                let options:any = {
-                    data: (():any => {
-                        return new cls();
-                    }),
-                    methods: {},
-                    computed: {}
-                };
-
-                // check for replace and template
-                if (cls.hasOwnProperty('replace'))
-                    options.replace = cls.replace;
-
-                if (cls.hasOwnProperty('template'))
-                    options.template = cls.template;
-
-                // create object and get prototype
-                let obj:any = new cls();
-                let proto:any = Object.getPrototypeOf(obj);
-
-                if (proto.hasOwnProperty('__props__'))
-                    options.props = proto.__props__;
-
-                if (proto.hasOwnProperty('__events__'))
-                    options.events = proto.__events__;
-
-                if (proto.hasOwnProperty('__hooks__'))
-                    Object.keys(proto.__hooks__).forEach((name:string):void => {
-                        options[name] = proto.__hooks__[name];
-                    });
-
-                // get methods
-                Object.getOwnPropertyNames(proto).forEach((method:string):void => {
-
-                    // skip the constructor and the internal option keeper
-                    if (['constructor'].indexOf(method) > -1)
-                        return;
-
-                    let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
-
-                    // normal methods
-                    if (typeof desc.value === 'function')
-                        options.methods[method] = proto[method];
-
-                    // if getter and setter are defied, pass the function as computed property
-                    else if (typeof desc.set === 'function')
-                        options.computed[method] = {
-                            get: desc.get,
-                            set: desc.set
-                        };
-
-                    // if the method only has a getter, just put the getter to the component
-                    else if (typeof desc.get === 'function')
-                        options.computed[method] = desc.get;
-                });
-
-                // create a Vue component
-                Vue.component(name, options);
-            };
-        }
-
 
         export class Component {
 
@@ -311,11 +340,7 @@ module packadic.addons {
 
     export module widgets {
 
-        export function createWidget(name:string, proto:any) {
-            proto = new proto();
-            $.widget(namespacePrefix + name, proto);
-            console.log('Widget', name, 'registered', proto);
-        }
+
 
         export function extendWidget(name:string, parent:any, proto:Widget) {
             $.widget(namespacePrefix + name, parent, proto);
@@ -540,8 +565,8 @@ module packadic.addons {
             return regOpts;
         }
 
-        function registerPlugin(name:string, pluginClass:any) {
-            var regOpts:IPluginRegisterOptions = makeRegOptions(name, pluginClass);
+        export function registerPlugin(name:string, pluginClass:typeof Plugin, opts:IPluginRegisterOptions={}) {
+            var regOpts:IPluginRegisterOptions = <IPluginRegisterOptions> $.extend(true, {}, makeRegOptions(name, pluginClass), opts);
 
             function jQueryPlugin(options?:any, ...args:any[]) {
                 var all:JQuery = this.each(function () {
@@ -550,7 +575,7 @@ module packadic.addons {
                     var opts:any = $.extend({}, pluginClass.defaults, $this.data(), typeof options == 'object' && options);
 
                     if (!data) {
-                        $this.data(regOpts.namespace, (data = new pluginClass(app, this, opts, regOpts.namespace)));
+                        $this.data(regOpts.namespace, (data = new pluginClass(this, opts, regOpts.namespace)));
                     }
 
                     if (kindOf(options) === 'string') {
@@ -582,7 +607,6 @@ module packadic.addons {
             $.fn[name] = jQueryPlugin;
             $.fn[name].Constructor = pluginClass;
         }
-
 
     }
 }

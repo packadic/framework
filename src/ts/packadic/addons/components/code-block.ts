@@ -1,7 +1,7 @@
-module packadic.addons.components {
+module packadic.components {
 
 
-    @createComponent('code-block')
+    @component('code-block')
     export class CodeBlock extends Component {
         static template:string = getTemplate('code-block')({});
         static replace:boolean = true;
@@ -33,7 +33,7 @@ module packadic.addons.components {
 
         get actions():any[] {
             return [
-                {id: 'cb-copy', title: 'Copy to clipboard', icon: 'fa-copy', onClick: $.noop },
+                {id: 'cb-copy', title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick },
                 {id: 'cb-open', title: 'Open in window', icon: 'fa-external-link', onClick: this.onOpenInWindowClick},
                 {id: 'cb-more', title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick},
                 {id: 'cb-less', title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick},
@@ -110,6 +110,12 @@ module packadic.addons.components {
             }
         }
 
+        onCopyClick(e){
+            notify({
+                text: 'Code has been copied to your clipboard',
+                type: 'information'
+            })
+        }
 
         onOpenInWindowClick(e) {
             var win:Window = util.openWindow({
@@ -169,7 +175,7 @@ module packadic.addons.components {
             if (defined(this.client)) {
                 return;
             }
-            packadic.getClipboard().then((Clipboard:typeof ZeroClipboard) => {
+            getClipboard().then((Clipboard:typeof ZeroClipboard) => {
                 this.client = new Clipboard($(this.$$.actions).find('a.btn#cb-copy'));
                 this.client.on('ready', (event:any) => {
                     this.client.on('copy', (event:any) => {
@@ -199,7 +205,7 @@ module packadic.addons.components {
             }
             this.destroyScrollContent();
             var $pre = $(this.$$.pre);
-            plugins.makeSlimScroll($pre, {
+            makeSlimScroll($pre, {
                 height: this.getHeightBetweenLines(0, this.$get('toManyLines')),
                 allowPageScroll: true,
                 size: '10px'
@@ -208,7 +214,7 @@ module packadic.addons.components {
 
         destroyScrollContent() {
             var $pre = $(this.$$.pre);
-            plugins.destroySlimScroll($pre);
+            destroySlimScroll($pre);
             $(this.$$.content).find('.slimScrollBar, .slimScrollRail').remove();
         }
     }

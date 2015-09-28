@@ -6,7 +6,7 @@ block vars
 block page-title
     | Code Block
 
-block breadcrumb
+// block breadcrumb
     +breadcrumb('index.html') Home
     +breadcrumb('code-block.html', true) Code Block
 
@@ -1261,22 +1261,11 @@ block content
 
 block append scripts
     script.
-        (function(){
+        (function () {
             var app = packadic.Application.instance;
-            app.booted(function() {
-                var doc = new Vue({
-                    data: {
-                        breadcrumbs: {
-                            home: true,
-                            items: [
-                                {name: 'Stuff' },
-                                {name: 'Code Block', href: 'code-block.html'}
-                            ]
-                        }
+            app.$set('breadcrumbs.items', [
+                {title: 'Examples'},
+                {title: 'Code Block', href: location.href }
+            ])
 
-                    }
-                });
-                doc.$addChild(packadic.addons.components.CodeBlock);
-
-            })
         }.call())

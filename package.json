@@ -79,6 +79,8 @@
     "grunt-ts": "^4.2.0",
     "grunt-typedoc": "^0.2.2",
     "grunt-typescript": "radic-forks/grunt-typescript#d61682f27e2e48df236455f97f87ff216e60b3c7",
+    "grunt-wrap": "^0.3.0",
+    "js-yaml": "^3.4.2",
     "load-grunt-tasks": "^3.2.0",
     "node-libs-browser": "^0.5.3",
     "node-mv": "^0.1.3",

@@ -11,6 +11,7 @@ module packadic {
 
     var $body:JQuery = $('body');
 
+
     export interface IApplication {
 
     }
@@ -81,8 +82,8 @@ module packadic {
 
         public timers:any = {construct: null, init: null, boot: null};
 
-        public get components():components.Components {
-            return packadic.components.Components.instance;
+        public get extensions():extensions.Extensions {
+            return extensions.Extensions.instance;
         }
 
         constructor(options?: {}) {
@@ -125,28 +126,29 @@ module packadic {
             }
             this.emit('pre-init');
             this.timers.init = new Date;
-
+            Vue.config.debug = this.DEBUG;
             if (this.DEBUG) {
                 this.debug.enable();
                 this.debug.setStartDate(this.timers.construct);
-                Vue.config.debug = this.debug.isEnabled()
+                console.groupCollapsed('DEBUG: init');
             }
 
             this._config = new ConfigObject($.extend({}, Application.defaults, opts));
             this.config = ConfigObject.makeProperty(this._config);
 
 
-            this.components.loadAll();
+            this.extensions.loadAll();
 
-            this.components.each((comp:packadic.components.Component) => {
+            this.extensions.each((comp:packadic.extensions.Extension) => {
                 this[comp.name] = comp;
             });
 
-            addons.plugins.registerHelperPlugins();
+            registerHelperPlugins();
 
             callReadyCallbacks();
 
             this.emit('init', this);
+            if(this.DEBUG) console.groupEnd();
             return this;
         }
 
@@ -158,11 +160,13 @@ module packadic {
                 }, 100);
                 return defer.promise;
             }
+            if(this.DEBUG) {
+                console.group('DEBUG: boot');
+            }
 
             $(() => {
-                this.emit('boot', this);
-
                 this.$mount('html');
+                this.emit('boot', this);
 
                 this.timers.boot = new Date;
                 if (!isTouchDevice()) {
@@ -173,6 +177,7 @@ module packadic {
                 $.material.init();
                 this.isBooted = true;
                 this.emit('booted', this);
+                if(this.DEBUG) console.groupEnd();
                 defer.resolve(this);
             });
             return defer.promise;
@@ -187,6 +192,12 @@ module packadic {
             return (prefixBaseUrl ? this.config('baseUrl') : '') + this.config('assetPath') + path;
         }
 
+        public mergeData(newData:Object={}){
+            this.$data = _.merge(this.$data, newData);
+            Object.keys(newData).forEach((key:string) => {
+                this.$set(key, newData[key]);
+            });
+        }
 
 
         /****************************/
@@ -246,6 +257,7 @@ module packadic {
             this._events.emit(event, args);
             return this;
         }
+
 
         public booted(fn:Function) {
             if (this.isBooted) {

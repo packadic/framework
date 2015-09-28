@@ -8,7 +8,7 @@
 /// @param {String} $state - The state (class name)
 /// @param {Background} $background - The background property value
 /// @param {Color} $test - The color of the text
-@mixin table-row-variant($state, $background, $text) {
+@mixin table-row-variant($state, $background, $text: false) {
     // Exact selectors below required to override `.table-striped` and prevent
     // inheritance to nested tables.
 
@@ -20,7 +20,9 @@
         &.#{$state} > td,
         &.#{$state} > th {
             background: $background;
-            color: $text;
+            @if $text != false {
+                color: $text;
+            }
         }
     }
 

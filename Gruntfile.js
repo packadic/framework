@@ -8,13 +8,15 @@ var _       = require('lodash'),
     exec    = require('child_process').execSync,
     grunt   = require('grunt'),
     globule = require('globule'),
+    jsyaml  = require('js-yaml'),
     xml2js  = require('xml2js');
 
-function _out(){
-    function ins(val){
+function _out() {
+    function ins(val) {
         process.stdout.write(inspect(val, {hidden: true, colors: true, depth: 7}) + '\n');
     }
-    [].concat(_.toArray(arguments)).forEach(function(arg){
+
+    [].concat(_.toArray(arguments)).forEach(function (arg) {
         ins(arg);
     })
 }
@@ -28,39 +30,37 @@ function getVendorScripts(vendorScripts) {
     }
     return scripts;
 }
+function getNotyScripts() {
+    var dir = path.join('bower_components', 'noty', 'js', 'noty');
+    var srcDir = path.join('src', 'js', 'noty');
+    var files = [path.join(dir, 'jquery.noty.js')];
 
-function getPnotifyScripts() {
-    var src = path.join('bower_components', 'pnotify', 'src');
-    var files = [path.join(src, 'pnotify.core.js')];
-    files = files.concat(globule.find([src + '/**/*.js', '!' + src + '/**/*.min.js', '!' + src + '/**/*.core.js']));
-    //process.stdout.write(inspect(files));
+    // layout definition files
+    files.push(globule.find(path.join(dir, 'layouts') + '/**/*.js'));
+
+    // we fetch theme & layout definition files we created ourself
+    files.push(globule.find(path.join(srcDir, '*.js')));
+
     return files;
-}
-
-function getTsSource(file){
-    return fs.readFileSync(path.join(__dirname, 'src', 'ts', 'packadic', 'lib', file), 'utf8');
-}
-function getTsComponentSource(file){
-    var filePath = path.join(__dirname, 'src', 'ts', 'components', file);
-    _out(filePath);
-    var fileContent = fs.readFileSync(filePath, 'utf8');
-    _out(fileContent);
-    return fileContent;
 }
 
 module.exports = function (_grunt) {
     grunt = _grunt;
+
     var target = grunt.option('target') || 'dev';
-    var vendorScripts = [
+    var configFile = grunt.option('config') || path.join(__dirname, 'config.yml');
+    var vendorScripts = getVendorScripts([
         //'reflect-metadata/Reflect.js', 'es6-module-loader/dist/es6-module-loader.js', 'system.js/dist/system.src.js', 'vue/dist/vue.js',
         'lodash/lodash.js', 'eventemitter2/lib/eventemitter2.js', 'async/dist/async.js', 'underscore.string/dist/underscore.string.js', 'jade/runtime.js',
         'jquery/dist/jquery.js', 'jquery-migrate/jquery-migrate.js', 'jquery-ui/ui/widget.js', 'jquery-slimscroll/jquery.slimscroll.js', 'jcarousel/dist/jquery.jcarousel.js',
         'tether/dist/js/tether.js', 'bootstrap/dist/js/bootstrap.js', 'bootstrap-material-design/dist/js/material.js'
-    ];
+    ]);
+    var notyScripts = getNotyScripts();
 
     grunt.log.subhead('Packadic Builder for Packadic ' + require('./bower.json').version);
-    //inspect(docs);
+
     var config = {
+        cfg    : jsyaml.safeLoad(fs.readFileSync(configFile, 'utf8')),
         /**/
         //      Targeting
         /**/
@@ -86,13 +86,13 @@ module.exports = function (_grunt) {
             views            : {src: '<%= target.dest %>/**/*.html'}
         },
         concat: {
-            vendor : {
-                src : getVendorScripts(vendorScripts),
+            vendor: {
+                src : vendorScripts,
                 dest: '<%= target.dest %>/assets/scripts/vendor.js'
             },
-            pnotify: {
-                src : getPnotifyScripts(),
-                dest: '<%= target.dest %>/assets/scripts/pnotify.js'
+            noty  : {
+                src : notyScripts,
+                dest: '<%= target.dest %>/assets/scripts/noty.js'
             }
         },
         copy  : {
@@ -100,7 +100,7 @@ module.exports = function (_grunt) {
             bower         : {src: ['**/*.{js,css,woff*,ttf,swf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
             scss          : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
             js            : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
-            ts_components : {src: ['**/*.ts'], cwd: 'src/ts/components', expand: true, dest: '<%= target.dest %>/assets/scripts/components'},
+            ts_extensions: {src: ['**/*.ts'], cwd: 'src/ts/extensions', expand: true, dest: '<%= target.dest %>/assets/scripts/extensions'},
             angular2_app  : {src: ['**/*.{js,js.map,html,css}'], cwd: 'src/angular2', expand: true, dest: '<%= target.dest %>/angular2-app'},
             angular2_files: {src: ['**/*.{js,js.map,html}'], cwd: 'node_modules/angular2', expand: true, dest: '<%= target.dest %>/assets/angular2'}
         },
@@ -111,9 +111,9 @@ module.exports = function (_grunt) {
                         _       : _,
                         _s      : _s,
                         _inspect: util.inspect,
+                        _target : target,
                         material: require('./src/grunt/material-colors'),
-                        sources: {
-                        }
+                        sources : {}
                     });
                 }.call()
             },
@@ -135,7 +135,15 @@ module.exports = function (_grunt) {
                 }
             }
         },
-
+        wrap: {
+            noty: {
+                src    : '<%= target.dest %>/assets/scripts/noty.js',
+                dest   : '<%= target.dest %>/assets/scripts/noty.js',
+                options: {
+                    wrapper: ["!function(root, factory) {\n\t if (typeof define === 'function' && define.amd) {\n\t\t define(['jquery'], factory);\n\t } else if (typeof exports === 'object') {\n\t\t module.exports = factory(require('jquery'));\n\t } else {\n\t\t factory(root.jQuery);\n\t }\n}(this, function($) {\n", "\nreturn window.noty;\n\n});"]
+                }
+            }
+        },
 
         /**/
         //      Scripting
@@ -143,10 +151,8 @@ module.exports = function (_grunt) {
         uglify    : {
             vendor     : {
                 files: {
-                    '<%= target.dest %>/assets/scripts/vendor.min.js': (function () {
-                        return getVendorScripts(vendorScripts);
-                    }.call()),
-                    '<%= target.dest %>/assets/scripts/pnotify.min.js': getPnotifyScripts()
+                    '<%= target.dest %>/assets/scripts/vendor.min.js': vendorScripts,
+                    '<%= target.dest %>/assets/scripts/noty.min.js'  : '<%= target.dest %>/assets/scripts/noty.js' // make sure to WRAP it first mofo
                 }
             },
             ts_packadic: {
@@ -171,10 +177,10 @@ module.exports = function (_grunt) {
             options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true, sourceMap: target === 'dev', experimentalDecorators: true},
             packadic  : {
                 options: {declaration: true, sourceMap: target === 'dev'},
-                src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts','src/ts/packadic/addons/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
+                src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts', 'src/ts/packadic/addons/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
                 out    : 'src/ts/packadic.js'
             },
-            components: {files: [{src: ['src/ts/components/**/*.ts']}], options: {declaration: false, sourceMap: target === 'dev'}}
+            extensions: {files: [{src: ['src/ts/extensions/**/*.ts']}], options: {declaration: false, sourceMap: target === 'dev'}}
         },
 
         /**/
@@ -190,7 +196,7 @@ module.exports = function (_grunt) {
                 },
                 src    : ['src/ts/**/*.ts', '!src/ts/packadic.d.ts', '!src/ts/plugins/**/*.ts']
             },
-            components: {src: ['src/ts/components/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/components', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}},
+            extensions: {src: ['src/ts/components/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/components', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}},
             plugins   : {src: ['src/ts/plugins/**/*.ts', '!src/ts/packadic.d.ts'], options: {out: '<%= target.dest %>/docs/plugins', name: 'Packadic API Documentation', readme: 'docs/packadic.md'}}
         },
 
@@ -218,22 +224,22 @@ module.exports = function (_grunt) {
             watch  : ['default_watch']
         },
         default_watch : {
-            options      : {livereload: true},
+            options: {livereload: true},
 
-            templates    : {files: ['src/templates/**/*.jade'], tasks: ['jade:templates', 'uglify:templates']},
+            templates: {files: ['src/templates/**/*.jade'], tasks: ['jade:templates', 'uglify:templates']},
 
             js           : {files: ['src/js/**/*.js'], tasks: ['copy:js']},
             styles       : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
             views        : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
             newerViews   : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
-            ts_packadic  : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:components', 'uglify:ts_packadic', 'copy_ts_scripts']},
-            ts_components: {files: ['src/ts/components/**/*.ts'], tasks: ['ts:components', 'copy:ts_components', 'copy_ts_scripts']},
+            ts_packadic  : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:extensions', 'uglify:ts_packadic', 'copy_ts_scripts']},
+            ts_extensions: {files: ['src/ts/extensions/**/*.ts'], tasks: ['ts:extensions', 'copy:ts_extensions', 'copy_ts_scripts']},
 
-
+            noty          : {files: ['src/js/noty/**/*.js'], tasks: ['concat:noty', 'wrap:noty']},
             jade_test_page: {files: ['src/views/test.jade'], tasks: ['jade:test_page']},
             bower         : {files: ['bower.json'], tasks: ['bower']},
 
-            livereload    : {
+            livereload: {
                 options: {livereload: 35729},
                 files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/bower_components/**/*']
             }
@@ -257,9 +263,13 @@ module.exports = function (_grunt) {
         ['images', 'Copy images', ['clean:images', 'copy:images']],
         ['bower', 'Copy bower components', ['clean:bower', 'copy:bower']],
         // compile
-        ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles']],
+        ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles', 'animate_css']],
         ['scripts', 'Concat & uglify vendor scripts and compile typescript files',
-            ['clean:scripts', 'uglify:vendor', 'concat:vendor', 'jade:templates', 'ts:packadic', 'ts:components', 'ts:plugins', 'uglify:ts_packadic', 'copy_ts_scripts', 'copy:js']
+            [
+                'clean:scripts', 'concat:vendor', 'concat:noty', 'wrap:noty',
+                'uglify:vendor', 'jade:templates', 'uglify:templates', 'ts:packadic', 'ts:extensions',
+                'uglify:ts_packadic', 'copy_ts_scripts', 'copy:js'
+            ]
         ],
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build

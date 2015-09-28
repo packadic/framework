@@ -1,5 +1,7 @@
 
-module packadic.addons.plugins {
+module packadic.plugins {
+
+    @plugin('testPlugin')
     export class TestPlugin extends Plugin {
 
         protected _create() {

@@ -16,6 +16,7 @@
 @import "components/mixins/size";
 @import "components/mixins/tables"; // component mixins should go after vendor(bootstrap) mixins, as they might replace/extend em
 @import "components/mixins/loader";
+@import "components/mixins/list-group";
 
 // temp
 //@import "variables/theme-variables";

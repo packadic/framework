@@ -8,6 +8,19 @@ mixin javascript(name, bower)
     - var path = bower === true ? assetPath + 'bower_components/' : assetPath + 'scripts/';
     script(src=path + name)
 
+mixin javascript2(name, devName, bower, devBower)
+    - name = _s.endsWith(name, '.js') ? name : name + '.js';
+    - bower = _.isBoolean(devName) ? devName : bower || false;
+    - devBower = _.isBoolean(devBower) ? devBower : bower || false;
+    - var path = assetPath;
+    - if(_.isString(devName)){
+    -   devName = _s.endsWith(devName, '.js') ? devName : devName + '.js';
+    -   name = _target === 'dist' ? name : devName;
+    -   bower = _target === 'dist' ? bower : devBower;
+    - }
+    - path += (bower === true ? 'bower_components/' : 'scripts/');
+    script(src=path + name)
+
 mixin sb-item(title, href, icon, hasChildren)
     - href = href || '#';
     li&attributes(attributes)

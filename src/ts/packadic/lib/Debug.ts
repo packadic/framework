@@ -13,7 +13,7 @@ module packadic {
                 if (variant !== '500') {
                     name += variant.toString();
                 }
-                this._styles[name.toString()] = 'color: ' + util.material.color(name.toString(), variant);
+                this._styles[(<string>name).toString()] = 'color: ' + util.material.color((<string>name).toString(), variant);
             } else {
                 (<string[]> name).forEach(function (n:string) {
                     this.addMSC(n, variant);

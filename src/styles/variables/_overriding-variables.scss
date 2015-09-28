@@ -2,11 +2,6 @@ $em-base:                           16px;       // bourbon & bootstrap default
 $font-size-root:                    $em-base;   // bootstrap
 
 // bootstrap overrides
-
-//$border-radius:                     0px;
-//$border-radius-lg:                  0px;
-//$border-radius-sm:                  0px;
-
 $font-family-default:  	  		 	$font-family-primary;
 $font-family-base:                  $font-family-primary;
 $font-family-monospace:             $font-family-code;
@@ -21,5 +16,10 @@ $input-color-placeholder:        	lighten($input-color, 50%);
 
 $tooltip-bg:                        #37474f;
 $enable-transitions:                true;
-$enable-rounded:                    false;
 $enable-shadows:                    true;
+
+// Kill all rounded corners
+$enable-rounded:                    false;
+$border-radius:                     0px;
+$border-radius-lg:                  0px;
+$border-radius-sm:                  0px;

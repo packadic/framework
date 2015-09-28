@@ -23,7 +23,7 @@ module packadic.util {
         opts = $.extend({}, openWindowDefaults, opts);
         var win = window.open('', '', 'width=' + opts.width + ', height=' + opts.height);
         if(defined(opts.content)) {
-            win.document.write(opts.content);
+            win.document.body.innerHTML = opts.content;
         }
         return win;
     }

@@ -1,5 +1,7 @@
 
-module packadic.addons.widgets {
+module packadic.widgets {
+
+    @widget('testWidget')
     export class TestWidget extends Widget {
 
         public version:string = '1.0.0';
@@ -17,5 +19,5 @@ module packadic.addons.widgets {
 
     }
 
-    createWidget('testWidget', TestWidget);
+    //createWidget('testWidget', TestWidget);
 }

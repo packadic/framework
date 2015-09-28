@@ -72,7 +72,9 @@
     "vue-resource": "~0.1.16",
     "vue-panel": "~3.0.0",
     "zeroclipboard": "~2.2.0",
-    "pnotify": "~2.1.0"
+    "pnotify": "~2.1.0",
+    "noty": "~2.3.7",
+    "animate.css": "~3.4.0"
   },
   "resolutions": {
     "jquery": "~1.11.2"
