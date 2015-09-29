@@ -1,3 +1,5 @@
+
+
 module packadic.directives {
 
     @directive('breadcrumbs')

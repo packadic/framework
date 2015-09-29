@@ -25,9 +25,14 @@ var docs = {};
 
 function getVendorScripts(vendorScripts) {
     var scripts = [];
-    for (var k in vendorScripts) {
-        scripts.push('bower_components/' + vendorScripts[k]);
-    }
+    vendorScripts.forEach(function (file) {
+        if ( _s.startsWith(file, '#') ) {
+            scripts.push(file.replace('#', 'src/js/'));
+        } else {
+            scripts.push('bower_components/' + file);
+        }
+    });
+
     return scripts;
 }
 function getNotyScripts() {
@@ -49,15 +54,17 @@ module.exports = function (_grunt) {
 
     var target = grunt.option('target') || 'dev';
     var configFile = grunt.option('config') || path.join(__dirname, 'config.yml');
+
+    var notyScripts = getNotyScripts();
     var vendorScripts = getVendorScripts([
-        //'reflect-metadata/Reflect.js', 'es6-module-loader/dist/es6-module-loader.js', 'system.js/dist/system.src.js', 'vue/dist/vue.js',
         'lodash/lodash.js', 'eventemitter2/lib/eventemitter2.js', 'async/dist/async.js', 'underscore.string/dist/underscore.string.js', 'jade/runtime.js',
         'jquery/dist/jquery.js', 'jquery-migrate/jquery-migrate.js', 'jquery-ui/ui/widget.js', 'jquery-slimscroll/jquery.slimscroll.js', 'jcarousel/dist/jquery.jcarousel.js',
         'tether/dist/js/tether.js', 'bootstrap/dist/js/bootstrap.js', 'bootstrap-material-design/dist/js/material.js'
-    ]);
-    var notyScripts = getNotyScripts();
+    ])
 
     grunt.log.subhead('Packadic Builder for Packadic ' + require('./bower.json').version);
+
+    //_out(vendorScripts);
 
     var config = {
         cfg    : jsyaml.safeLoad(fs.readFileSync(configFile, 'utf8')),
@@ -70,6 +77,7 @@ module.exports = function (_grunt) {
             dist: {name: 'dist', dest: 'dist'},
             dev : {name: 'dev', dest: '.dev'}
         },
+
 
         /**/
         //      Basics & pre-processing
@@ -98,11 +106,9 @@ module.exports = function (_grunt) {
         copy  : {
             images        : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
             bower         : {src: ['**/*.{js,css,woff*,ttf,swf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
-            scss          : {src: ['**/*.scss'], cwd: 'src/styles', expand: true, dest: '<%= target.dest %>/assets/styles/scss/'},
             js            : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
-            ts_extensions: {src: ['**/*.ts'], cwd: 'src/ts/extensions', expand: true, dest: '<%= target.dest %>/assets/scripts/extensions'},
-            angular2_app  : {src: ['**/*.{js,js.map,html,css}'], cwd: 'src/angular2', expand: true, dest: '<%= target.dest %>/angular2-app'},
-            angular2_files: {src: ['**/*.{js,js.map,html}'], cwd: 'node_modules/angular2', expand: true, dest: '<%= target.dest %>/assets/angular2'}
+
+
         },
         jade  : {
             options  : {
@@ -117,7 +123,7 @@ module.exports = function (_grunt) {
                     });
                 }.call()
             },
-            test_page: {files: [{expand: true, cwd: 'src/views', src: ['test.jade', '!metalshark/**/*.jade', '!partials/**/*.jade', '!layouts/**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>'}]},
+
             views    : {files: [{expand: true, cwd: 'src/views', src: ['**/*.jade', '!{document,typedoc}.jade', '!metalshark/**/*.jade', '!partials/**/*.jade', '!layouts/**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>'}]},
             templates: {
                 options: {client: true, amd: false, namespace: 'JST'},
@@ -155,11 +161,11 @@ module.exports = function (_grunt) {
                     '<%= target.dest %>/assets/scripts/noty.min.js'  : '<%= target.dest %>/assets/scripts/noty.js' // make sure to WRAP it first mofo
                 }
             },
-            ts_packadic: {
+            ts: {
                 files: {
                     '<%= target.dest %>/assets/scripts/packadic.min.js': [
                         'src/ts/packadic.js',
-                        'src/ts/{components,plugins}/*.js'
+                        'src/ts/addons.js'
                     ]
                 }
             },
@@ -177,10 +183,15 @@ module.exports = function (_grunt) {
             options   : {compiler: 'node_modules/typescript/bin/tsc', target: 'ES5', emitError: true, sourceMap: target === 'dev', experimentalDecorators: true},
             packadic  : {
                 options: {declaration: true, sourceMap: target === 'dev'},
-                src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts', 'src/ts/packadic/addons/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
+                src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
                 out    : 'src/ts/packadic.js'
             },
             extensions: {files: [{src: ['src/ts/extensions/**/*.ts']}], options: {declaration: false, sourceMap: target === 'dev'}}
+        },
+        packadic: {
+            addons: {
+
+            }
         },
 
         /**/
@@ -232,7 +243,7 @@ module.exports = function (_grunt) {
             styles       : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
             views        : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
             newerViews   : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
-            ts_packadic  : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'ts:extensions', 'uglify:ts_packadic', 'copy_ts_scripts']},
+            ts_packadic  : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'copy_ts_scripts']},
             ts_extensions: {files: ['src/ts/extensions/**/*.ts'], tasks: ['ts:extensions', 'copy:ts_extensions', 'copy_ts_scripts']},
 
             noty          : {files: ['src/js/noty/**/*.js'], tasks: ['concat:noty', 'wrap:noty']},

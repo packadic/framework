@@ -1,6 +1,19 @@
 @import "functions/data-types";
 @import "functions/deep-getset-maps";
 @import "functions/breakpoints";
+@import "functions/SassyJSON";
+
+
+@function em2px($emval, $base: $em-base){
+    @if not unitless($emval){
+        $emval: strip-units($emval);
+    }
+    @if not unitless($base) {
+        $base: strip-units($base);
+    }
+    @return ($emval * $base) + 0px;
+}
+
 
 @function get-color-variant($color-name, $variant: '') {
     @if ($variant == 'light') {

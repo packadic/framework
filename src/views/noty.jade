@@ -13,6 +13,12 @@ block breadcrumb
     +breadcrumb('index.html') Home
     +breadcrumb('noty.html', true) Noty
 
+block append styles
+    style(type='text/css').
+        .runner {
+            padding-left: 5px;
+        }
+
 block append scripts
     script.
         window.anim = {};
@@ -73,7 +79,7 @@ block append scripts
                 return false;
             }
 
-            packadic.addons.plugins.notify({
+            packadic.app.notify.create({
                 text        : notes[self.data('type')],
                 type        : self.data('type'),
                 dismissQueue: true,
@@ -87,7 +93,7 @@ block append scripts
                         addClass: 'btn btn-primary', text: 'Ok', onClick: function ($noty) {
 
                         $noty.close();
-                        packadic.addons.plugins.notify({
+                        packadic.app.notify.create({
                             force  : true, animation: {
                                 open : 'animated ' + window.anim.open,
                                 close: 'animated ' + window.anim.close
@@ -98,7 +104,7 @@ block append scripts
                     {
                         addClass: 'btn btn-danger', text: 'Cancel', onClick: function ($noty) {
                         $noty.close();
-                        packadic.addons.plugins.notify({
+                        packadic.app.notify.create({
                             force  : true,
                             animation: {
                                 open : 'animated bounceIn',
@@ -112,6 +118,102 @@ block append scripts
             return false;
         });
 
+mixin anim-select()
+    select&attributes(attributes)
+        optgroup(label='Attention Seekers')
+            option(value='bounce') bounce
+            option(value='flash') flash
+            option(value='pulse') pulse
+            option(value='rubberBand') rubberBand
+            option(value='shake') shake
+            option(value='swing') swing
+            option(value='tada') tada
+            option(value='wobble') wobble
+        optgroup(label='Bouncing Entrances')
+            option(value='bounceIn') bounceIn
+            option(value='bounceInDown') bounceInDown
+            option(value='bounceInLeft') bounceInLeft
+            option(value='bounceInRight') bounceInRight
+            option(value='bounceInUp') bounceInUp
+        optgroup(label='Bouncing Exits')
+            option(value='bounceOut') bounceOut
+            option(value='bounceOutDown') bounceOutDown
+            option(value='bounceOutLeft') bounceOutLeft
+            option(value='bounceOutRight') bounceOutRight
+            option(value='bounceOutUp') bounceOutUp
+        optgroup(label='Fading Entrances')
+            option(value='fadeIn') fadeIn
+            option(value='fadeInDown') fadeInDown
+            option(value='fadeInDownBig') fadeInDownBig
+            option(value='fadeInLeft') fadeInLeft
+            option(value='fadeInLeftBig') fadeInLeftBig
+            option(value='fadeInRight') fadeInRight
+            option(value='fadeInRightBig') fadeInRightBig
+            option(value='fadeInUp') fadeInUp
+            option(value='fadeInUpBig') fadeInUpBig
+        optgroup(label='Fading Exits')
+            option(value='fadeOut') fadeOut
+            option(value='fadeOutDown') fadeOutDown
+            option(value='fadeOutDownBig') fadeOutDownBig
+            option(value='fadeOutLeft') fadeOutLeft
+            option(value='fadeOutLeftBig') fadeOutLeftBig
+            option(value='fadeOutRight') fadeOutRight
+            option(value='fadeOutRightBig') fadeOutRightBig
+            option(value='fadeOutUp') fadeOutUp
+            option(value='fadeOutUpBig') fadeOutUpBig
+        optgroup(label='Flippers')
+            option(value='flip') flip
+            option(value='flipInX', selected='selected') flipInX
+            option(value='flipInY') flipInY
+            option(value='flipOutX') flipOutX
+            option(value='flipOutY') flipOutY
+        optgroup(label='Lightspeed')
+            option(value='lightSpeedIn') lightSpeedIn
+            option(value='lightSpeedOut') lightSpeedOut
+        optgroup(label='Rotating Entrances')
+            option(value='rotateIn') rotateIn
+            option(value='rotateInDownLeft') rotateInDownLeft
+            option(value='rotateInDownRight') rotateInDownRight
+            option(value='rotateInUpLeft') rotateInUpLeft
+            option(value='rotateInUpRight') rotateInUpRight
+        optgroup(label='Rotating Exits')
+            option(value='rotateOut') rotateOut
+            option(value='rotateOutDownLeft') rotateOutDownLeft
+            option(value='rotateOutDownRight') rotateOutDownRight
+            option(value='rotateOutUpLeft') rotateOutUpLeft
+            option(value='rotateOutUpRight') rotateOutUpRight
+        optgroup(label='Specials')
+            option(value='hinge') hinge
+            option(value='rollIn') rollIn
+            option(value='rollOut') rollOut
+        optgroup(label='Zoom Entrances')
+            option(value='zoomIn') zoomIn
+            option(value='zoomInDown') zoomInDown
+            option(value='zoomInLeft') zoomInLeft
+            option(value='zoomInRight') zoomInRight
+            option(value='zoomInUp') zoomInUp
+        optgroup(label='Zoom Exits')
+            option(value='zoomOut') zoomOut
+            option(value='zoomOutDown') zoomOutDown
+            option(value='zoomOutLeft') zoomOutLeft
+            option(value='zoomOutRight') zoomOutRight
+            option(value='zoomOutUp') zoomOutUp
+
+mixin layout-actions(layout)
+    .col-xs-12.col-md-4.col-lg-4
+        h5.mt-n=_s.capitalize(layout)
+        a.runner(href='', data-layout=layout, data-type='alert') Alert
+        | ,
+        a.runner(href='', data-layout=layout, data-type='success') Success
+        | ,
+        a.runner(href='', data-layout=layout, data-type='error') Error
+        | ,
+        a.runner(href='', data-layout=layout, data-type='warning') Warning
+        | ,
+        a.runner(href='', data-layout=layout, data-type='information') Information
+        | ,
+        a.runner(href='', data-layout=layout, data-type='confirm') Confirm
+        hr.mt-n
 block content
     #layouts
         .row
@@ -121,328 +223,32 @@ block content
                     |  has
                     strong 11
                     |  layouts and also you can create custom layouts.
-            .col-xs-12.col-md-4.col-lg-4
-                h3 Top
-                a.runner(href='', data-layout='top', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='top', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='top', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='top', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='top', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='top', data-type='confirm') Confirm
-                hr
+            +layout-actions('top')
             .col-xs-12.col-md-4.col-lg-4
                 label(for='anim-open') Open Animation (Animate.css)
                 #uniform-anim-open.selector(style='width: 281.56px;')
                     span(style='width: 257.4px; -webkit-user-select: none;') flipInX
-                    select#anim-open(name='anim-open')
-                        optgroup(label='Attention Seekers')
-                            option(value='bounce') bounce
-                            option(value='flash') flash
-                            option(value='pulse') pulse
-                            option(value='rubberBand') rubberBand
-                            option(value='shake') shake
-                            option(value='swing') swing
-                            option(value='tada') tada
-                            option(value='wobble') wobble
-                        optgroup(label='Bouncing Entrances')
-                            option(value='bounceIn') bounceIn
-                            option(value='bounceInDown') bounceInDown
-                            option(value='bounceInLeft') bounceInLeft
-                            option(value='bounceInRight') bounceInRight
-                            option(value='bounceInUp') bounceInUp
-                        optgroup(label='Bouncing Exits')
-                            option(value='bounceOut') bounceOut
-                            option(value='bounceOutDown') bounceOutDown
-                            option(value='bounceOutLeft') bounceOutLeft
-                            option(value='bounceOutRight') bounceOutRight
-                            option(value='bounceOutUp') bounceOutUp
-                        optgroup(label='Fading Entrances')
-                            option(value='fadeIn') fadeIn
-                            option(value='fadeInDown') fadeInDown
-                            option(value='fadeInDownBig') fadeInDownBig
-                            option(value='fadeInLeft') fadeInLeft
-                            option(value='fadeInLeftBig') fadeInLeftBig
-                            option(value='fadeInRight') fadeInRight
-                            option(value='fadeInRightBig') fadeInRightBig
-                            option(value='fadeInUp') fadeInUp
-                            option(value='fadeInUpBig') fadeInUpBig
-                        optgroup(label='Fading Exits')
-                            option(value='fadeOut') fadeOut
-                            option(value='fadeOutDown') fadeOutDown
-                            option(value='fadeOutDownBig') fadeOutDownBig
-                            option(value='fadeOutLeft') fadeOutLeft
-                            option(value='fadeOutLeftBig') fadeOutLeftBig
-                            option(value='fadeOutRight') fadeOutRight
-                            option(value='fadeOutRightBig') fadeOutRightBig
-                            option(value='fadeOutUp') fadeOutUp
-                            option(value='fadeOutUpBig') fadeOutUpBig
-                        optgroup(label='Flippers')
-                            option(value='flip') flip
-                            option(value='flipInX', selected='selected') flipInX
-                            option(value='flipInY') flipInY
-                            option(value='flipOutX') flipOutX
-                            option(value='flipOutY') flipOutY
-                        optgroup(label='Lightspeed')
-                            option(value='lightSpeedIn') lightSpeedIn
-                            option(value='lightSpeedOut') lightSpeedOut
-                        optgroup(label='Rotating Entrances')
-                            option(value='rotateIn') rotateIn
-                            option(value='rotateInDownLeft') rotateInDownLeft
-                            option(value='rotateInDownRight') rotateInDownRight
-                            option(value='rotateInUpLeft') rotateInUpLeft
-                            option(value='rotateInUpRight') rotateInUpRight
-                        optgroup(label='Rotating Exits')
-                            option(value='rotateOut') rotateOut
-                            option(value='rotateOutDownLeft') rotateOutDownLeft
-                            option(value='rotateOutDownRight') rotateOutDownRight
-                            option(value='rotateOutUpLeft') rotateOutUpLeft
-                            option(value='rotateOutUpRight') rotateOutUpRight
-                        optgroup(label='Specials')
-                            option(value='hinge') hinge
-                            option(value='rollIn') rollIn
-                            option(value='rollOut') rollOut
-                        optgroup(label='Zoom Entrances')
-                            option(value='zoomIn') zoomIn
-                            option(value='zoomInDown') zoomInDown
-                            option(value='zoomInLeft') zoomInLeft
-                            option(value='zoomInRight') zoomInRight
-                            option(value='zoomInUp') zoomInUp
-                        optgroup(label='Zoom Exits')
-                            option(value='zoomOut') zoomOut
-                            option(value='zoomOutDown') zoomOutDown
-                            option(value='zoomOutLeft') zoomOutLeft
-                            option(value='zoomOutRight') zoomOutRight
-                            option(value='zoomOutUp') zoomOutUp
-                label(for='anim-close') Close Animation (Animate.css)
+                    +anim-select#anim-open(name='anim-open')
+                label(for="anim-close") Close Animation (Animate.css)
                 #uniform-anim-close.selector(style='width: 281.56px;')
                     span(style='width: 257.4px; -webkit-user-select: none;') flipOutX
-                    select#anim-close(name='anim-close')
-                        optgroup(label='Attention Seekers')
-                            option(value='bounce') bounce
-                            option(value='flash') flash
-                            option(value='pulse') pulse
-                            option(value='rubberBand') rubberBand
-                            option(value='shake') shake
-                            option(value='swing') swing
-                            option(value='tada') tada
-                            option(value='wobble') wobble
-                        optgroup(label='Bouncing Entrances')
-                            option(value='bounceIn') bounceIn
-                            option(value='bounceInDown') bounceInDown
-                            option(value='bounceInLeft') bounceInLeft
-                            option(value='bounceInRight') bounceInRight
-                            option(value='bounceInUp') bounceInUp
-                        optgroup(label='Bouncing Exits')
-                            option(value='bounceOut') bounceOut
-                            option(value='bounceOutDown') bounceOutDown
-                            option(value='bounceOutLeft') bounceOutLeft
-                            option(value='bounceOutRight') bounceOutRight
-                            option(value='bounceOutUp') bounceOutUp
-                        optgroup(label='Fading Entrances')
-                            option(value='fadeIn') fadeIn
-                            option(value='fadeInDown') fadeInDown
-                            option(value='fadeInDownBig') fadeInDownBig
-                            option(value='fadeInLeft') fadeInLeft
-                            option(value='fadeInLeftBig') fadeInLeftBig
-                            option(value='fadeInRight') fadeInRight
-                            option(value='fadeInRightBig') fadeInRightBig
-                            option(value='fadeInUp') fadeInUp
-                            option(value='fadeInUpBig') fadeInUpBig
-                        optgroup(label='Fading Exits')
-                            option(value='fadeOut') fadeOut
-                            option(value='fadeOutDown') fadeOutDown
-                            option(value='fadeOutDownBig') fadeOutDownBig
-                            option(value='fadeOutLeft') fadeOutLeft
-                            option(value='fadeOutLeftBig') fadeOutLeftBig
-                            option(value='fadeOutRight') fadeOutRight
-                            option(value='fadeOutRightBig') fadeOutRightBig
-                            option(value='fadeOutUp') fadeOutUp
-                            option(value='fadeOutUpBig') fadeOutUpBig
-                        optgroup(label='Flippers')
-                            option(value='flip') flip
-                            option(value='flipInX') flipInX
-                            option(value='flipInY') flipInY
-                            option(value='flipOutX', selected='selected') flipOutX
-                            option(value='flipOutY') flipOutY
-                        optgroup(label='Lightspeed')
-                            option(value='lightSpeedIn') lightSpeedIn
-                            option(value='lightSpeedOut') lightSpeedOut
-                        optgroup(label='Rotating Entrances')
-                            option(value='rotateIn') rotateIn
-                            option(value='rotateInDownLeft') rotateInDownLeft
-                            option(value='rotateInDownRight') rotateInDownRight
-                            option(value='rotateInUpLeft') rotateInUpLeft
-                            option(value='rotateInUpRight') rotateInUpRight
-                        optgroup(label='Rotating Exits')
-                            option(value='rotateOut') rotateOut
-                            option(value='rotateOutDownLeft') rotateOutDownLeft
-                            option(value='rotateOutDownRight') rotateOutDownRight
-                            option(value='rotateOutUpLeft') rotateOutUpLeft
-                            option(value='rotateOutUpRight') rotateOutUpRight
-                        optgroup(label='Specials')
-                            option(value='hinge') hinge
-                            option(value='rollIn') rollIn
-                            option(value='rollOut') rollOut
-                        optgroup(label='Zoom Entrances')
-                            option(value='zoomIn') zoomIn
-                            option(value='zoomInDown') zoomInDown
-                            option(value='zoomInLeft') zoomInLeft
-                            option(value='zoomInRight') zoomInRight
-                            option(value='zoomInUp') zoomInUp
-                        optgroup(label='Zoom Exits')
-                            option(value='zoomOut') zoomOut
-                            option(value='zoomOutDown') zoomOutDown
-                            option(value='zoomOutLeft') zoomOutLeft
-                            option(value='zoomOutRight') zoomOutRight
-                            option(value='zoomOutUp') zoomOutUp
+                    +anim-select#anim-close(name='anim-close')
+
         .row
-            .col-xs-12.col-md-4.col-lg-4
-                h3 TopLeft
-                a.runner(href='', data-layout='topLeft', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='topLeft', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='topLeft', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='topLeft', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='topLeft', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='topLeft', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
-                h3 TopCenter
-                a.runner(href='', data-layout='topCenter', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='topCenter', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='topCenter', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='topCenter', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='topCenter', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='topCenter', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
-                h3 TopRight
-                a.runner(href='', data-layout='topRight', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='topRight', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='topRight', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='topRight', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='topRight', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='topRight', data-type='confirm') Confirm
-                hr
+            +layout-actions('topLeft')
+            +layout-actions('topCenter')
+            +layout-actions('topRight')
         .row
-            .col-xs-12.col-md-4.col-lg-4
-                h3 CenterLeft
-                a.runner(href='', data-layout='centerLeft', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='centerLeft', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='centerLeft', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='centerLeft', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='centerLeft', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='centerLeft', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
-                h3 Center
-                a.runner(href='', data-layout='center', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='center', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='center', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='center', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='center', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='center', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
-                h3 CenterRight
-                a.runner(href='', data-layout='centerRight', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='centerRight', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='centerRight', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='centerRight', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='centerRight', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='centerRight', data-type='confirm') Confirm
-                hr
+            +layout-actions('centerLeft')
+            +layout-actions('center')
+            +layout-actions('centerRight')
         .row
-            .col-xs-12.col-md-4.col-lg-4
-                h3 BottomLeft
-                a.runner(href='', data-layout='bottomLeft', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='bottomLeft', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='bottomLeft', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='bottomLeft', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='bottomLeft', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='bottomLeft', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
-                h3 BottomCenter
-                a.runner(href='', data-layout='bottomCenter', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='bottomCenter', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='bottomCenter', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='bottomCenter', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='bottomCenter', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='bottomCenter', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
-                h3 BottomRight
-                a.runner(href='', data-layout='bottomRight', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='bottomRight', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='bottomRight', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='bottomRight', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='bottomRight', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='bottomRight', data-type='confirm') Confirm
-                hr
+            +layout-actions('bottomLeft')
+            +layout-actions('bottomCenter')
+            +layout-actions('bottomRight')
         .row
-            .col-xs-12.col-md-4.col-lg-4
-            .col-xs-12.col-md-4.col-lg-4
-                h3 Bottom
-                a.runner(href='', data-layout='bottom', data-type='alert') Alert
-                | ,
-                a.runner(href='', data-layout='bottom', data-type='success') Success
-                | ,
-                a.runner(href='', data-layout='bottom', data-type='error') Error
-                | ,
-                a.runner(href='', data-layout='bottom', data-type='warning') Warning
-                | ,
-                a.runner(href='', data-layout='bottom', data-type='information') Information
-                | ,
-                a.runner(href='', data-layout='bottom', data-type='confirm') Confirm
-                hr
-            .col-xs-12.col-md-4.col-lg-4
+            +layout-actions('footerLeft')
+            +layout-actions('bottom')
+            +layout-actions('footerRight')
+
+        .row

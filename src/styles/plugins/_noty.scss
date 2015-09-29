@@ -1,116 +1,68 @@
-/****************************/
-// core
-/****************************/
 
-.ui-pnotify {
-    top: 25px;
-    right: 25px;
+@mixin notyPackadicLayoutVariant($layout){
+    .noty_#{$layout}_layout_container.noty_packadicTheme {
+        @content;
+    }
+}
+
+@mixin notyPackadicTypeVariant($type, $background:#ffffff, $color:#aaaaaa, $border-color:#332244) {
+    .noty_packadicTheme {
+        .noty_item.noty_item_#{$type} {
+            border-color: $border-color;
+            background-color: $background;
+            .noty_message, .noty_message {
+                color: $color;
+            }
+        }
+    }
+}
+
+.noty_packadicTheme.noty_container {
+
+    // ul.noty_container > li.list-group-item
+    .noty_item {
+        float: right;
+    }
+
+    //
+    .noty_bar {
+        width: auto;
+        border-right: 30px solid #0aa2ff;
+        border-bottom: 1px solid #0aa2ff;
+    }
+
+    .noty_message {
+        font-size: 13px;
+        line-height: 16px;
+        width: auto;
+        position: relative;
+        text-align: right;
+        padding: 8px 20px;
+    }
+
+    .noty_text {
+    }
+}
+
+
+@include notyPackadicLayoutVariant('footerRight'){
+    top: 0px;
+    right: 20px;
     position: absolute;
-    height: auto;
-    /* Ensures notices are above everything */
-    z-index: 9999;
-}
-/* Hides position: fixed from IE6 */
-html > body > .ui-pnotify {
-    position: fixed;
-}
-.ui-pnotify .ui-pnotify-shadow {
-    -webkit-box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
-    -moz-box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
-    box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
-}
-.ui-pnotify-container {
-    background-position: 0 0;
-    padding: .8em;
-    height: 100%;
-    margin: 0;
-}
-.ui-pnotify-container.ui-pnotify-sharp {
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-}
-.ui-pnotify-title {
-    display: block;
-    margin-bottom: .4em;
-    margin-top: 0;
-}
-.ui-pnotify-text {
-    display: block;
-}
-.ui-pnotify-icon, .ui-pnotify-icon span {
-    display: block;
-    float: left;
-    margin-right: .2em;
-}
-/* Alternate stack initial positioning. */
-.ui-pnotify.stack-topleft, .ui-pnotify.stack-bottomleft {
-    left: 25px;
-    right: auto;
-}
-.ui-pnotify.stack-bottomright, .ui-pnotify.stack-bottomleft {
-    bottom: 25px;
-    top: auto;
-}
-
-
-/****************************/
-// buttons
-/****************************/
-.ui-pnotify-closer, .ui-pnotify-sticker {
+    min-width: 200px;
+    height: 33px;
+    margin: 0px;
     float: right;
-    margin-left: .2em;
-}
+    padding: 0px;
+    list-style-type: none;
+    z-index: 10000000;}
 
-
-/****************************/
-// history
-/****************************/
-.ui-pnotify-history-container {
-    position: absolute;
-    top: 0;
-    right: 18px;
-    width: 70px;
-    border-top: none;
-    padding: 0;
-    -webkit-border-top-left-radius: 0;
-    -moz-border-top-left-radius: 0;
-    border-top-left-radius: 0;
-    -webkit-border-top-right-radius: 0;
-    -moz-border-top-right-radius: 0;
-    border-top-right-radius: 0;
-    /* Ensures history container is above notices. */
-    z-index: 10000;
-}
-.ui-pnotify-history-container.ui-pnotify-history-fixed {
-    position: fixed;
-}
-.ui-pnotify-history-container .ui-pnotify-history-header {
-    padding: 2px;
-    text-align: center;
-}
-.ui-pnotify-history-container button {
-    cursor: pointer;
-    display: block;
-    width: 100%;
-}
-.ui-pnotify-history-container .ui-pnotify-history-pulldown {
-    display: block;
-    margin: 0 auto;
-}
-
-
-/****************************/
-// picon
-/****************************/
-.ui-pnotify .picon {
-    background-color: transparent;
-    background-repeat: no-repeat;
-    background-position: center center;
-    width: 17px;
-    height: 17px;
-}
-.ui-pnotify-title {
-    line-height: 17px;
-    min-height: 17px;
-}
+@include notyPackadicTypeVariant('alert');
+@include notyPackadicTypeVariant('notification', $state-info-bg, $state-info-text, $state-info-border){
+    .noty_bar {
+        border-color: $state-info-bg;    }
+};
+@include notyPackadicTypeVariant('warning', $state-warning-bg, $state-warning-text, $state-warning-border);
+@include notyPackadicTypeVariant('error', $state-danger-bg, $state-danger-text, $state-danger-border);
+@include notyPackadicTypeVariant('information', $state-info-bg, $state-info-text, $state-info-border);
+@include notyPackadicTypeVariant('success', $state-success-bg, $state-success-text, $state-success-border);

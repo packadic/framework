@@ -10,11 +10,62 @@ declare module packadic {
 }
 declare module packadic {
     var namespacePrefix: string;
-    function directive(name: string, isElementDirective?: boolean): (cls: any) => void;
+    function extension(name: string, configToMergeIntoDefaults?: any): (cls: typeof extensions.Extension) => void;
+    function directive(name: string, isElementDirective?: boolean): (cls: typeof directives.Directive) => void;
     function filter(name?: string): MethodDecorator;
-    function component(name: string): (cls: any) => void;
-    function widget(name: string, proto: any): void;
+    function component(name: string): (cls: typeof components.Component) => void;
+    function widget(name: string, parent?: any): (cls: typeof widgets.Widget) => void;
     function plugin(name: string, regOpts?: any): (cls: typeof plugins.Plugin) => void;
+    module extensions {
+        interface IExtension {
+            app: Application;
+        }
+        interface IExtensionClass<T extends IExtension> {
+            dependencies: string[];
+            new (name: string, host: Extensions, app: Application): T;
+        }
+        class Extensions {
+            protected app: Application;
+            protected extensions: {
+                [name: string]: Extension;
+            };
+            protected static EXTENSIONS: {
+                [name: string]: IExtensionClass<Extension>;
+            };
+            protected static EXTENSIONSDEPS: util.obj.DependencySorter;
+            private static _instance;
+            constructor(app?: Application);
+            static instance: Extensions;
+            has(name: string): boolean;
+            get(name?: string): Extension;
+            protected load(name: any, cb?: Function): Extension;
+            all(): {
+                [name: string]: Extension;
+            };
+            getRegisteredNames(): string[];
+            getRegistered(): {
+                [name: string]: IExtensionClass<Extension>;
+            };
+            loadAll(): Extensions;
+            each(fn: _.ObjectIterator<Extension, void>): Extensions;
+            static register<T extends IExtension>(name: string, componentClass: IExtensionClass<Extension>, configToMergeIntoDefaults?: any): void;
+        }
+        class Extension implements IExtension {
+            static dependencies: string[];
+            app: Application;
+            extensions: Extensions;
+            name: string;
+            constructor(name: string, extensions: Extensions, app: Application);
+            config: IConfigProperty;
+            private _make();
+            private _boot();
+            private _booted();
+            protected make(): void;
+            protected init(): void;
+            protected boot(): void;
+            protected booted(): void;
+        }
+    }
     module directives {
         class Directive {
             el: HTMLElement;
@@ -83,7 +134,6 @@ declare module packadic {
         function prop(options: any): (cls: any, name: string) => void;
     }
     module widgets {
-        function extendWidget(name: string, parent: any, proto: Widget): void;
         class Widget {
             _create(): any;
             _destroy(): void;
@@ -263,59 +313,6 @@ declare module packadic {
         enable(): void;
         isEnabled(): boolean;
         setStartDate(start: Date): Debug;
-    }
-}
-declare module packadic {
-    function extension(name: string, configToMergeIntoDefaults?: any): (cls: typeof extensions.Extension) => void;
-    module extensions {
-        interface IExtension {
-            app: Application;
-        }
-        interface IExtensionClass<T extends IExtension> {
-            dependencies: string[];
-            new (name: string, host: Extensions, app: Application): T;
-        }
-        class Extensions {
-            protected app: Application;
-            protected extensions: {
-                [name: string]: Extension;
-            };
-            protected static EXTENSIONS: {
-                [name: string]: IExtensionClass<Extension>;
-            };
-            protected static EXTENSIONSDEPS: util.obj.DependencySorter;
-            private static _instance;
-            constructor(app?: Application);
-            static instance: Extensions;
-            has(name: string): boolean;
-            get(name?: string): Extension;
-            protected load(name: any, cb?: Function): Extension;
-            all(): {
-                [name: string]: Extension;
-            };
-            getRegisteredNames(): string[];
-            getRegistered(): {
-                [name: string]: IExtensionClass<Extension>;
-            };
-            loadAll(): Extensions;
-            each(fn: _.ObjectIterator<Extension, void>): Extensions;
-            static register<T extends IExtension>(name: string, componentClass: IExtensionClass<Extension>, configToMergeIntoDefaults?: any): void;
-        }
-        class Extension implements IExtension {
-            static dependencies: string[];
-            app: Application;
-            extensions: Extensions;
-            name: string;
-            constructor(name: string, extensions: Extensions, app: Application);
-            config: IConfigProperty;
-            private _make();
-            private _boot();
-            private _booted();
-            protected make(): void;
-            protected init(): void;
-            protected boot(): void;
-            protected booted(): void;
-        }
     }
 }
 declare module packadic {
@@ -566,80 +563,5 @@ declare module packadic.util.version {
         toString(): string;
         parseRange(range: any): any;
         test(version: any): any;
-    }
-}
-declare module packadic.components {
-    class CodeBlock extends Component {
-        static template: string;
-        static replace: boolean;
-        language: string;
-        title: string;
-        description: string;
-        showTop: boolean;
-        theme: string;
-        toManyLines: number;
-        lineChangeStep: number;
-        fixCodeIndent: boolean;
-        show: boolean;
-        minimized: boolean;
-        lines: number;
-        original: string;
-        code: string;
-        actionBtnClass: string;
-        client: ZeroClipboard;
-        isrdy: boolean;
-        actions: any[];
-        created(): void;
-        ready(): void;
-        beforeDestroy(): void;
-        maximize(): void;
-        minimize(): void;
-        tryMaximize(): void;
-        onCopyClick(e: any): void;
-        onOpenInWindowClick(e: any): void;
-        onMinimizeToggleClick(e: any): void;
-        onDecreaseLinesClick(e: any): void;
-        onIncreaseLinesClick(e: any): void;
-        setCodeContent(code: string, fixIndent?: boolean): void;
-        initClipboard(): void;
-        getHeightBetweenLines(one: number, two: number): number;
-        initScrollContent(): void;
-        destroyScrollContent(): void;
-    }
-}
-declare module packadic.directives {
-    class BreadcrumbsDirective extends Directive {
-        deep: boolean;
-        hasOwnContent: boolean;
-        $el: JQuery;
-        $items: JQuery;
-        $links: JQuery;
-        bind(): void;
-        unbind(): void;
-        setOptions(opts?: any): void;
-        update(value: any): void;
-        createItem(name: string, href?: string | boolean, last?: boolean): JQuery;
-        _getInfoContent(value?: any): void;
-    }
-}
-declare module packadic.filters {
-    class SomeFilters {
-        testFilter(value: any): any;
-        changeit(val: any, old?: any): any;
-    }
-    var someFilters: SomeFilters;
-}
-declare module packadic.plugins {
-    class TestPlugin extends Plugin {
-        protected _create(): void;
-    }
-}
-declare module packadic.widgets {
-    class TestWidget extends Widget {
-        version: string;
-        widgetEventPrefix: string;
-        options: any;
-        constructor();
-        _create(): any;
     }
 }

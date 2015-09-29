@@ -2,8 +2,52 @@ module packadic {
 
     export var namespacePrefix:string = 'packadic.';
 
-    export function directive(name:string, isElementDirective:boolean=false):(cls:any)=>void {
-        return (cls:any):void => {
+    /**
+     * The @extension decorator registers a extension
+     * ```typescript
+     * module packadic.extensions {
+     *      @extension('code-block', { })
+     *      export class LayoutExtension extends Extension {
+     *            init(){
+     *                console.log('init layout extension');
+     *            }
+     *            boot(){
+     *                console.log('booting layout extension');
+     *            }
+     *       }
+     * }
+     * ```
+     * @param {String} name - The name of the extension
+     * @param {Object} configToMergeIntoDefaults - The config object to merge into the default config
+     * @returns {function(packadic.extensions.Extension): void}
+     */
+    export function extension(name:string, configToMergeIntoDefaults:any = {}):(cls:typeof extensions.Extension)=>void {
+        return (cls:typeof extensions.Extension):void => {
+            extensions.Extensions.register(name, cls, configToMergeIntoDefaults);
+        };
+    }
+
+    /**
+     * The @directive decorator registers a Vue Directive
+     * ```typescript
+     * module packadic.extensions {
+     *      @extension('code-block', { })
+     *      export class LayoutExtension extends Extension {
+     *            init(){
+     *                console.log('init layout extension');
+     *            }
+     *            boot(){
+     *                console.log('booting layout extension');
+     *            }
+     *       }
+     * }
+     * ```
+     * @param {String} name - The name of the directive
+     * @param {Boolean} isElementDirective - Register as element directive
+     * @returns {function(packadic.directives.Directive): void}
+     */
+    export function directive(name:string, isElementDirective:boolean=false):(cls:typeof directives.Directive)=>void {
+        return (cls:typeof directives.Directive):void => {
 
             let definition:any = {
                 isLiteral: false,
@@ -48,6 +92,25 @@ module packadic {
         }
     }
 
+    /**
+     * The @filter decorator registers a Vue filter
+     * ```typescript
+     * module packadic.filters {
+     *      export class SomeFilters {
+     *            @filter('code-block')
+     *            codeBlockFilter(){
+     *                console.log('init layout extension');
+     *            }
+     *            @filter
+     *            code(){
+     *                console.log('booting layout extension');
+     *            }
+     *       }
+     * }
+     * ```
+     * @param {String} name - The name of the filter
+     * @returns {function(filters.FilterCallback, string, TypedPropertyDescriptor<any>): TypedPropertyDescriptor<any>}
+     */
     export function filter(name?:string):MethodDecorator {
         return (target:filters.FilterCallback, propertyKey:string, descriptor:TypedPropertyDescriptor<any>) => {
             name = name || propertyKey;
@@ -63,7 +126,12 @@ module packadic {
         }
     }
 
-    export function component(name:string):(cls:any)=>void {
+    /**
+     * The @component decorator registers a Vue component
+     * @param {String} name - The name of the component
+     * @returns {function(any): void}
+     */
+    export function component(name:string):(cls:typeof components.Component)=>void {
         return (cls:any):void => {
 
             let options:any = {
@@ -126,16 +194,308 @@ module packadic {
         };
     }
 
-    export function widget(name:string, proto:any) {
-        proto = new proto();
-        $.widget(namespacePrefix + name, proto);
-        console.log('Widget', name, 'registered', proto);
+    /**
+     * The @widget decorator registers a widget
+     * ```typescript
+     * module packadic.extensions {
+     *      @extension('code-block', { })
+     *      export class LayoutExtension extends Extension {
+     *            init(){
+     *                console.log('init layout extension');
+     *            }
+     *            boot(){
+     *                console.log('booting layout extension');
+     *            }
+     *       }
+     * }
+     * ```
+     * @param name
+     * @param parent
+     * @returns {function(packadic.widgets.Widget): void}
+     */
+    export function widget(name:string, parent?:any):(cls:typeof widgets.Widget)=>void {
+        return (cls:typeof widgets.Widget):void => {
+            if(parent){
+                $.widget(namespacePrefix + name, cls, parent);
+            } else {
+                $.widget(namespacePrefix + name, cls);
+            }
+            console.log('Widget', name, 'registered', cls);
+        };
+
     }
 
+    /**
+     * The @plugin decorator registers a plugin
+     * ```typescript
+     * module packadic.extensions {
+     *      @extension('code-block', { })
+     *      export class LayoutExtension extends Extension {
+     *            init(){
+     *                console.log('init layout extension');
+     *            }
+     *            boot(){
+     *                console.log('booting layout extension');
+     *            }
+     *       }
+     * }
+     * ```
+     * @param name
+     * @param regOpts
+     * @returns {function(packadic.plugins.Plugin): void}
+     */
     export function plugin(name:string, regOpts:any = {}):(cls:typeof plugins.Plugin)=>void {
         return (cls:typeof plugins.Plugin):void => {
             plugins.registerPlugin(name, cls, regOpts);
         };
+    }
+
+    /**
+     * ### Extensions
+     * Extensions are awesome
+     */
+    export module extensions {
+
+        export interface IExtension {
+
+            app:Application;
+        }
+
+
+        export interface IExtensionClass<T extends IExtension> {
+            dependencies:string[];
+            new(name:string, host:Extensions, app:Application):T;
+        }
+
+        /**
+         * Components repository (singleton)
+         */
+        export class Extensions {
+            protected app:Application;
+
+            protected extensions:{[name:string]:Extension};
+
+            protected static EXTENSIONS:{[name:string]:IExtensionClass<Extension>} = {};
+            protected static EXTENSIONSDEPS:util.obj.DependencySorter;
+
+            private static _instance:Extensions;
+
+            /**
+             * @private
+             */
+            constructor(app?:Application) {
+                if (Extensions._instance) {
+                    throw new Error("Error - use Singleton.getInstance()");
+                }
+                this.app = app || packadic.app;
+                if (!defined(this.app)) {
+                    packadic.ready(() => {
+                        this.app = packadic.Application.instance;
+                    })
+                }
+                this.extensions = {};
+            }
+
+            /**
+             * Get the Components instance
+             * @returns {Extensions}
+             */
+            public static get instance():Extensions {
+                Extensions._instance = Extensions._instance || new Extensions();
+                return Extensions._instance
+            }
+
+            /**
+             * Returns true if the component is loaded
+             * @param name
+             * @returns {boolean}
+             */
+            public has(name:string):boolean {
+                return kindOf(name) === 'string' && Object.keys(this.extensions).indexOf(name) !== -1;
+            }
+
+            /**
+             * Returns a loaded component
+             * @param name
+             * @returns {Extension}
+             */
+            public get(name?:string):Extension {
+                if (this.has(name)) {
+                    return this.extensions[name];
+                }
+                throw new Error('ExtensionHost: Could not find ' + name);
+            }
+
+            /**
+             * Load a registered component
+             * @param name
+             * @param cb
+             * @returns {Extension}
+             */
+            protected load(name:any, cb?:Function):Extension {
+
+                if (this.has(name)) {
+                    return this.get(name);
+                }
+
+                if (typeof Extensions.EXTENSIONSDEPS === 'undefined') {
+                    Extensions.EXTENSIONSDEPS = new util.obj.DependencySorter();
+                }
+                this.extensions[name] = new Extensions.EXTENSIONS[name](name, this, this.app);
+                this.app.emit('component:loaded', name, this.extensions[name]);
+                debug.log('Components', ' loaded: ', name, this.extensions[name]);
+
+                if (kindOf(cb) === 'function') {
+                    cb.apply(this, arguments)
+                }
+
+                return this.extensions[name];
+            }
+
+            /**
+             * Returns all loaded components
+             * @returns {{}}
+             */
+            public all():{[name:string]:Extension} {
+                return this.extensions;
+            }
+
+
+            public getRegisteredNames():string[] {
+                return Object.keys(this.getRegistered());
+            }
+
+            public getRegistered():{[name:string]:IExtensionClass<Extension>} {
+                return Extensions.EXTENSIONS;
+            }
+
+            /**
+             * Load all registered components
+             * @returns {packadic.components.Components}
+             */
+            public loadAll():Extensions {
+                if (typeof Extensions.EXTENSIONSDEPS === 'undefined') {
+                    Extensions.EXTENSIONSDEPS = new util.obj.DependencySorter();
+                }
+
+                var names:string[] = Extensions.EXTENSIONSDEPS.sort();
+                console.log('loadAll deps:', names);
+                var missing:number = Object.keys(Extensions.EXTENSIONSDEPS.getMissing()).length;
+                if (missing > 0) {
+                    console.warn('Missing dependencies: ' + missing.toString());
+                }
+                names.forEach((name:string) => {
+                    if (!this.has(name)) {
+                        this.load(name);
+                    }
+                });
+                return this;
+            }
+
+            /**
+             * Iterate over all loaded components, executing the callback function each time
+             * @param fn
+             * @returns {packadic.components.Components}
+             */
+            public each(fn:_.ObjectIterator<Extension, void>):Extensions {
+                util.arr.each(this.all(), fn);
+                return this;
+            }
+
+            /**
+             * Register a Component with the Components class
+             * @param name
+             * @param componentClass
+             * @param configToMergeIntoDefaults
+             */
+            public static register<T extends IExtension>(name:string, componentClass:IExtensionClass<Extension>, configToMergeIntoDefaults?:any) {
+                if (typeof Extensions.EXTENSIONSDEPS === 'undefined') {
+                    Extensions.EXTENSIONSDEPS = new util.obj.DependencySorter();
+                }
+                if (typeof Extensions.EXTENSIONS[name] !== 'undefined') {
+                    throw new Error('Cannot add ' + name + '. Already exists');
+                }
+
+                Extensions.EXTENSIONS[name] = componentClass;
+                Extensions.EXTENSIONSDEPS.addItem(name, componentClass.dependencies);
+
+                console.log('register deps:', componentClass);
+
+                // merge config if needed
+                if (typeof configToMergeIntoDefaults !== "undefined") {
+                    var configMerger:any = {};
+                    configMerger[name] = configToMergeIntoDefaults;
+                    mergeIntoDefaultConfig(configMerger);
+                }
+                console.log('Components', ' registered: ', name, componentClass);
+            }
+        }
+
+        /**
+         * Components are used to seperate application logic.
+         *
+         * @class Extension
+         */
+        export class Extension implements IExtension {
+            public static dependencies:string[] = [];
+
+            public app:Application;
+            public extensions:Extensions;
+            public name:string;
+
+            constructor(name:string, extensions:Extensions, app:Application) {
+                this.name = name;
+                this.extensions = extensions;
+                this.app = app;
+
+                this._make.call(this);
+                if (app.isInitialised) {
+                    this.init.call(this);
+                } else {
+                    app.on('init', this.init.bind(this));
+                }
+                if (app.isBooted) {
+                    this._boot.call(this);
+                    this._booted.call(this);
+                } else {
+                    app.on('boot', this._boot.bind(this));
+                    app.on('booted', this._booted.bind(this));
+                }
+            }
+
+            public get config():IConfigProperty {
+                return this.app.config;
+            }
+
+            private _make() {
+                this.make();
+            }
+
+            private _boot() {
+                this.boot();
+            }
+
+            private _booted() {
+                this.booted();
+
+            }
+
+            protected make() {
+
+            }
+
+            protected init() {
+
+            }
+
+            protected boot() {
+
+            }
+
+            protected booted() {
+
+            }
+        }
     }
 
     export module directives {
@@ -210,6 +570,26 @@ module packadic {
 
     }
 
+    /**
+     * ### Components
+     * Components are
+     * ```typescript
+     * module packadic.components {
+     *      @extension('code-block', { })
+     *      export class CodeBlock extends Component {
+     *          static template:string = getTemplate('code-block')({});
+     *          static replace:boolean = true;
+     *          @prop({type: String, required: false, 'default': '', twoWay: true})
+     *          language:string;
+     *
+     *          @lifecycleHook('ready')
+     *          ready():void {
+     *                console.log('The component is ready');
+     *          }
+     *     }
+     * }
+     * ```
+     */
     export module components {
 
         // register a class as component in vue
@@ -217,13 +597,28 @@ module packadic {
         export class Component {
 
             // public properties: http://vuejs.org/api/instance-properties.html
+            /** An object that holds child components that have v-ref registered. For more details see v-ref. */
             $:any;
+
+            /** An object that holds DOM elements that have v-el registered. For more details see v-el. */
             $$:any;
+
+            /** The data object that the Vue instance is observing. You can swap it with a new object. The Vue instance proxies access to the properties on its data object. */
             $data:any;
+
+            /** The direct child components of the current instance. */
             $children:Array<Vue>;
+
+            /** The DOM element that the Vue instance is managing. Note that for Fragment Instances, vm.$el will return an anchor node that indicates the starting position of the fragment. */
             $el:HTMLElement;
+
+            /** The instantiation options used for the current Vue instance. This is useful when you want to include custom properties in the options */
             $options:any;
+
+            /** The parent instance, if the current instance has one. */
             $parent:Vue;
+
+            /** The root Vue instance of the current component tree. If the current instance has no parents this value will be itself. */
             $root:Vue;
 
             // methods: http://vuejs.org/api/instance-methods.html
@@ -295,6 +690,31 @@ module packadic {
             $set(exp:string, val:any):void {
             }
 
+            /**
+             * Watch an expression or a computed function on the Vue instance for changes. The expression can be a single keypath or actual expressions
+             * ```typescript
+             * vm.$watch('a + b', function (newVal, oldVal) {
+             * // do something
+             * })
+             * // or
+             * vm.$watch(
+             *  function () {
+             *      return this.a + this.b
+             *      },
+             *  function (newVal, oldVal) {
+             *      // do something
+             *  }
+             * )
+             * ```
+             * To also detect nested value changes inside Objects, you need to pass in deep: true in the options argument. Note that you don’t need to do so to listen for Array mutations.
+             * ```typescript
+             * vm.$watch('someObject', callback, { deep: true })
+             * vm.someObject.nestedValue = 123
+             * ```
+             * @param exp
+             * @param cb
+             * @param options
+             */
             $watch(exp:string|(()=>string),
                    cb:(val:any, old?:any)=>any,
                    options?:{ deep?: boolean; immediate?: boolean }):void {
@@ -339,13 +759,6 @@ module packadic {
     }
 
     export module widgets {
-
-
-
-        export function extendWidget(name:string, parent:any, proto:Widget) {
-            $.widget(namespacePrefix + name, parent, proto);
-            console.log('Widget', name, 'extended', Widget);
-        }
 
         export class Widget {
             _create():any {

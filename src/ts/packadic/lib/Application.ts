@@ -99,6 +99,7 @@ module packadic {
             packadic.app = this;
 
 
+
             Application.defaults = getConfigDefaults();
 
             this.timers.construct = new Date;
@@ -135,6 +136,15 @@ module packadic {
 
             this._config = new ConfigObject($.extend({}, Application.defaults, opts));
             this.config = ConfigObject.makeProperty(this._config);
+
+            // get the stylesheet data from the head. also parse all int stuff
+            var styles:any = JSON.parse(util.str.unquote($('head').css('font-family'), "'"));
+            ['breakpoints', 'containers'].forEach((name:string) => {
+                $.each(styles['style'][name], (key:string, val:string) => {
+                    styles['style'][name][key] = parseInt(val);
+                });
+            });
+            this.config.merge(styles);
 
 
             this.extensions.loadAll();

@@ -2,7 +2,6 @@
   "name": "packadic-site",
   "version": "0.0.5",
   "description": "",
-  "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"Starting build\" && rm -rf bower_components node_modules && npm install && bower install && grunt build"
@@ -11,11 +10,9 @@
   "license": "MIT",
   "keywords": [
     "packadic",
-    "framework"
+    "framework",
+      "gruntplugin"
   ],
-  "directories": {
-    "lib": "./"
-  },
   "engines": {
     "node": "*"
   },
@@ -32,7 +29,6 @@
     "browserify-derequire": "^0.9.4",
     "chalk": "^1.1.1",
     "express": "^4.13.3",
-    "fs-extra": "^0.22.1",
     "globule": "^0.2.0",
     "grunt-contrib-concat": "^0.5.1",
     "http-server": "^0.8.0",
@@ -48,12 +44,14 @@
     "node-sass": "^3.2.0",
     "optimist": "^0.6.1",
     "q": "^1.4.1",
+    "qtip2": "^2.2.0",
     "sassdoc": "^2.1.15",
     "serve-static": "^1.10.0",
     "tmp": "0.0.27",
     "typedoc": "^0.3.8",
     "typescript": "^1.6.0-betas",
     "xml2js": "^0.4.12",
+      "fs-extra": "^0.22.1",
     "yargs": "^3.23.0"
   },
   "devDependencies": {
@@ -90,13 +88,5 @@
     "underscore.string": "^3.2.0",
     "vue": "^0.12.15",
     "webpack": "^1.12.2"
-  },
-  "jshintConfig": {
-    "node": true,
-    "browser": true,
-    "qunit": true,
-    "globals": {
-      "s": true
-    }
   }
 }
