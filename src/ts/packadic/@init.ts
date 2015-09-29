@@ -77,7 +77,7 @@ module packadic {
 
     export function ready(fn:Function) {
         if (isReady) {
-            fn.call(app);
+            fn.apply(fn, [packadic.app]);
         } else {
             _readyCallbacks.push(fn);
         }
@@ -87,12 +87,12 @@ module packadic {
     /**
      * @private
      */
-    export function callReadyCallbacks() {
+    export function callReadyCallbacks(app:Application) {
         if (isReady) {
             return;
         }
         _readyCallbacks.forEach((fn:Function) => {
-            fn.call(app)
+            fn.apply(fn, [app])
         });
         isReady = true;
     }

@@ -114,7 +114,7 @@ module packadic {
         public static get instance() {
             if (typeof Application._instance === "undefined") {
                 Application._instance = new Application();
-                app = Application._instance;
+                packadic.app = Application._instance;
             }
             return Application._instance;
         }
@@ -126,6 +126,9 @@ module packadic {
                 this.isInitialised = true;
             }
             this.emit('pre-init');
+
+            console.groupEnd();
+
             this.timers.init = new Date;
             Vue.config.debug = this.DEBUG;
             if (this.DEBUG) {
@@ -155,7 +158,7 @@ module packadic {
 
             registerHelperPlugins();
 
-            callReadyCallbacks();
+            callReadyCallbacks(this);
 
             this.emit('init', this);
             if(this.DEBUG) console.groupEnd();

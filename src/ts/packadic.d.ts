@@ -6,7 +6,7 @@ declare module packadic {
     function mergeIntoDefaultConfig(obj?: any): void;
     var _readyCallbacks: Function[];
     function ready(fn: Function): void;
-    function callReadyCallbacks(): void;
+    function callReadyCallbacks(app: Application): void;
 }
 declare module packadic {
     var namespacePrefix: string;

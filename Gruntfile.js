@@ -185,13 +185,11 @@ module.exports = function (_grunt) {
                 options: {declaration: true, sourceMap: target === 'dev'},
                 src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
                 out    : 'src/ts/packadic.js'
-            },
-            extensions: {files: [{src: ['src/ts/extensions/**/*.ts']}], options: {declaration: false, sourceMap: target === 'dev'}}
+            }
         },
         packadic: {
-            addons: {
-
-            }
+            dir: 'src/ts/addons',
+            dest: '<%= target.dest %>/assets/scripts/addons.js'
         },
 
         /**/
@@ -243,7 +241,7 @@ module.exports = function (_grunt) {
             styles       : {files: ['src/styles/**/*.{scss,sass}'], tasks: ['styles']},
             views        : {files: ['src/views/partials/**/*.jade', 'src/views/**/_*.jade', 'src/views/metalshark/**/*.jade', 'src/views/layouts/**/*.jade', 'docs/**/*.md'], tasks: ['jade:views']},
             newerViews   : {files: ['src/views/**/*.jade', '!src/views/partials/**/*.jade', '!src/views/metalshark/**/*.jade', '!src/views/**/_*.jade'], tasks: ['newer:jade:views']},
-            ts_packadic  : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'copy_ts_scripts']},
+            ts : {files: ['src/ts/packadic/**/*.ts'], tasks: ['ts:packadic', 'copy_ts_scripts']},
             ts_extensions: {files: ['src/ts/extensions/**/*.ts'], tasks: ['ts:extensions', 'copy:ts_extensions', 'copy_ts_scripts']},
 
             noty          : {files: ['src/js/noty/**/*.js'], tasks: ['concat:noty', 'wrap:noty']},
@@ -274,12 +272,14 @@ module.exports = function (_grunt) {
         ['images', 'Copy images', ['clean:images', 'copy:images']],
         ['bower', 'Copy bower components', ['clean:bower', 'copy:bower']],
         // compile
-        ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles', 'animate_css']],
+        ['styles', 'Compile all SCSS stylesheets', ['clean:styles', 'sass:styles', 'animate_cssss']],
         ['scripts', 'Concat & uglify vendor scripts and compile typescript files',
             [
-                'clean:scripts', 'concat:vendor', 'concat:noty', 'wrap:noty',
-                'uglify:vendor', 'jade:templates', 'uglify:templates', 'ts:packadic', 'ts:extensions',
-                'uglify:ts_packadic', 'copy_ts_scripts', 'copy:js'
+                'clean:scripts',
+                'concat:vendor', 'concat:noty', 'wrap:noty', 'uglify:vendor',
+                'jade:templates', 'uglify:templates',
+                'ts:packadic', 'uglify:ts', 'copy_ts_scripts',
+                'packadic', 'copy:js'
             ]
         ],
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
