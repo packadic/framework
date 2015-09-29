@@ -126,7 +126,6 @@ module packadic {
                 this.isInitialised = true;
             }
             this.emit('pre-init');
-
             console.groupEnd();
 
             this.timers.init = new Date;
@@ -167,15 +166,16 @@ module packadic {
 
         public boot():PromiseInterface<Application> {
             var defer:DeferredInterface<Application> = util.promise.create();
+            if(!this.isInitialised){
+                throw new Error('Calling boot before init is not acceptable');
+            }
             if (this.isBooted) {
                 setTimeout(() => {
                     defer.resolve(this);
                 }, 100);
                 return defer.promise;
             }
-            if(this.DEBUG) {
-                console.group('DEBUG: boot');
-            }
+            if(this.DEBUG) console.groupCollapsed('DEBUG: boot');
 
             $(() => {
                 this.$mount('html');
@@ -196,6 +196,8 @@ module packadic {
             return defer.promise;
         }
 
+
+
         public get debug():Debug {
             return debug;
         }
@@ -206,9 +208,13 @@ module packadic {
         }
 
         public mergeData(newData:Object={}){
-            this.$data = _.merge(this.$data, newData);
+
             Object.keys(newData).forEach((key:string) => {
-                this.$set(key, newData[key]);
+                if(typeof this.$get(key) !== 'undefined') {
+                    this.$set(key, newData[key]);
+                } else {
+                    this.$add(key, newData[key]);
+                }
             });
         }
 

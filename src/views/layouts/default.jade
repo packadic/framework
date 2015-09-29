@@ -96,8 +96,7 @@ html(lang="en")
                 +javascript('system.js/dist/system.src', true)
                 +javascript('vue/dist/vue', true)
                 +javascript('vendor.min')
-                +javascript('noty.min')
-                +javascript('templates.min.js')
+                +javascript('templates.min')
                 +javascript('packadic.min')
 
             else
@@ -107,7 +106,7 @@ html(lang="en")
                 +javascript('vue.dev') //+javascript('vue/dist/vue', true)
                 +javascript('vendor')
                 +javascript('noty')
-                +javascript('templates.min.js')
+                +javascript('templates.min')
                 +javascript('packadic')
                 +javascript('addons')
 
@@ -115,19 +114,24 @@ html(lang="en")
 
             if _target !== 'dist'
                 script.
-                    var app = packadic.Application.instance;
-                    app.DEBUG = true;
+                    (function(){
+                        var app = packadic.Application.instance;
+                        app.DEBUG = true;
+                    }.call())
+
 
 
         block boot-script
             script.
-                var app = packadic.Application.instance;
-                if(!app.isInitialised){
-                    app.init();
-                }
-                app.boot().then(function (app) {
-                    app.debug.log('BOOTED FROM boot-script');
-                });
+                (function() {
+                    var app = packadic.Application.instance;
+                    if ( ! app.isInitialised ) {
+                        app.init();
+                    }
+                    app.boot().then(function (app) {
+                        app.debug.log('BOOTED FROM boot-script');
+                    });
+                }.call())
 
         block script
 

@@ -13,9 +13,11 @@ module packadic.directives {
             return this.$el.find('li');
         }
 
+
         get $links():JQuery {
             return this.$el.find('a');
         }
+
 
 
         bind() {

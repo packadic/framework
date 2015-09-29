@@ -26,42 +26,44 @@ module.exports = function (grunt) {
     var name = 'packadic';
 
 
-    grunt.registerTask(name, 'Packadic build task', function () {
+    grunt.registerTask(name, 'Packadic extensions build task.', function () {
         var taskDone = this.async();
-        var target = grunt.config.get('target');
-        var dest = grunt.config.get('target.dest');
 
         this.requiresConfig(name);
         this.requiresConfig(name + '.dest');
 
-        var o = config(target);
+        var o = config();
         compile(o);
 
         return taskDone();
     });
 
-    function config(target) {
+    function config() {
         grunt.config(name, _.merge({
-            compiler: {
-                declaration           : true,
+            compiler   : {
+                declaration           : '<%= packadic.declaration %>',
                 compiler              : path.join(__dirname, '..', 'node_modules/typescript/bin/tsc'),
-                target                : 'ES5', emitError: true,
-                sourceMap             : target === 'dev',
+                target                : 'ES5',
+                emitError             : true,
+                sourceMap             : '<%= packadic.sourceMap %>',
                 experimentalDecorators: true
             },
-            dir     : 'src/ts/addons',
-            files   : ['**/*.ts'],
-            dest    : null,
-            def     : '<%= packadic.dir %>.d.ts',
-            uglify  : true
+            dir        : 'src/ts/addons',           // the packadic addons folder
+            files      : ['**/*.ts'],
+            dest       : null,                      // dest file path
+            uglify     : true,                      // uglify code, creates a seperate .min.js file
+            sourceMap  : false,                     // generate source map
+            declaration: true,                      // export declaration
+            def        : '<%= packadic.dir %>.d.ts',// export location for declaration
+            wrap       : true,                      // wrap in umd loader
+            wrapExtends: true                       // if false, it will define packadic, otherwise extend packadic
         }, grunt.config(name)));
         return grunt.config(name);
     }
 
     function compile(o) {
         var dir = tmp.dirSync();
-        //var dir = {name: ''};
-        //fs.emptyDirSync(dir.name = '/tmp/tmp-8104yx34xS4E4GVq/');
+
         o.files.push('!**/*.d.ts');
 
         o.files.forEach(function (file, k) {
@@ -130,6 +132,18 @@ module.exports = function (grunt) {
             dest: o.dest
         });
         grunt.task.run('concat:' + taskName);
+
+
+        // WRAP
+        if ( o.wrap ) {
+            grunt.config('umd.' + taskName, {
+                src : o.dest, dest: o.dest, objectToExport: 'packadic'
+            });
+            if( o.wrapExtends ) {
+                grunt.config('umd.' + taskName + '.deps', {'default': ['packadic']});
+            }
+            grunt.task.run('umd:' + taskName);
+        }
 
 
         // UGLIFY

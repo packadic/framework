@@ -115,11 +115,11 @@ module packadic {
     }
 
     export function getTemplate(name):any {
-        var namePath = 'src/templates/' + name;
-        if(!defined(window['JST'][namePath])){
+
+        if(!defined(window['JST'][name])){
             throw new Error('Template [' + name + '] not found');
         }
-        return window['JST'][namePath];
+        return window['JST'][name];
     }
 
 
