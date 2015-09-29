@@ -1,5 +1,6 @@
 module packadic.components {
 
+    import NotifyExtension = packadic.extensions.NotifyExtension;
 
     @component('code-block')
     export class CodeBlock extends Component {
@@ -41,12 +42,10 @@ module packadic.components {
             ];
         }
 
-
         @lifecycleHook('created')
         created():void {
             this.initClipboard();
         }
-
 
         @lifecycleHook('ready')
         ready():void {
@@ -110,8 +109,12 @@ module packadic.components {
             }
         }
 
+        get notify():NotifyExtension{
+            return <NotifyExtension> packadic.app.extensions.get('notify')
+        }
+
         onCopyClick(e){
-            notify({
+            this.notify.create({
                 text: 'Code has been copied to your clipboard',
                 type: 'information'
             })

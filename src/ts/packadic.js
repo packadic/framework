@@ -1563,27 +1563,6 @@ var packadic;
 })(packadic || (packadic = {}));
 var packadic;
 (function (packadic) {
-    function notify(opts) {
-        if (opts === void 0) { opts = {}; }
-        var defer = packadic.util.promise.create();
-        packadic.app.booted(function () {
-            opts = $.extend({}, packadic.app.config('vendor.noty'), opts);
-            if (packadic.defined(noty)) {
-                console.log('noty defined opts', opts, noty);
-                var n = noty(opts);
-                console.log('noty defined instance', n);
-                defer.resolve(n);
-            }
-            packadic.app.loadJS('noty').then(function (noty) {
-                console.log('noty opts', opts, noty);
-                var n = noty(opts);
-                console.log('noty instance', n);
-                defer.resolve(n);
-            });
-        });
-        return defer.promise;
-    }
-    packadic.notify = notify;
     function highlight(code, lang, wrap, wrapPre) {
         if (wrap === void 0) { wrap = false; }
         if (wrapPre === void 0) { wrapPre = false; }

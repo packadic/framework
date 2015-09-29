@@ -33,6 +33,10 @@ module packadic.extensions {
                 speed: 500 // opening & closing animation speed
             },
             css_default: {
+                open: 'animated flipInX', // Animate.css class names
+                close: 'animated flipOutX', // Animate.css class names
+            },
+            footerRight: {
                 open: 'animated slideInLeft', // Animate.css class names
                 close: 'animated slideOutDown', // Animate.css class names
             }
@@ -44,7 +48,7 @@ module packadic.extensions {
             text: '', // can be html or string
             dismissQueue: true, // If you want to use queue feature set this true
             template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>',
-            animation: '<%= notifications.animations.css_default %>',
+            animation: '<%= notify.animations.css_default %>',
             timeout: false, // delay for closing event. Set false for sticky notifications
             force: false, // adds notification to the beginning of queue when set to true
             modal: false,
@@ -96,22 +100,13 @@ module packadic.extensions {
                     style: function () {
                         var style = {
                             top: 20,
-                            right: 20,
-                            position: 'fixed',
-                            //width        : '310px',
-                            'min-width': '200px',
-                            height: 'auto',
-                            margin: 0,
-                            padding: 0,
-                            listStyleType: 'none',
-                            zIndex: 10000000
+                            right: 20
                         };
 
                         var app:Application = packadic.app;
-                        var layout:LayoutExtension = <LayoutExtension> packadic.app.extensions.get('layout');
+                        var layout:LayoutExtension = <LayoutExtension> app.extensions.get('layout');
 
                         layout.isHeaderFixed() ? style.top = $(app.$$['header']).innerHeight() + 5 : null;
-                        //console.log('noty topright packadic', layout.isHeaderFixed(), style);
 
                         $(this).css(style);
 
@@ -121,6 +116,9 @@ module packadic.extensions {
                             });
                         }
                     }
+                },
+                css: {
+                    display: 'block'
                 }
             }),
             footerRight: _layout('footerRight', {
@@ -133,11 +131,9 @@ module packadic.extensions {
                         this.$buttons = this.$bar.find('.noty_buttons');
                         this.$text = this.$bar.find('.noty_text');
 
-                        var app = packadic.app;
-                        /** @type {Extensions} */
-                        var extensions = app.extensions;
-                        /** @type {LayoutExtension} */
-                        var layout = extensions.get('layout');
+                        var app:Application = packadic.app;
+                        var extensions:Extensions = app.extensions;
+                        var layout:LayoutExtension = <LayoutExtension> extensions.get('layout');
 
                         var $footer = $(app.$$['footer']);
                         var pr = parseInt($footer.css('padding-right').replace('px', '')),
@@ -148,24 +144,14 @@ module packadic.extensions {
                             height: height
                         };
 
-                        console.log('noty footeRRight', this);
-
-                        this.$item.css({
-                            ///float: 'right'
-                        });
-
                         this.$bar.css({
                             height: height
                         });
-
-
-                        this.$message.css({
-                        });
-
                         $(this).css(style).appendTo($footer);
-
-
                     }
+                },
+                css: {
+                    display: 'block'
                 }
             })
         }
@@ -200,14 +186,30 @@ module packadic.extensions {
 
         public footer(text:string, type:string = 'information', opts:any = {}):NotyObjectStatic {
 
-            var footer = this.create($.extend(true, opts, {
+            var n = this.create($.extend(true, opts, {
                 text: text,
                 type: type,
                 layout: 'footerRight',
+                theme: 'packadicTheme',
+                animation: this.config('notify.animations.footerRight'),
+                callback: {
+                    afterShow: function(){
+                        console.log('afterShow', this);
+                        this.$item = this.$message.closest('.noty_item');
+                        this.$item.removeClass(this.options['animation'].open);
+                    }
+                }
+            }));
+            return n;
+        }
+
+        public topRight(text:string, type:string = 'information', opts:any = {}):NotyObjectStatic {
+            return this.create($.extend(true, opts, {
+                text: text,
+                type: type,
+                layout: 'topRight',
                 theme: 'packadicTheme'
             }));
-
-            return footer;
         }
     }
 

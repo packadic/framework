@@ -399,8 +399,6 @@ declare module packadic.storage {
     }
 }
 declare module packadic {
-    import PromiseInterface = packadic.util.promise.PromiseInterface;
-    function notify(opts?: any): PromiseInterface<Noty>;
     function highlight(code: string, lang?: string, wrap?: boolean, wrapPre?: boolean): util.promise.PromiseInterface<string>;
     function makeSlimScroll(el: any, opts?: any): void;
     function destroySlimScroll(el: any): void;

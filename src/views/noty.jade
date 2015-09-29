@@ -19,8 +19,19 @@ block append styles
             padding-left: 5px;
         }
 
-block append scripts
+block append script
     script.
+        (function(){
+            var app = packadic.app;
+            app.booted(function(){
+                /** @type {NotifyExtension} */
+                var notify = app.extensions.get('notify');
+                ['success', 'error', 'warning', 'info'].forEach(function(type){
+                    notify.footer('You have posted the issue', type);
+                    notify.topRight('You have posted the issue', type);
+                })
+            })
+        }.call())
         window.anim = {};
         window.anim.open = 'flipInX';
         window.anim.close = 'flipOutX';

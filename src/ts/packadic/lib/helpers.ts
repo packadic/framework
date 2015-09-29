@@ -5,26 +5,6 @@ module packadic {
     import DeferredInterface = packadic.util.promise.DeferredInterface;
     import PromiseInterface = packadic.util.promise.PromiseInterface;
 
-    export function notify(opts:any={}):PromiseInterface<Noty>{
-        var defer:DeferredInterface<Noty> = util.promise.create();
-        app.booted(() => {
-            opts = $.extend({}, app.config('vendor.noty'), opts);
-            if(defined(noty)){
-                console.log('noty defined opts', opts, noty);
-                var n:Noty = <Noty> noty(opts);
-                console.log('noty defined instance', n);
-                defer.resolve(n);
-            }
-            app.loadJS('noty').then((noty:any) => {
-                console.log('noty opts', opts, noty);
-                var n:Noty = <Noty> noty(opts);
-                console.log('noty instance', n);
-                defer.resolve(n);
-            })
-        });
-        return defer.promise;
-    }
-
     declare var hljs:HighlightJS;
 
     export function highlight(code:string, lang?:string, wrap:boolean = false, wrapPre:boolean = false):util.promise.PromiseInterface<string> {

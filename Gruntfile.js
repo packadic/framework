@@ -143,9 +143,6 @@ module.exports = function (_grunt) {
             vendor: {src: vendorScripts, dest: '<%= target.dest %>/assets/scripts/vendor.js'},
             noty  : {src: notyScripts, dest: '<%= target.dest %>/assets/scripts/noty.js'}
         },
-        wrap    : {
-            noty: { src    : '<%= target.dest %>/assets/scripts/noty.js', dest: '<%= target.dest %>/assets/scripts/noty.js', options: {wrapper: makeWrapper('return window.noty;')} },
-        },
         umd: {
             noty: { src    : '<%= target.dest %>/assets/scripts/noty.js', dest: '<%= target.dest %>/assets/scripts/noty.js', objectToExport: 'window.noty' },
             packadic: { src: '<%= target.dest %>/assets/scripts/packadic.js', dest: '<%= target.dest %>/assets/scripts/packadic.js', objectToExport: 'packadic' }

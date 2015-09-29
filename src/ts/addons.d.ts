@@ -3,6 +3,7 @@
 declare module packadic {
 }
 declare module packadic.components {
+    import NotifyExtension = packadic.extensions.NotifyExtension;
     class CodeBlock extends Component {
         static template: string;
         static replace: boolean;
@@ -29,6 +30,7 @@ declare module packadic.components {
         maximize(): void;
         minimize(): void;
         tryMaximize(): void;
+        notify: NotifyExtension;
         onCopyClick(e: any): void;
         onOpenInWindowClick(e: any): void;
         onMinimizeToggleClick(e: any): void;
@@ -133,6 +135,7 @@ declare module packadic.extensions {
         boot(): void;
         create(opts?: any): NotyObjectStatic;
         footer(text: string, type?: string, opts?: any): NotyObjectStatic;
+        topRight(text: string, type?: string, opts?: any): NotyObjectStatic;
     }
 }
 declare module packadic.extensions {

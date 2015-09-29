@@ -1,5 +1,4 @@
-
-@mixin notyPackadicLayoutVariant($layout){
+@mixin notyPackadicLayoutVariant($layout) {
     .noty_#{$layout}_layout_container.noty_packadicTheme {
         @content;
     }
@@ -8,27 +7,34 @@
 @mixin notyPackadicTypeVariant($type, $background:#ffffff, $color:#aaaaaa, $border-color:#332244) {
     .noty_packadicTheme {
         .noty_item.noty_item_#{$type} {
-            border-color: $border-color;
             background-color: $background;
-            .noty_message, .noty_message {
+            .noty_bar {
+                border-color: $border-color;
+            }
+            .noty_message {
                 color: $color;
             }
         }
     }
+    @content
 }
 
 .noty_packadicTheme.noty_container {
+    position: fixed;
+    min-width: 200px;
+    height: 33px;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    z-index: 10000000;
 
     // ul.noty_container > li.list-group-item
     .noty_item {
-        float: right;
     }
 
     //
     .noty_bar {
-        width: auto;
-        border-right: 30px solid #0aa2ff;
-        border-bottom: 1px solid #0aa2ff;
+        //border-bottom: 1px solid $brand-success;
     }
 
     .noty_message {
@@ -36,7 +42,7 @@
         line-height: 16px;
         width: auto;
         position: relative;
-        text-align: right;
+        text-align: center;
         padding: 8px 20px;
     }
 
@@ -44,25 +50,89 @@
     }
 }
 
-
-@include notyPackadicLayoutVariant('footerRight'){
-    top: 0px;
-    right: 20px;
+@include notyPackadicLayoutVariant('footerRight') {
     position: absolute;
-    min-width: 200px;
-    height: 33px;
-    margin: 0px;
+    top: 0;
+    right: 20px;
+    height: $page-footer-height;
     float: right;
-    padding: 0px;
-    list-style-type: none;
-    z-index: 10000000;}
+
+    .noty_item.list-group-item {
+        float: right;
+        min-width: 160px !important;
+        width: auto !important;
+        border: none !important;
+    }
+
+    .noty_bar {
+        width: auto;
+        border-right-width: 5px;
+        border-right-style: solid;
+    }
+    .noty_message {
+        text-align: right;
+    }
+
+}
 
 @include notyPackadicTypeVariant('alert');
-@include notyPackadicTypeVariant('notification', $state-info-bg, $state-info-text, $state-info-border){
+@include notyPackadicTypeVariant('notification', $state-info-bg, $state-info-text, $state-info-border) {
     .noty_bar {
-        border-color: $state-info-bg;    }
-};
-@include notyPackadicTypeVariant('warning', $state-warning-bg, $state-warning-text, $state-warning-border);
-@include notyPackadicTypeVariant('error', $state-danger-bg, $state-danger-text, $state-danger-border);
-@include notyPackadicTypeVariant('information', $state-info-bg, $state-info-text, $state-info-border);
-@include notyPackadicTypeVariant('success', $state-success-bg, $state-success-text, $state-success-border);
+        border-color: $state-info-bg;
+    }
+}
+
+$notify-warning-bg: $state-warning-bg !default;
+$notify-warning-text: material-color('orange', '800') !default;
+$notify-warning-border: material-color('orange', '400') !default;
+@include notyPackadicTypeVariant('warning', $notify-warning-bg, $notify-warning-text, $notify-warning-border) {
+    @include notyPackadicLayoutVariant('footerRight') {
+        .noty_item.noty_item_warning {
+            background-color: rgba($notify-warning-bg, 0.1);
+        }
+    }
+}
+
+;
+
+$notify-error-bg: $state-danger-bg !default;
+$notify-error-text: material-color('red', '800') !default;
+$notify-error-border: material-color('red', '400') !default;
+@include notyPackadicTypeVariant('error', $notify-error-bg, $notify-error-text, $notify-error-border) {
+    @include notyPackadicLayoutVariant('footerRight') {
+        .noty_item.noty_item_error {
+            background-color: rgba($notify-error-bg, 0.1);
+            .noty_message { color: lighten($notify-error-text, 20) !important; }
+        }
+    }
+}
+
+;
+
+$notify-info-bg: $state-info-bg !default;
+$notify-info-text: material-color('light-blue', '800') !default;
+$notify-info-border: material-color('light-blue', '400') !default;
+@include notyPackadicTypeVariant('info', $notify-info-bg, $notify-info-text, $notify-info-border) {
+    @include notyPackadicLayoutVariant('footerRight') {
+        .noty_item.noty_item_info {
+            background-color: rgba($notify-info-bg, 0.1);
+            .noty_message { color: lighten($notify-info-text, 50) !important; }
+        }
+    }
+}
+
+;
+
+$notify-success-bg: $state-success-bg !default;
+$notify-success-text: material-color('green', '800') !default;
+$notify-success-border: material-color('green', '400') !default;
+@include notyPackadicTypeVariant('success', $notify-success-bg, $notify-success-text, $notify-success-border) {
+    @include notyPackadicLayoutVariant('footerRight') {
+        .noty_item.noty_item_success {
+            background-color: rgba($notify-success-bg, 0.1);
+            .noty_message { color: lighten($notify-success-text, 50) !important; }
+        }
+    }
+}
+
+;
