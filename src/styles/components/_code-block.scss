@@ -1,66 +1,102 @@
-$code-block-top-height: 17px;
-$code-block-border-color: #BDAEA3;
+$code-block-top-height: 27px;
+$code-block-border-color: #bdaea3;
 $code-block-code-bg: #f5f2f0;
+$code-block-transition-speed: 150ms;
 
 .code-block {
     margin: 15px 0;
     border: 1px solid $code-block-border-color;
     width: 100%;
     opacity: 0;
-    transition: opacity 300ms linear;
+    transition: opacity $code-block-transition-speed linear;
 
     &.code-block-show {
         opacity: 1;
-        transition: opacity 300ms linear;
+        transition: opacity $code-block-transition-speed linear;
     }
-
-
 
     .code-block-top {
         height: $code-block-top-height;
         overflow: hidden;
-    }
+        display: table;
+        width: 100%;
 
-    .code-block-information {
-        font-size: 11px;
-        h4 {
-            padding: 2px 10px;
-            font-size: 11px;
-            span {
-                padding-right: 10px;
-                text-transform: uppercase;
-            }
-            small {
+        .code-block-top-left, .code-block-top-right {
+            display: table-cell;
+            height: $code-block-top-height;
+        }
+
+        .code-block-top-left {
+
+            .code-block-information {
+                height: $code-block-top-height;
+                @include clearfix;
                 font-size: 11px;
-                font-weight: 300;
+                h4 {
+                    height: $code-block-top-height;
+                    padding: 6px 10px;
+                    font-size: 13px;
+                    span {
+                        padding-right: 10px;
+                        text-transform: uppercase;
+                    }
+                    small {
+                        font-size: 11px;
+                        font-weight: 300;
+                    }
+                }
+                dl, h4 {
+                    height: $code-block-top-height;
+                    display: block;
+                    float: left;
+                    width: 50%;
+                    margin: 0;
+                }
+                dl {
+                    border-left: 1px solid $code-block-border-color;
+                }
+                dt, dd {
+                    height: $code-block-top-height;
+                    display: block;
+                    padding: 6px 10px;
+                    border-right: 1px solid $code-block-border-color;
+                    float: left;
+                    text-align: center;
+                    width: 25%;
+                    color: #757779;
+                }
+                dt {
+                    background: darken($code-block-code-bg, 10);
+                }
+                dd {
+                    background: $code-block-code-bg;
+                }
             }
         }
-        dl, h4 {
-            display: block;
-            float: left;
-            width: 50%;
-            margin: 0;
-        }
-        dl {
-            border-left: 1px solid $code-block-border-color;
-        }
-        dt, dd {
-            display: block;
-            padding: 1px 10px;
-            border-right: 1px solid $code-block-border-color;
-            float: left;
-            text-align: center;
-            width: 25%;
-            color: #757779;
-        }
-        dt {
-            background: darken($code-block-code-bg, 10);
-        }
-        dd {
-            background: $code-block-code-bg;
+
+        .code-block-top-right {
+            width: 200px;
+            height: $code-block-top-height;
+
+            .code-block-actions {
+                height: $code-block-top-height;
+                display: table;
+                width: 100%;
+
+                a.btn {
+                    display: table-cell;
+                    @include btn-sm;
+                    font-size: 14px;
+                    padding: 0;
+                    line-height: 1;
+                    opacity: 0.5;
+                    &:hover {
+                        opacity: 0.9;
+                    }
+                }
+            }
         }
     }
-
 
     .code-block-content {
         border-top: 1px solid $code-block-border-color;
@@ -93,10 +129,7 @@ $code-block-code-bg: #f5f2f0;
             }
         }
 
-
-
     }
-
 
     &.code-block-minimized {
         cursor: pointer; // clicking op the code-block will open it

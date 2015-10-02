@@ -2,6 +2,48 @@
 /// <reference path="packadic.d.ts" />
 declare module packadic {
 }
+declare module packadic {
+    module components {
+        class BSPopoverComponent extends Component {
+            static template: string;
+            static replace: boolean;
+            show: boolean;
+            title: string;
+            arrow: boolean;
+            container: string;
+            delay: number;
+            animation: boolean;
+            html: boolean;
+            content: string;
+            placement: string;
+            trigger: string;
+            offsets: string;
+            ready(): void;
+        }
+    }
+    module directives {
+        class BSPopoverDirective extends Directive {
+            isLiteral: boolean;
+            bind(): void;
+            update(): void;
+            unbind(): void;
+            bindPopover(): void;
+        }
+    }
+}
+declare module packadic {
+    module components {
+        class BSModalComponent extends Component {
+            static template: string;
+            static replace: boolean;
+            show: boolean;
+            header: boolean;
+            footer: boolean;
+            close: boolean;
+            ready(): void;
+        }
+    }
+}
 declare module packadic.components {
     import NotifyExtension = packadic.extensions.NotifyExtension;
     class CodeBlock extends Component {
@@ -31,6 +73,7 @@ declare module packadic.components {
         minimize(): void;
         tryMaximize(): void;
         notify: NotifyExtension;
+        hideButtonTooltip(srcElement: any): void;
         onCopyClick(e: any): void;
         onOpenInWindowClick(e: any): void;
         onMinimizeToggleClick(e: any): void;
@@ -43,19 +86,64 @@ declare module packadic.components {
         destroyScrollContent(): void;
     }
 }
+declare module packadic.components {
+    class ColorSelectorComponent extends Component {
+        static template: string;
+        static replace: boolean;
+        show: boolean;
+        target: string;
+        property: string;
+        info: string;
+        colors: {
+            [name: string]: any[];
+        };
+        created(): void;
+        ready(): void;
+        onHover(color: any, e: any): void;
+        onClick(color: any, e: any): void;
+        onShown(e: JQueryEventObject): void;
+        getTarget(): JQuery;
+    }
+}
+declare module packadic.components {
+    class IBoxComponent extends Component {
+        static template: string;
+        static replace: boolean;
+        id: string;
+        ready(): void;
+    }
+}
 declare module packadic.directives {
     class BreadcrumbsDirective extends Directive {
         deep: boolean;
         hasOwnContent: boolean;
-        $el: JQuery;
-        $items: JQuery;
-        $links: JQuery;
+        $el: JQuery | any;
+        $items: JQuery | any;
+        $links: JQuery | any;
         bind(): void;
         unbind(): void;
         setOptions(opts?: any): void;
         update(value: any): void;
         createItem(name: string, href?: string | boolean, last?: boolean): JQuery;
         _getInfoContent(value?: any): void;
+    }
+}
+declare module packadic.directives {
+    class ColorSelectorDirective extends Directive {
+        bind(): void;
+        update(value: any): void;
+    }
+}
+declare module packadic.directives {
+    class IBoxGridDirective extends Directive {
+        isLiteral: boolean;
+        selector: string;
+        $el: JQuery;
+        $columns: JQuery;
+        bind(): void;
+        unbind(): void;
+        update(value: any): void;
+        makeSortable(): void;
     }
 }
 declare module packadic.extensions {
@@ -209,6 +297,39 @@ declare module packadic.extensions {
 declare module packadic.plugins {
     class TestPlugin extends Plugin {
         protected _create(): void;
+    }
+}
+declare module packadic.widgets {
+    class progressbarWidget extends Widget {
+        version: string;
+        widgetEventPrefix: string;
+        options: any;
+        $back_text: JQuery;
+        $front_text: JQuery;
+        $parent: JQuery;
+        isVertical: boolean;
+        minValue: number;
+        maxValue: number;
+        targetValue: number;
+        percentage: number;
+        current_percentage: number;
+        current_value: number;
+        this_size: number;
+        parent_size: number;
+        text: string;
+        progressIntervalId: number;
+        bs4: boolean;
+        constructor();
+        _getDataAttributes(): any;
+        _formatAmount(val: any, percent: any, max: any, min: any): string;
+        _updateBaseValues(): void;
+        _create(): void;
+        _start(): void;
+        update(): void;
+        _update(): void;
+        _destroy(): void;
+        _init(): any;
+        _setOption(key: string, value: any): any;
     }
 }
 declare module packadic.widgets {

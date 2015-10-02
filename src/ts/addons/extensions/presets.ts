@@ -13,6 +13,7 @@ module packadic.extensions {
         }
     };
 
+
     var $body:JQuery = $('body');
 
 

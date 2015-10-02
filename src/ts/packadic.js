@@ -83,6 +83,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var packadic;
 (function (packadic) {
     packadic.namespacePrefix = 'packadic.';
+    console.log('packadic namespace ' + packadic.namespacePrefix);
     function extension(name, configToMergeIntoDefaults) {
         if (configToMergeIntoDefaults === void 0) { configToMergeIntoDefaults = {}; }
         return function (cls) {
@@ -99,13 +100,11 @@ var packadic;
                 acceptStatement: false,
                 deep: false
             };
-            Object.keys(definition).forEach(function (defName) {
-                if (cls.hasOwnProperty(defName)) {
-                    definition[defName] = cls[defName];
-                }
-            });
             var obj = new cls();
             var proto = Object.getPrototypeOf(obj);
+            Object.getOwnPropertyNames(obj).forEach(function (defName) {
+                definition[defName] = obj[defName];
+            });
             Object.getOwnPropertyNames(proto).forEach(function (method) {
                 if (['constructor'].indexOf(method) > -1)
                     return;
@@ -114,15 +113,13 @@ var packadic;
                     definition[method] = proto[method];
                 }
                 else if (typeof desc.set === 'function') {
-                    definition[method] = {
-                        get: desc.get,
-                        set: desc.set
-                    };
+                    Object.defineProperty(definition, method, desc);
                 }
                 else if (typeof desc.get === 'function') {
-                    definition[method] = desc.get;
+                    Object.defineProperty(definition, method, desc);
                 }
             });
+            console.log('@directive ', name, definition, proto);
             if (isElementDirective) {
                 Vue.elementDirective(name, definition);
             }
@@ -154,9 +151,7 @@ var packadic;
     function component(name) {
         return function (cls) {
             var options = {
-                data: (function () {
-                    return new cls();
-                }),
+                props: {},
                 methods: {},
                 computed: {}
             };
@@ -166,8 +161,23 @@ var packadic;
                 options.template = cls.template;
             var obj = new cls();
             var proto = Object.getPrototypeOf(obj);
-            if (proto.hasOwnProperty('__props__'))
+            if (proto.hasOwnProperty('__props__')) {
                 options.props = proto.__props__;
+            }
+            Object.getOwnPropertyNames(obj).forEach(function (name) {
+                var type = null;
+                var t = typeof obj[name];
+                if (t === 'string') {
+                    type = String;
+                }
+                else if (t === 'number') {
+                    type = Number;
+                }
+                else if (t === 'boolean') {
+                    type = Boolean;
+                }
+                options.props[name] = { type: type, 'default': obj[name] };
+            });
             if (proto.hasOwnProperty('__events__'))
                 options.events = proto.__events__;
             if (proto.hasOwnProperty('__hooks__'))
@@ -188,6 +198,12 @@ var packadic;
                 else if (typeof desc.get === 'function')
                     options.computed[method] = desc.get;
             });
+            if (name === 'modal') {
+                console.log('!component cls', cls);
+                console.log('!component obj', obj);
+                console.log('!component proto', proto);
+                console.log('!component options', options);
+            }
             Vue.component(name, options);
         };
     }
@@ -195,10 +211,10 @@ var packadic;
     function widget(name, parent) {
         return function (cls) {
             if (parent) {
-                $.widget(packadic.namespacePrefix + name, cls, parent);
+                $.widget(packadic.namespacePrefix + name, new cls, parent);
             }
             else {
-                $.widget(packadic.namespacePrefix + name, cls);
+                $.widget(packadic.namespacePrefix + name, new cls);
             }
             console.log('Widget', name, 'registered', cls);
         };
@@ -370,6 +386,13 @@ var packadic;
                     delete myPrototype[propertyName];
                 });
             }
+            Object.defineProperty(Directive.prototype, "$el", {
+                get: function () {
+                    return $(this.el);
+                },
+                enumerable: true,
+                configurable: true
+            });
             Directive.prototype.$set = function (exp, val) {
             };
             Directive.prototype.$delete = function (key) { };
@@ -784,7 +807,6 @@ var packadic;
             this.emit('pre-init');
             console.groupEnd();
             this.timers.init = new Date;
-            Vue.config.debug = this.DEBUG;
             if (this.DEBUG) {
                 this.debug.enable();
                 this.debug.setStartDate(this.timers.construct);

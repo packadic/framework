@@ -1,0 +1,8 @@
+.color-selector.dropdown
+    content
+    div.dropdown-menu
+        .color-selector-lists
+            ul.color-selector-list(v-repeat="color in colors", data-color="{{color.name}}")
+                li(v-repeat="variant in color")
+                    a(href='#', class="bg-color-{{variant.name}}", v-on="mouseenter: onHover(variant, $event), click: onClick(variant, $event)")
+        span.color-selector-info(v-text='info')

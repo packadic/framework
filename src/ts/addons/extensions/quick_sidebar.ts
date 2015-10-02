@@ -285,8 +285,9 @@ module packadic.extensions {
         }
 
         public boot() {
-            debug.log('QuickSidebarComponent debug');
+            debug.log('QuickSidebarComponent boot');
             if (!this.exists()) {
+                debug.log('QuickSidebarComponent does not exist');
                 return;
             }
 
@@ -353,6 +354,7 @@ module packadic.extensions {
                     self.openPreviousTab();
                 }
             };
+
             self.layout.setApiActions(apiActions);
         }
 

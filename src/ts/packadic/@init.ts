@@ -3,6 +3,7 @@
 
 console.groupCollapsed('Packadic pre-init logs');
 
+
 module packadic {
 
     export var app:Application;

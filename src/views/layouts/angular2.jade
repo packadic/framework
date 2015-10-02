@@ -1,32 +1,48 @@
 extends default
 block vars
-    - bodyClass += ' .angular2-app';
+    - bodyClass += ' a2-app';
 
-block append scripts
+block meta
+    base(href='http://localhost:8000')
+
+block page-header
+
+block page-container
+    app
+
+block page-footer
+
+
+block scripts
+    +javascript('traceur/traceur', true)
+    +javascript('es6-module-loader/dist/es6-module-loader-dev.js', true)
     +javascript('reflect-metadata/Reflect', true)
-    +javascript('system.js/dist/system.src')
-    +javascript('../angular2-app/app')
+    +javascript('system.js/dist/system.src', true)
+    script.
+        System.config({
+            defaultJSExtensions: true
+        });
+    +javascript('../angular2/angular2.dev')
+    +javascript('../angular2/router.dev')
+    +javascript('../angular2/http.dev')
+    +javascript('vendor')
+    +javascript('noty')
+    +javascript('templates.min')
+    +javascript('packadic')
+    +javascript('addons')
 
 block init-script
     script.
         System.config({
             defaultJSExtensions: true,
             map                : {
-                angular2: 'assets/angular2',
-                rx      : 'bower_components/rxjs/dist/rx.js'
             }
         });
 
-        System.import('angular2-app/app');
+        System.import('app/app');
 
-        var app = packadic.Application.instance;
-        app.DEBUG = true;
-        app
-            .init({
-                hello: 'test'
-            })
-            .boot()
-            .then(function (app) {
-                $('#testPluginContainer').testPlugin({});
-                $('#testWidgetContainer').testWidget({});
-            });
+
+
+
+
+block boot-script

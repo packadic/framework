@@ -40,6 +40,7 @@ interface JQuery {
     slimScroll(...args:any[]):JQuery ;
     onClick(...args:any[]):JQuery;
     jcarousel(...args:any[]):JQuery;
+    prefixedData(prefix):any;
 }
 
 interface HighlightJS {

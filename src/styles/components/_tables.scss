@@ -1,4 +1,11 @@
 .table {
+    tr td,
+    tr th {
+        padding: 0.45rem;
+    }
+}
+
+.table {
 
     &.table-bordered {
         thead > tr > th {

@@ -1,0 +1,7 @@
+.popover-template.hide
+    .popover(role='tooltip')
+        .popover-arrow(v-if='arrow')
+        h3.popover-title(v-text='title', v-if='title')
+        content(select=".popover-content")
+            .popover-content
+                content

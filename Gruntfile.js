@@ -49,7 +49,7 @@ function getNotyScripts() {
     return files;
 }
 
-function makeWrapper(returnText){
+function makeWrapper(returnText) {
     return [
         "!function(root, factory) {\n\t if (typeof define === 'function' && define.amd) {\n\t\t define(['jquery'], factory);\n\t } else if (typeof exports === 'object') {\n\t\t module.exports = factory(require('jquery'));\n\t } else {\n\t\t factory(root.jQuery);\n\t }\n}(this, function($) {\n",
         "\n" + returnText + ";\n\n});"
@@ -101,9 +101,10 @@ module.exports = function (_grunt) {
             views            : {src: '<%= target.dest %>/**/*.html'}
         },
         copy : {
-            images: {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
-            bower : {src: ['**/*.{js,css,woff*,ttf,swf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
-            js    : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'}
+            images         : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
+            bower          : {src: ['**/*.{js,css,woff*,ttf,swf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
+            js             : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
+            angular_bundles: {src: ['**/*.{js,js.map}'], cwd: 'node_modules/angular2/bundles', expand: true, dest: '<%= target.dest %>/assets/angular2'}
         },
         jade : {
             options  : {
@@ -114,7 +115,23 @@ module.exports = function (_grunt) {
                         _inspect: util.inspect,
                         _target : target,
                         material: require('./src/grunt/material-colors'),
-                        sources : {}
+                        getRandomId: function(length) {
+                            if ( ! _.isNumber(length) ) {
+                                length = 15;
+                            }
+                            var text = "";
+                            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                            for (var i = 0; i < length; i ++) {
+                                text += possible.charAt(Math.floor(Math.random() * possible.length));
+                            }
+                            return text;
+                        },
+                        sources : {
+                            md: function(name){
+                                var file = name + (_s.endsWith(name, '.md') ? '' : '.md');
+                                return fs.readFileSync(path.join(__dirname, 'src', 'md', file));
+                            }
+                        }
                     });
                 }.call()
             },
@@ -122,7 +139,8 @@ module.exports = function (_grunt) {
             templates: {
                 options: {client: true, amd: false, namespace: 'JST'},
                 files  : [{expand: true, cwd: 'src/templates', src: ['**/*.jade', '!**/_*.jade'], ext: '.js', dest: '<%= target.dest %>/assets/scripts/templates'}]
-            }
+            },
+            angular: {files: [{expand: true, cwd: 'src/angular', src: ['**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>/app'}]}
         },
 
         sass: {
@@ -131,7 +149,8 @@ module.exports = function (_grunt) {
                 files: {
                     '<%= target.dest %>/assets/styles/stylesheet.css'               : 'src/styles/stylesheet.scss',
                     '<%= target.dest %>/assets/styles/themes/theme-default.css'     : 'src/styles/themes/theme-default.scss',
-                    '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css': 'src/styles/themes/theme-dark-sidebar.scss'
+                    '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css': 'src/styles/themes/theme-dark-sidebar.scss',
+                    '<%= target.dest %>/assets/styles/themes/theme-codex.css': 'src/styles/themes/theme-codex.scss'
                 }
             }
         },
@@ -143,9 +162,9 @@ module.exports = function (_grunt) {
             vendor: {src: vendorScripts, dest: '<%= target.dest %>/assets/scripts/vendor.js'},
             noty  : {src: notyScripts, dest: '<%= target.dest %>/assets/scripts/noty.js'}
         },
-        umd: {
-            noty: { src    : '<%= target.dest %>/assets/scripts/noty.js', dest: '<%= target.dest %>/assets/scripts/noty.js', objectToExport: 'window.noty' },
-            packadic: { src: '<%= target.dest %>/assets/scripts/packadic.js', dest: '<%= target.dest %>/assets/scripts/packadic.js', objectToExport: 'packadic' }
+        umd     : {
+            noty    : {src: '<%= target.dest %>/assets/scripts/noty.js', dest: '<%= target.dest %>/assets/scripts/noty.js', objectToExport: 'window.noty'},
+            packadic: {src: '<%= target.dest %>/assets/scripts/packadic.js', dest: '<%= target.dest %>/assets/scripts/packadic.js', objectToExport: 'packadic'}
         },
         uglify  : {
             vendor   : {
@@ -171,6 +190,11 @@ module.exports = function (_grunt) {
                 options: {declaration: true, sourceMap: target === 'dev'},
                 src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
                 out    : 'src/ts/packadic.js'
+            },
+            angular: {
+                options: { module: 'commonjs', outDir: '<%= target.dest %>/app' },
+                src: ['src/angular/**/*.ts'],
+                outDir: '<%= target.dest %>/app'
             }
         },
         packadic: {
@@ -231,6 +255,8 @@ module.exports = function (_grunt) {
             noty : {files: ['src/js/noty/**/*.js'], tasks: ['concat:noty', 'wrap:noty']},
             bower: {files: ['bower.json'], tasks: ['bower']},
 
+            angularts: {files: ['src/angular/**/*.ts'], tasks: ['ts:angular']},
+            angularjade: {files: ['src/angular/**/*.jade'], tasks: ['jade:angular']},
             livereload: {
                 options: {livereload: 35729},
                 files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/bower_components/**/*']

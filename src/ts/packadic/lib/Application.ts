@@ -129,7 +129,7 @@ module packadic {
             console.groupEnd();
 
             this.timers.init = new Date;
-            Vue.config.debug = this.DEBUG;
+            //Vue.config.debug = this.DEBUG;
             if (this.DEBUG) {
                 this.debug.enable();
                 this.debug.setStartDate(this.timers.construct);
@@ -208,7 +208,6 @@ module packadic {
         }
 
         public mergeData(newData:Object={}){
-
             Object.keys(newData).forEach((key:string) => {
                 if(typeof this.$get(key) !== 'undefined') {
                     this.$set(key, newData[key]);

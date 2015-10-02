@@ -1,6 +1,7 @@
 module packadic {
 
     export var namespacePrefix:string = 'packadic.';
+    console.log('packadic namespace ' + namespacePrefix);
 
     /**
      * The @extension decorator registers a extension
@@ -47,6 +48,7 @@ module packadic {
      * @returns {function(packadic.directives.Directive): void}
      */
     export function directive(name:string, isElementDirective:boolean=false):(cls:typeof directives.Directive)=>void {
+
         return (cls:typeof directives.Directive):void => {
 
             let definition:any = {
@@ -56,33 +58,29 @@ module packadic {
                 deep: false
             };
 
-            Object.keys(definition).forEach((defName:string) => {
-                if (cls.hasOwnProperty(defName)) {
-                    definition[defName] = cls[defName];
-                }
-            });
-
             let obj:any = new cls();
             let proto:any = Object.getPrototypeOf(obj);
+
+            Object.getOwnPropertyNames(obj).forEach((defName:string) => {
+                definition[defName] = obj[defName];
+            });
 
             Object.getOwnPropertyNames(proto).forEach((method:string):void => {
                 if (['constructor'].indexOf(method) > -1)
                     return;
 
                 let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
-
                 if (typeof desc.value === 'function') {
                     definition[method] = proto[method];
                 } else if (typeof desc.set === 'function') {
-                    definition[method] = {
-                        get: desc.get,
-                        set: desc.set
-                    };
+                    Object.defineProperty(definition, method, desc);
                 } else if (typeof desc.get === 'function') {
-                    definition[method] = desc.get;
+                    Object.defineProperty(definition, method, desc);
                 }
 
             });
+
+            console.log('@directive ', name, definition, proto);
 
             if(isElementDirective){
                 Vue.elementDirective(name, definition);
@@ -135,9 +133,7 @@ module packadic {
         return (cls:any):void => {
 
             let options:any = {
-                data: (():any => {
-                    return new cls();
-                }),
+                props: {},
                 methods: {},
                 computed: {}
             };
@@ -153,8 +149,22 @@ module packadic {
             let obj:any = new cls();
             let proto:any = Object.getPrototypeOf(obj);
 
-            if (proto.hasOwnProperty('__props__'))
+            if (proto.hasOwnProperty('__props__')) {
                 options.props = proto.__props__;
+            }
+
+            Object.getOwnPropertyNames(obj).forEach((name:string) => {
+                var type:any = null;
+                var t:string = typeof obj[name];
+                if(t === 'string'){
+                    type = String;
+                } else if(t === 'number') {
+                    type = Number;
+                } else if(t === 'boolean') {
+                    type = Boolean;
+                }
+                options.props[name] = { type: type, 'default': obj[name] }
+            });
 
             if (proto.hasOwnProperty('__events__'))
                 options.events = proto.__events__;
@@ -188,6 +198,12 @@ module packadic {
                 else if (typeof desc.get === 'function')
                     options.computed[method] = desc.get;
             });
+            if(name==='modal') {
+                console.log('!component cls', cls);
+                console.log('!component obj', obj);
+                console.log('!component proto', proto);
+                console.log('!component options', options);
+            }
 
             // create a Vue component
             Vue.component(name, options);
@@ -216,9 +232,9 @@ module packadic {
     export function widget(name:string, parent?:any):(cls:typeof widgets.Widget)=>void {
         return (cls:typeof widgets.Widget):void => {
             if(parent){
-                $.widget(namespacePrefix + name, cls, parent);
+                $.widget(namespacePrefix + name, <any> new cls, parent);
             } else {
-                $.widget(namespacePrefix + name, cls);
+                $.widget(namespacePrefix + name, <any> new cls);
             }
             console.log('Widget', name, 'registered', cls);
         };
@@ -515,6 +531,10 @@ module packadic {
                 $.each(myPrototype, (propertyName, value)=> {
                     delete myPrototype[propertyName];
                 });
+            }
+
+            get $el():JQuery {
+                return $(this.el);
             }
 
             // methods: http://vuejs.org/api/instance-methods.html

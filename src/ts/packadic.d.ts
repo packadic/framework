@@ -75,6 +75,7 @@ declare module packadic {
             raw: string;
             name: string;
             constructor();
+            $el: JQuery;
             $set(exp: string, val: any): void;
             $delete(key: string): void;
             set(value: any): void;

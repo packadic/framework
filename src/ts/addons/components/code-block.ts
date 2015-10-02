@@ -15,21 +15,14 @@ module packadic.components {
         @prop({type: Number, required: false, 'default': 30})toManyLines:number;
         @prop({type: Number, required: false, 'default': 10})lineChangeStep:number;
         @prop({type: Boolean, required: false, 'default': true})fixCodeIndent:boolean;
-
-        show:boolean = false;
-
-        minimized:boolean = false;
+        @prop({type: Boolean, required: false, 'default': false})show:boolean;
+        @prop({type: Boolean, required: false, 'default': false})minimized:boolean;
 
         lines:number = 0;
-
         original:string = '';
-
         code:string = '';
-
         actionBtnClass:string = 'btn btn-sm blue-grey-light';
-
         client:ZeroClipboard;
-
         isrdy:boolean = false;
 
         get actions():any[] {
@@ -52,6 +45,12 @@ module packadic.components {
             if (this.isrdy) {
                 return;
             }
+            this.$watch('minimized', (val:any, old:any) => {
+                console.log('watch mini', val, old);
+                var $i = $(this.$$.actions).find('#cb-minmax > i');
+                $i.removeClass('fa-chevron-up fa-chevron-down');
+                $i.addClass(val ? 'fa-chevron-down' : 'fa-chevron-up');
+            });
             app.loadCSS('prism/themes/' + this.theme, true);
             app.loadJS('prism/prism', true).then(()=> {
                 // Load Prism highlighter
@@ -113,7 +112,19 @@ module packadic.components {
             return <NotifyExtension> packadic.app.extensions.get('notify')
         }
 
+        hideButtonTooltip(srcElement:any){
+            var $el = $(srcElement);
+            if($el.is('i.fa')){
+                $el = $el.parent('a.btn');
+            }
+            var tooltip:any = $el.data('bs.tooltip');
+            if(tooltip){
+                tooltip.hide();
+            }
+        }
+
         onCopyClick(e){
+            this.hideButtonTooltip(e.srcElement);
             this.notify.create({
                 text: 'Code has been copied to your clipboard',
                 type: 'information'
@@ -121,6 +132,7 @@ module packadic.components {
         }
 
         onOpenInWindowClick(e) {
+            this.hideButtonTooltip(e.srcElement);
             var win:Window = util.openWindow({
                 height: screen.height / 2,
                 width: screen.width / 2
@@ -137,17 +149,19 @@ module packadic.components {
             this.initScrollContent();
         }
 
-        onMinimizeToggleClick(e) {
-            if (this.$get('minimized')) {
-                this.$set('minimized', false);
+
+        onMinimizeToggleClick(e:any) {
+            this.hideButtonTooltip(e.srcElement);
+            this.destroyScrollContent();
+            this.$data.minimized = ! this.$data.minimized;
+
+            if (!this.$data.minimized) {
                 this.initScrollContent();
-            } else {
-                this.$set('minimized', true);
-                this.destroyScrollContent();
             }
         }
 
         onDecreaseLinesClick(e) {
+            this.hideButtonTooltip(e.srcElement);
             var targetLineCount:number = <number> this.$get('toManyLines') - <number> this.$get('lineChangeStep');
             if (targetLineCount > 0) {
                 this.$set('toManyLines', targetLineCount);
@@ -156,6 +170,7 @@ module packadic.components {
         }
 
         onIncreaseLinesClick(e) {
+            this.hideButtonTooltip(e.srcElement);
             this.$set('toManyLines', <number> this.$get('toManyLines') + <number> this.$get('lineChangeStep'));
             this.initScrollContent();
         }
@@ -165,7 +180,7 @@ module packadic.components {
             var $code:JQuery = $(this.$$.code);
             $code.ensureClass('language-' + this.language);
 
-            this.original = code;
+            this.original = code = code.trim();
             this.code = fixIndent ? util.codeIndentFix(util.codeIndentFix(code)) : code;
             this.lines = this.code.split('\n').length;
 
@@ -195,10 +210,14 @@ module packadic.components {
         }
 
         getHeightBetweenLines(one:number, two:number):number {
+            var isMinimized:boolean = this.$data.minimized;
+            this.$data.minimized = false; // temporary disable minimize to get the right height
             var $lineRows = $(this.$$.content).find('.line-numbers-rows');
             var $first = $lineRows.children('span').first();
             var $last = $first.nextAll().slice(one, two).last();
-            return $last.position().top - $first.position().top;
+            var height:number = $last.position().top - $first.position().top;
+            this.$data.minimized = isMinimized;
+            return height;
         }
 
 
@@ -208,8 +227,10 @@ module packadic.components {
             }
             this.destroyScrollContent();
             var $pre = $(this.$$.pre);
+            var height:number = this.getHeightBetweenLines(0, this.$get('toManyLines'));
+            height = height < 20 ? 20 : height;
             makeSlimScroll($pre, {
-                height: this.getHeightBetweenLines(0, this.$get('toManyLines')),
+                height: height,
                 allowPageScroll: true,
                 size: '10px'
             });

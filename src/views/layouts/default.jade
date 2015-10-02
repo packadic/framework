@@ -1,12 +1,11 @@
 include ../_base
-- var bodyClass = 'page-header-fixed page-footer-fixed'
+- var bodyClass = 'page-header-fixed page-footer-fixed page-edged page-sidebar-condensed'
 - var sidebarClass = ''
+- var pageHeadClass = ''
 - var pageHeaderClass = 'navbar-fixed-top';
 - rootPath = rootPath || '';
 - var assetPath = rootPath + 'assets/';
-- var themeStyle = 'default';
-- var highlightJsStyle = 'tomorrow';
-- var includeHighlightJs = false;
+- var themeStyle = 'codex';
 block vars
 doctype html
 <!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
@@ -28,113 +27,115 @@ html(lang="en")
                 +stylesheet('themes/theme-' +themeStyle)(id='theme-style')
                 +stylesheet('animate')
 
-    body.page-loading(class=bodyClass, v-el='body')
-        #page-loader
-            .loader.loader-page
+    block body
+        body.page-loading(class=bodyClass, v-el='body')
+            #page-loader
+                .loader.loader-page
 
-        .page-header.navbar(class=pageHeaderClass, v-el='header')
             block page-header
-                .page-header-inner
-                    block header-logo
-                        .page-logo
-                            .logo-packadic.pull-left
-                                block header-logo-inner
-                                    | Packadic
-                            block header-sidebar-toggler
-                                .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
+                .page-header.navbar(class=pageHeaderClass, v-el='header')
+                    block page-header-inner
+                        .page-header-inner
+                            block header-logo
+                                .page-logo
+                                    .logo-packadic.pull-left
+                                        block header-logo-inner
+                                            | Packadic
+                                    block header-sidebar-toggler
+                                        .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
 
-                    block header-responsive-toggler
-                        a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
+                            block header-responsive-toggler
+                                a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
 
-                    .pull-right
-                        block header-right
-                            .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
+                            .pull-right
+                                block header-right
+                                    .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
 
-        .clearfix
-
-
-        block page-container
-            .page-container
-                .page-sidebar-wrapper
-                    .page-sidebar.navbar-collapse.collapse(v-el='sidebar')
-                        block page-sidebar
-                            ul.page-sidebar-menu(class=sidebarClass, v-el='sidebar-menu')
-                                block page-sidebar-menu
-                                    include ../partials/sidebar-items
+                .clearfix
 
 
-                .page-content-wrapper
-                    block page-content-wrapper
-                        .page-content
-                            .page-head
-                                .page-title
-                                    h1(v-el='page-title')
-                                        block page-title
-                            ul.page-breadcrumb.breadcrumb(v-el='breadcrumbs', v-breadcrumbs="breadcrumbs")
-                                block breadcrumb
-                            .page-content-seperator
-                            block page-content
-                                .page-content-inner(v-el='content')
-                                    block content
+            block page-container
+                .page-container
+                    .page-sidebar-wrapper
+                        .page-sidebar.navbar-collapse.collapse(v-el='sidebar')
+                            block page-sidebar
+                                ul.page-sidebar-menu(class=sidebarClass, v-el='sidebar-menu')
+                                    block page-sidebar-menu
+                                        include ../partials/sidebar-items
 
 
-        block page-footer
-            .page-footer(v-el='footer')
-                .page-footer-inner(v-el='footer-content')
-                    block page-footer-inner
-                        - var year = (new Date()).getFullYear()
-                        | Copyright Packadic
-                block scroll-to-top
-                    .scroll-to-top
-                        i.fa.fa-level-up
+                    .page-content-wrapper
+                        block page-content-wrapper
+                            .page-content
+                                .page-head(class=pageHeadClass)
+                                    .page-title
+                                        h1(v-el='page-title')
+                                            block page-title
+                                ul.page-breadcrumb.breadcrumb(v-el='breadcrumbs', v-breadcrumbs="breadcrumbs")
+                                    block breadcrumb
+                                .page-content-seperator
+                                block page-content
+                                    .page-content-inner(v-el='content')
+                                        block content
 
 
-        block scripts
-            if _target === 'dist'
-                +javascript('reflect-metadata/Reflect', true)
-                +javascript('es6-module-loader/dist/es6-module-loader', true)
-                +javascript('system.js/dist/system.src', true)
-                +javascript('vue/dist/vue', true)
-                +javascript('vendor.min')
-                +javascript('templates.min')
-                +javascript('packadic.min')
+            block page-footer
+                .page-footer(v-el='footer')
+                    .page-footer-inner(v-el='footer-content')
+                        block page-footer-inner
+                            - var year = (new Date()).getFullYear()
+                            | Copyright Packadic
+                    block scroll-to-top
+                        .scroll-to-top
+                            i.fa.fa-level-up
 
-            else
-                +javascript('reflect-metadata/Reflect', true)
-                +javascript('es6-module-loader/dist/es6-module-loader', true)
-                +javascript('system.js/dist/system.src', true)
-                +javascript('vue.dev') //+javascript('vue/dist/vue', true)
-                +javascript('vendor')
-                +javascript('noty')
-                +javascript('templates.min')
-                +javascript('packadic')
-                +javascript('addons')
 
-        block init-script
+            block scripts
+                if _target === 'dist'
+                    +javascript('reflect-metadata/Reflect', true)
+                    +javascript('es6-module-loader/dist/es6-module-loader', true)
+                    +javascript('system.js/dist/system.src', true)
+                    +javascript('vue/dist/vue', true)
+                    +javascript('vendor.min')
+                    +javascript('templates.min')
+                    +javascript('packadic.min')
 
-            if _target !== 'dist'
+                else
+                    +javascript('reflect-metadata/Reflect', true)
+                    +javascript('es6-module-loader/dist/es6-module-loader', true)
+                    +javascript('system.js/dist/system.src', true)
+                    +javascript('vue.dev') //+javascript('vue/dist/vue', true)
+                    +javascript('vendor')
+                    +javascript('noty')
+                    +javascript('templates.min')
+                    +javascript('packadic')
+                    +javascript('addons')
+
+            block init-script
+
+                if _target !== 'dist'
+                    script.
+                        (function(){
+                            var app = packadic.Application.instance;
+                            app.DEBUG = true;
+                        }.call())
+
+
+
+            block boot-script
                 script.
-                    (function(){
+                    (function() {
                         var app = packadic.Application.instance;
-                        app.DEBUG = true;
+                        if ( ! app.isInitialised ) {
+                            app.init();
+                        }
+                        app.boot().then(function (app) {
+                            app.debug.log('BOOTED FROM boot-script');
+                        });
                     }.call())
 
+            block script
 
 
-        block boot-script
-            script.
-                (function() {
-                    var app = packadic.Application.instance;
-                    if ( ! app.isInitialised ) {
-                        app.init();
-                    }
-                    app.boot().then(function (app) {
-                        app.debug.log('BOOTED FROM boot-script');
-                    });
-                }.call())
-
-        block script
-
-
-        block quick-sidebar
-            include ../partials/quick-sidebar
+            block quick-sidebar
+                include ../partials/quick-sidebar

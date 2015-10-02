@@ -106,7 +106,8 @@ module packadic.extensions {
                         var app:Application = packadic.app;
                         var layout:LayoutExtension = <LayoutExtension> app.extensions.get('layout');
 
-                        layout.isHeaderFixed() ? style.top = $(app.$$['header']).innerHeight() + 5 : null;
+
+                        layout.isHeaderFixed() ? style.top = layout.e('header').innerHeight() + 5 : null;
 
                         $(this).css(style);
 
@@ -135,7 +136,7 @@ module packadic.extensions {
                         var extensions:Extensions = app.extensions;
                         var layout:LayoutExtension = <LayoutExtension> extensions.get('layout');
 
-                        var $footer = $(app.$$['footer']);
+                        var $footer = layout.e('footer');
                         var pr = parseInt($footer.css('padding-right').replace('px', '')),
                             height = $footer.outerHeight();
 

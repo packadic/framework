@@ -1,25 +1,27 @@
-.code-block(v-class='code-block-show: show, code-block-minimized: minimized', v-el='block', v-on='click: tryMaximize')
+.code-block(v-class='code-block-show: show, code-block-minimized: minimized', v-el='block')
     .code-block-top(v-if='showTop')
-        .code-block-information
-            h4
-                span(v-text='title')
-                small(v-text='description')
-            dl
-                dt Language
-                dd(v-text='language')
-                dt Lines
-                dd(v-text='lines')
+        .code-block-top-left
+            .code-block-information
+                h4
+                    span(v-text='title')
+                    small(v-text='description')
+                dl
+                    dt Language
+                    dd(v-text='language')
+                    dt Lines
+                    dd(v-text='lines')
 
-
-    .code-block-content(v-el='content')
-        .code-block-actions
-            template(v-repeat='actions')
-                a.btn(
+        .code-block-top-right
+            .code-block-actions(v-el='actions')
+                template(v-repeat='actions')
+                    a.btn(
                     href="javascript:;", data-toggle='tooltip', data-container='body', title='{{title}}',
                     data-clipboard-text="Copy me!", class='code-block-action-button {{actionBtnClass}}',
-                    v-on='click: onClick', id='{{id}}'
-                )
-                    i.fa(class='{{icon}}')
+                    v-class='blue-grey-dark: id == "cb-minmax" && minimized' v-on='click: onClick', id='{{id}}'
+                    )
+                        i.fa(class='{{icon}}')
+
+    .code-block-content(v-el='content')
 
         pre.line-numbers(v-el='pre')
             code.code-block-code(v-el='code'): content

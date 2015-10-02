@@ -7,22 +7,16 @@ module packadic.directives {
 
         deep:boolean = true;
         hasOwnContent:boolean = false;
-        $el:JQuery;
-
-        get $items():JQuery {
-            return this.$el.find('li');
-        }
-
-
-        get $links():JQuery {
-            return this.$el.find('a');
-        }
-
+        $el:JQuery|any = $;
+        $items:JQuery|any = $;
+        $links:JQuery|any = $;
 
 
         bind() {
             var self:BreadcrumbsDirective = this;
             this.$el = $(this.el);
+            this.$items = this.$el.find('li');
+            this.$links = this.$el.find('a');
             if (this.$el.find('li, a').length > 0) {
                 this.hasOwnContent = true;
             }

@@ -274,6 +274,7 @@ module packadic.extensions {
 
 
         public setApiActions(apiActions:{[name:string]: Function}){
+            console.log('setapi actions', apiActions, this);
             $.each(apiActions, (actionName:string, actionFn:any) => {
                 this.setApiAction(actionName, actionFn);
             });

@@ -23,8 +23,10 @@ mixin javascript2(name, devName, bower, devBower)
 
 mixin sb-item(title, href, icon, hasChildren)
     - href = href || '#';
+    - var attr = {};
+    - attr[ href[0] === '[' ? 'bind-router-link' : 'href'] = href;
     li&attributes(attributes)
-        a(href=href)
+        a&attributes(attr)
             if icon
                 i(class=icon)
             span.title= title
@@ -88,3 +90,26 @@ mixin breadcrumb(link, last)
 
 mixin _dump(val)
     pre: code=_inspect(val, { colors: false, hidden: true })
+
+
+mixin progressbar(min, max, val, textDisplay, format)
+    - if(textDisplay){
+    -   attributes['data-bar-text-display'] = textDisplay;
+    - }
+    - if(format) {
+    -   attributes['data-bar-text-format'] = format;
+    - }
+    -     if (attributes.primary) {
+    -         _addClassAttribute('primary', 'progress-primary', attributes)
+    -     } else if (attributes.success) {
+    -         _addClassAttribute('success', 'progress-success', attributes)
+    -     } else if (attributes.info) {
+    -         _addClassAttribute('info', 'progress-info', attributes)
+    -     } else if (attributes.warning) {
+    -         _addClassAttribute('warning', 'progress-warning', attributes)
+    -     } else if (attributes.danger) {
+    -         _addClassAttribute('danger', 'progress-danger', attributes)
+    -     }
+    - _addClassAttribute('striped', 'progress-striped', attributes)
+    - _addClassAttribute('active', 'active', attributes)
+    progress.progress(value=val, max=max)&attributes(attributes)=val+'%'

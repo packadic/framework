@@ -44,7 +44,6 @@
     "async": "~1.4.2",
     "spectrum": "~1.7.1",
     "bootstrap-switch": "~3.3.2",
-    "angular2": "~1.4.5",
     "es6-module-loader": "~0.17.6",
     "reflect-metadata": "~0.1.1",
     "zone.js": "~0.5.2",
@@ -74,7 +73,11 @@
     "zeroclipboard": "~2.2.0",
     "pnotify": "~2.1.0",
     "noty": "~2.3.7",
-    "animate.css": "~3.4.0"
+    "animate.css": "~3.4.0",
+    "jquery-sortable": "~0.9.13",
+    "html.sortable": "~0.3.0",
+    "traceur": "~0.0.91",
+    "marked": "~0.3.5"
   },
   "resolutions": {
     "jquery": "~1.11.2"

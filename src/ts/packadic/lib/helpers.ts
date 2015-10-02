@@ -1,5 +1,4 @@
 
-
 module packadic {
 
     import DeferredInterface = packadic.util.promise.DeferredInterface;
