@@ -1232,6 +1232,7 @@ var packadic;
                     }
                     defer.resolve();
                     self.app.emit('layout:sidebar:closed');
+                    self.app.emit('resize');
                 });
                 return defer.promise();
             };
@@ -1291,6 +1292,7 @@ var packadic;
                     }
                     defer.resolve();
                     self.app.emit('layout:sidebar:opened');
+                    self.app.emit('resize');
                 });
                 return defer.promise();
             };

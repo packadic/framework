@@ -589,6 +589,7 @@ module packadic.extensions {
                 }
                 defer.resolve();
                 self.app.emit('layout:sidebar:closed');
+                self.app.emit('resize');
             });
             return defer.promise();
         }
@@ -656,6 +657,7 @@ module packadic.extensions {
                 defer.resolve();
 
                 self.app.emit('layout:sidebar:opened');
+                self.app.emit('resize');
             });
             return defer.promise();
         }

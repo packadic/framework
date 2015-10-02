@@ -40,7 +40,7 @@ html(lang="en")
                                 .page-logo
                                     .logo-packadic.pull-left
                                         block header-logo-inner
-                                            | Packadic
+                                            | Codex
                                     block header-sidebar-toggler
                                         .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
 
@@ -84,7 +84,7 @@ html(lang="en")
                     .page-footer-inner(v-el='footer-content')
                         block page-footer-inner
                             - var year = (new Date()).getFullYear()
-                            | Copyright Packadic
+                            | Copyright &copy; Codex #{year}
                     block scroll-to-top
                         .scroll-to-top
                             i.fa.fa-level-up

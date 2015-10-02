@@ -21,18 +21,21 @@ function _out() {
     })
 }
 
-
-
 module.exports = function (_grunt) {
     grunt = _grunt;
     var name = 'packadic';
 
-    grunt.loadTasks('./node_modules/grunt-ts/tasks');
-    grunt.loadTasks('./node_modules/grunt-sass/tasks');
-    grunt.loadTasks('./node_modules/grunt-contrib-jade/tasks');
-    grunt.loadTasks('./node_modules/grunt-contrib-uglify/tasks');
-    grunt.loadTasks('./node_modules/grunt-umd/tasks');
-    grunt.loadTasks('./node_modules/grunt-contrib-concat/tasks');
+    function _loadTasks(dir){
+        var dirPath = path.join(__dirname, '..', 'node_modules', dir, 'tasks');
+        grunt.loadTasks(dirPath);
+    }
+
+    _loadTasks('grunt-contrib-concat');
+    _loadTasks('grunt-contrib-jade');
+    _loadTasks('grunt-contrib-uglify');
+    _loadTasks('grunt-ts');
+    _loadTasks('grunt-sass');
+    _loadTasks('grunt-umd');
 
 
     grunt.registerTask(name, 'Packadic extensions build task.', function () {
