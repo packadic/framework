@@ -133,3 +133,10 @@ mixin dd-submenu(name)
 mixin dd-footer
     .dropdown-footer
         block
+
+mixin dd-divider
+    .dropdown-divider.bg-color-grey-300
+
+mixin dd-toggler
+    a(href='#', type='button', data-toggle='dropdown', aria-expanded='false').dropdown-toggle&attributes(attributes)
+        block

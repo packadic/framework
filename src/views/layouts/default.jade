@@ -46,12 +46,11 @@ html(lang="en")
 
                                 .page-actions
                                     .btn-group
-                                        .btn-group.open
-                                            a.btn.dropdown-toggle.btn-primary.btn-sm(href='#', type='button', data-toggle='dropdown', aria-expanded='true')
-                                                | Actions
-                                            .dropdown-menu
+                                        .btn-group
+                                            +dd-toggler.btn.btn-primary.btn-sm Actions
+                                            +dd-menu
                                                 +dd-item('#') First
-                                                .dropdown-divider.bg-color-grey-300(role='separator')
+                                                +dd-divider
                                                 +dd-item('#') Second
                                                 +dd-item('#') Third
                                                 +dd-item('#') Fourth
@@ -59,8 +58,7 @@ html(lang="en")
                                                     +a Left
                                                     +a Right
                                         .btn-group
-                                            a.btn.dropdown-toggle.btn-primary.btn-sm(href='#', type='button', data-toggle='dropdown', aria-expanded='false')
-                                                | Options
+                                            +dd-toggler.btn.btn-primary.btn-sm Options
                                             +dd-menu
                                                 +dd-item('#') First
                                                 +dd-item('#') Second
