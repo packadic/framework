@@ -146,7 +146,7 @@ module.exports = function (_grunt) {
         grunt.task.run('concat:' + taskName);
 
 
-        // WRAP
+        // UMD WRAP
         if ( o.wrap ) {
             grunt.config('umd.' + taskName, {
                 src : o.dest, dest: o.dest, objectToExport: 'packadic'

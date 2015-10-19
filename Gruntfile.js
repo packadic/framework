@@ -298,7 +298,7 @@ module.exports = function (_grunt) {
         ['docs', 'Generate the docs', ['clean:docs', 'typedoc:ts']],
         ['demo', 'Build the theme', ['clean:all', 'bower', 'images', 'styles', 'scripts', 'views', 'docs']],
         ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'images', 'styles', 'scripts']],
-        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'styles', 'scripts', 'images', 'jade:test_page', 'jade:views']],
+        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'styles', 'scripts', 'images',   'jade:views']],
         // dev
         ['lib', 'Compile typescript files in lib for node.', ['typescript:lib']],
         ['watch', 'Watch for file changes and fire tasks.', ['concurrent:watch']],

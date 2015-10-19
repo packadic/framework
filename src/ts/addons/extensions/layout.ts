@@ -704,7 +704,7 @@ module packadic.extensions {
                     .replace(/\.\.\//g, '');
 
                 if (location['hostname'] !== 'localhost') {
-                    href = self.config('docgen.baseUrl') + href;
+                    //href = self.config('baseUrl') + href;
                 }
 
                 var path = util.str.trim(href, '/');

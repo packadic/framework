@@ -61,10 +61,8 @@ mixin alert(type, dismissible, fade)
                 span.sr-only Close
         block
 
-
 mixin lia(href)
-    - href = href || '#';
-    li: a(href=href)
+    li: +a(href)
         block
 
 mixin dropdown-button(text, color, size, caret)
@@ -113,3 +111,25 @@ mixin progressbar(min, max, val, textDisplay, format)
     - _addClassAttribute('striped', 'progress-striped', attributes)
     - _addClassAttribute('active', 'active', attributes)
     progress.progress(value=val, max=max)&attributes(attributes)=val+'%'
+
+
+
+mixin dd-item(href)
+    - href = href || '#'
+    a(href=href).dropdown-item&attributes(attributes)
+        block
+
+mixin dd-menu
+    .dropdown-menu
+        block
+
+
+mixin dd-submenu(name)
+    .dropdown-submenu
+        +dd-item #{name}
+        .dropdown-menu
+            block
+
+mixin dd-footer
+    .dropdown-footer
+        block

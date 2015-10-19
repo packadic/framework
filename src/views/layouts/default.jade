@@ -44,6 +44,32 @@ html(lang="en")
                                     block header-sidebar-toggler
                                         .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
 
+                                .page-actions
+                                    .btn-group
+                                        .btn-group.open
+                                            a.btn.dropdown-toggle.btn-primary.btn-sm(href='#', type='button', data-toggle='dropdown', aria-expanded='true')
+                                                | Actions
+                                            .dropdown-menu
+                                                +dd-item('#') First
+                                                .dropdown-divider.bg-color-grey-300(role='separator')
+                                                +dd-item('#') Second
+                                                +dd-item('#') Third
+                                                +dd-item('#') Fourth
+                                                +dd-footer
+                                                    +a Left
+                                                    +a Right
+                                        .btn-group
+                                            a.btn.dropdown-toggle.btn-primary.btn-sm(href='#', type='button', data-toggle='dropdown', aria-expanded='false')
+                                                | Options
+                                            +dd-menu
+                                                +dd-item('#') First
+                                                +dd-item('#') Second
+                                                +dd-submenu('Submenu')
+                                                    +dd-item('#') First
+                                                    +dd-item('#') Second
+                                                +dd-item('#') Third
+                                                +dd-item('#') Fourth
+
                             block header-responsive-toggler
                                 a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
 
