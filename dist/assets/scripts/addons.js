@@ -1333,7 +1333,6 @@ var packadic;
                         .replace(location['origin'], '')
                         .replace(/\.\.\//g, '');
                     if (location['hostname'] !== 'localhost') {
-                        href = self.config('docgen.baseUrl') + href;
                     }
                     var path = packadic.util.str.trim(href, '/');
                     if (path == currentPath) {
