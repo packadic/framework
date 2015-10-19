@@ -19,7 +19,7 @@
     "test",
     "tests"
   ],
-  "dependencies": {
+  "devDependencies": {
     "jquery": "~1.11.2",
     "jquery-migrate": "~1.2.1",
     "lodash": "~3.10.0",
