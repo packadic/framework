@@ -59,6 +59,9 @@ declare module packadic.components {
         fixCodeIndent: boolean;
         show: boolean;
         minimized: boolean;
+        autoHideScrollbar: boolean;
+        showTopActions: boolean;
+        showContentActions: boolean;
         lines: number;
         original: string;
         code: string;

@@ -1,9 +1,11 @@
-.ibox
-    header(role='heading')
-        h2 Ibox
-        .pull-right
-            color-selector(target="'#' + id + ' > header'", property='background-color')
-                a.btn.btn-secondary(v-color-selector) Color
+dom-module(id='myele')
+    template
+        .ibox
+            header(role='heading')
+                h2 Ibox
+                .pull-right
+                    color-selector(target="'#' + id + ' > header'", property='background-color')
+                        a.btn.btn-secondary(v-color-selector) Color
 
-    div(role='content')
-        content
+            div(role='content')
+                content

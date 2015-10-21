@@ -1,6 +1,5 @@
-module packadic.components {
 
-    import NotifyExtension = packadic.extensions.NotifyExtension;
+module packadic.components {
 
     @component('ibox')
     export class IBoxComponent extends Component {

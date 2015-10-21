@@ -1,6 +1,7 @@
 module packadic {
 
     export var namespacePrefix:string = 'packadic.';
+
     console.log('packadic namespace ' + namespacePrefix);
 
     /**

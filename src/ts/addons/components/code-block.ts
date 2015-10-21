@@ -17,6 +17,17 @@ module packadic.components {
         @prop({type: Boolean, required: false, 'default': true})fixCodeIndent:boolean;
         @prop({type: Boolean, required: false, 'default': false})show:boolean;
         @prop({type: Boolean, required: false, 'default': false})minimized:boolean;
+        @prop({type: Boolean, required: false, 'default': false})autoHideScrollbar:boolean;
+
+
+        get showTopActions():boolean {
+            return this.showTop;
+        }
+
+        get showContentActions():boolean {
+            return ! this.showTop;
+        }
+
 
         lines:number = 0;
         original:string = '';
@@ -25,13 +36,15 @@ module packadic.components {
         client:ZeroClipboard;
         isrdy:boolean = false;
 
+
+
         get actions():any[] {
             return [
                 {id: 'cb-copy', title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick },
                 {id: 'cb-open', title: 'Open in window', icon: 'fa-external-link', onClick: this.onOpenInWindowClick},
                 {id: 'cb-more', title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick},
                 {id: 'cb-less', title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick},
-                {id: 'cb-minmax', title: 'Minimize/maximize', icon: 'fa-chevron-up', onClick: this.onMinimizeToggleClick}
+                {id: 'cb-minmax', title: 'Minimize/maximize', icon: "fa-chevron-up", onClick: this.onMinimizeToggleClick}
             ];
         }
 
@@ -77,6 +90,7 @@ module packadic.components {
                 // Set/transform our code into something beatifull like the guy who codes this.
                 var $code:JQuery = $(this.$$.code);
                 var code:string = $code.text();
+
                 this.setCodeContent(code, this.fixCodeIndent);
             }).then(() => {
                 // Lets make it shine
@@ -229,6 +243,17 @@ module packadic.components {
             var $pre = $(this.$$.pre);
             var height:number = this.getHeightBetweenLines(0, this.$get('toManyLines'));
             height = height < 20 ? 20 : height;
+
+            var options:any = {
+                setHeight: height,
+                theme: 'minimal-dark',
+                autoHideScrollbar: this.autoHideScrollbar === false,
+                autoDraggerLength: false,
+                axis:"yx" // vertical and horizontal scrollbar
+            };
+            debug.log('code-block mCustomScrollbar', options);
+            $(this.$$.content).mCustomScrollbar(options);
+            return;
             makeSlimScroll($pre, {
                 height: height,
                 allowPageScroll: true,
@@ -237,9 +262,7 @@ module packadic.components {
         }
 
         destroyScrollContent() {
-            var $pre = $(this.$$.pre);
-            destroySlimScroll($pre);
-            $(this.$$.content).find('.slimScrollBar, .slimScrollRail').remove();
+            $(this.$$.content).mCustomScrollbar("destroy");
         }
     }
 }

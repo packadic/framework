@@ -2,7 +2,8 @@ $code-block-top-height: 27px;
 $code-block-border-color: #bdaea3;
 $code-block-code-bg: #f5f2f0;
 $code-block-transition-speed: 150ms;
-
+$code-block-scroll-rail-bg-color: #e1d7d1;
+$code-block-scroll-dragger-bg-color: #98A0A4;
 .code-block {
     margin: 15px 0;
     border: 1px solid $code-block-border-color;
@@ -77,44 +78,50 @@ $code-block-transition-speed: 150ms;
         .code-block-top-right {
             width: 200px;
             height: $code-block-top-height;
+        }
+    }
 
-            .code-block-actions {
-                height: $code-block-top-height;
-                display: table;
-                width: 100%;
 
-                a.btn {
-                    display: table-cell;
-                    @include btn-sm;
-                    font-size: 14px;
-                    padding: 0;
-                    line-height: 1;
-                    opacity: 0.5;
-                    &:hover {
-                        opacity: 0.9;
-                    }
-                }
+    .code-block-actions #cb-minmax i.fa {
+        transition: 300ms ease-in-out;
+        transform: rotate(0deg);
+    }
+
+    .code-block-top .code-block-top-right .code-block-actions {
+        height: $code-block-top-height;
+        display: table;
+        width: 100%;
+
+        a.btn {
+            display: table-cell;
+            @include btn-sm;
+            font-size: 14px;
+            padding: 0;
+            line-height: 1;
+            opacity: 0.5;
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+    }
+
+    > .code-block-actions {
+        position: absolute;
+        z-index: 9;
+        right: 16px;
+
+        a.btn {
+            @include btn-sm;
+            font-size: 11px;
+            opacity: 0.3;
+            &:hover {
+                opacity: 0.9;
             }
         }
     }
 
     .code-block-content {
         border-top: 1px solid $code-block-border-color;
-
-        .code-block-actions {
-            position: absolute;
-            z-index: 9;
-            right: 16px;
-
-            a.btn {
-                @include btn-sm;
-                font-size: 11px;
-                opacity: 0.3;
-                &:hover {
-                    opacity: 0.9;
-                }
-            }
-        }
 
         pre {
             margin: 0;
@@ -131,13 +138,51 @@ $code-block-transition-speed: 150ms;
 
     }
 
+
     &.code-block-minimized {
         cursor: pointer; // clicking op the code-block will open it
         .code-block-content {
             display: none;
         }
+        .code-block-actions #cb-minmax i.fa {
+            transition: 300ms ease-in-out;
+            transform: rotate(180deg);
+        }
         //opacity: 1;
         //transition: opacity 300ms linear;
+    }
+
+    &.code-block-hide-top {
+
+        .code-block-top {
+            display: none;
+        }
+
+        .code-block-content {
+            border-top: 0;
+        }
+
+        .mCSB_scrollTools_vertical {
+            top: 16px;
+        }
+    }
+
+    .mCustomScrollbar  {
+        .mCSB_scrollTools_vertical {
+            opacity: 1 !important;
+            margin: 1px 0;
+            width: 10px;
+            .mCSB_draggerRail {
+                width: 10px;
+                border-radius: 0;
+                background-color: $code-block-scroll-rail-bg-color;
+            }
+            .mCSB_dragger_bar {
+                width: 10px;
+                border-radius: 0;
+                background-color: $code-block-scroll-dragger-bg-color;
+            }
+        }
     }
 
 }

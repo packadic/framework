@@ -2,6 +2,10 @@
 
 console.groupCollapsed('Packadic pre-init logs');
 
+@component('myele')
+class MyEle extends polymer.Base {
+
+}
 
 module packadic {
 
