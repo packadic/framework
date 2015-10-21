@@ -26,6 +26,7 @@ html(lang="en")
                 +stylesheet('stylesheet')
                 +stylesheet('themes/theme-' +themeStyle)(id='theme-style')
                 +stylesheet('animate')
+                +javascript('../jspm_packages/system.js')
 
     block body
         body.page-loading(class=bodyClass, v-el='body')
@@ -114,6 +115,11 @@ html(lang="en")
                             i.fa.fa-level-up
 
 
+
+            //block scripts
+                +javascript('../system.config.js')
+                script.
+                    System.import('scripts/packadic')
             block scripts
                 if _target === 'dist'
                     +javascript('reflect-metadata/Reflect', true)
@@ -135,15 +141,14 @@ html(lang="en")
                     +javascript('packadic')
                     +javascript('addons')
 
-            block init-script
 
+            block init-script
                 if _target !== 'dist'
                     script.
                         (function(){
                             var app = packadic.Application.instance;
                             app.DEBUG = true;
                         }.call())
-
 
 
             block boot-script

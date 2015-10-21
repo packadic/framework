@@ -742,6 +742,105 @@ var packadic;
         plugins.registerPlugin = registerPlugin;
     })(plugins = packadic.plugins || (packadic.plugins = {}));
 })(packadic || (packadic = {}));
+var packadic;
+(function (packadic) {
+    var Angular;
+    (function (Angular) {
+        Angular.defaultModuleName = 'packadic';
+        var directiveProperties = [
+            'compile',
+            'controller',
+            'controllerAs',
+            'bindToController',
+            'link',
+            'priority',
+            'replace',
+            'require',
+            'restrict',
+            'scope',
+            'template',
+            'templateUrl',
+            'terminal',
+            'transclude'
+        ];
+        function instantiate(moduleName, name, mode) {
+            return function (target) {
+                angular.module(moduleName)[mode](name, target);
+            };
+        }
+        function attachInjects(target) {
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
+            }
+            (target.$inject || []).forEach(function (item, index) {
+                target.prototype[(item.charAt(0) === '$' ? '$' : '$$') + item] = args[index];
+            });
+            return target;
+        }
+        Angular.attachInjects = attachInjects;
+        function inject() {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return function (target, key, index) {
+                if (angular.isNumber(index)) {
+                    target.$inject = target.$inject || [];
+                    target.$inject[index] = args[0];
+                }
+                else {
+                    target.$inject = args;
+                }
+            };
+        }
+        Angular.inject = inject;
+        function service(serviceName, moduleName) {
+            if (moduleName === void 0) { moduleName = Angular.defaultModuleName; }
+            return instantiate(moduleName, serviceName, 'service');
+        }
+        Angular.service = service;
+        function controller(ctrlName, moduleName) {
+            if (moduleName === void 0) { moduleName = Angular.defaultModuleName; }
+            return instantiate(moduleName, ctrlName, 'controller');
+        }
+        Angular.controller = controller;
+        function directive(directiveName, moduleName) {
+            if (moduleName === void 0) { moduleName = Angular.defaultModuleName; }
+            return function (target) {
+                var config;
+                var ctrlName = angular.isString(target.controller) ? target.controller.split(' ').shift() : null;
+                if (ctrlName) {
+                    controller(moduleName, ctrlName)(target);
+                }
+                config = directiveProperties.reduce(function (config, property) {
+                    return angular.isDefined(target[property]) ? angular.extend(config, (_a = {}, _a[property] = target[property], _a)) :
+                        config;
+                    var _a;
+                }, { controller: target, scope: Boolean(target.templateUrl) });
+                angular.module(moduleName).directive(directiveName, function () { return (config); });
+            };
+        }
+        Angular.directive = directive;
+        function classFactory(className, moduleName) {
+            if (moduleName === void 0) { moduleName = Angular.defaultModuleName; }
+            return function (target) {
+                function factory() {
+                    var args = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        args[_i - 0] = arguments[_i];
+                    }
+                    return attachInjects.apply(void 0, [target].concat(args));
+                }
+                if (target.$inject && target.$inject.length > 0) {
+                    factory.$inject = target.$inject.slice(0);
+                }
+                angular.module(moduleName).factory(className, factory);
+            };
+        }
+        Angular.classFactory = classFactory;
+    })(Angular = packadic.Angular || (packadic.Angular = {}));
+})(packadic || (packadic = {}));
 /**
  * The application class
  */
@@ -3574,3 +3673,4 @@ var packadic;
         });
     });
 }.call(this));
+//# sourceMappingURL=packadic.js.map

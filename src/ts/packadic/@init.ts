@@ -1,6 +1,5 @@
 /// <reference path="./../types.d.ts" />
 
-
 console.groupCollapsed('Packadic pre-init logs');
 
 

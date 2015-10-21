@@ -11,3 +11,4 @@
 /// <reference path="zeroclipboard/zeroclipboard.d.ts" />
 /// <reference path="jquery.pnotify/jquery.pnotify.d.ts" />
 /// <reference path="jquery.noty/jquery.noty.d.ts" />
+/// <reference path="angularjs/angular.d.ts" />

@@ -207,6 +207,34 @@ declare module packadic {
         function registerPlugin(name: string, pluginClass: typeof Plugin, opts?: IPluginRegisterOptions): void;
     }
 }
+declare module packadic.Angular {
+    var defaultModuleName: string;
+    interface IClassAnnotationDecorator {
+        (target: any): void;
+        (t: any, key: string, index: number): void;
+    }
+    function attachInjects(target: any, ...args: any[]): any;
+    interface IInjectAnnotation {
+        (...args: any[]): IClassAnnotationDecorator;
+    }
+    function inject(...args: string[]): IClassAnnotationDecorator;
+    interface IServiceAnnotation {
+        (moduleName: string, serviceName: string): IClassAnnotationDecorator;
+    }
+    function service(serviceName: string, moduleName?: string): IClassAnnotationDecorator;
+    interface IControllerAnnotation {
+        (moduleName: string, ctrlName: string): IClassAnnotationDecorator;
+    }
+    function controller(ctrlName: string, moduleName?: string): IClassAnnotationDecorator;
+    interface IDirectiveAnnotation {
+        (moduleName: string, directiveName: string): IClassAnnotationDecorator;
+    }
+    function directive(directiveName: string, moduleName?: string): IClassAnnotationDecorator;
+    interface IClassFactoryAnnotation {
+        (moduleName: string, className: string): IClassAnnotationDecorator;
+    }
+    function classFactory(className: string, moduleName?: string): IClassAnnotationDecorator;
+}
 declare module packadic {
     import PromiseInterface = packadic.util.promise.PromiseInterface;
     interface IApplication {

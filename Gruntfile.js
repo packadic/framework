@@ -101,21 +101,22 @@ module.exports = function (_grunt) {
             views            : {src: '<%= target.dest %>/**/*.html'}
         },
         copy : {
-            images         : {src: ['**'], cwd: 'src/images', expand: true, dest: '<%= target.dest %>/assets/images/'},
-            bower          : {src: ['**/*.{js,css,woff*,ttf,swf}'], cwd: 'bower_components', expand: true, dest: '<%= target.dest %>/assets/bower_components/'},
-            js             : {src: ['**/*.js'], cwd: 'src/js', expand: true, dest: '<%= target.dest %>/assets/scripts/'},
-            angular_bundles: {src: ['**/*.{js,js.map}'], cwd: 'node_modules/angular2/bundles', expand: true, dest: '<%= target.dest %>/assets/angular2'}
+            images         : {cwd: 'src/images', src: ['**'], dest: '<%= target.dest %>/assets/images/', expand: true},
+            bower          : {cwd: 'bower_components', src: ['**/*.{js,css,woff*,ttf,swf}'], dest: '<%= target.dest %>/assets/bower_components/', expand: true},
+            js             : {cwd: 'src/js', src: ['**/*.js'], dest: '<%= target.dest %>/assets/scripts/', expand: true},
+            angular_bundles: {cwd: 'node_modules/angular2/bundles', src: ['**/*.{js,js.map}'], dest: '<%= target.dest %>/assets/angular2', expand: true},
+            jspm           : {cwd: '', src: ['jspm_packages/**/*', 'system.config.js'], dest: '<%= target.dest %>/assets/', expand: true},
         },
         jade : {
             options  : {
                 pretty: true, data: function () {
                     return _.merge({}, {
-                        _       : _,
-                        _s      : _s,
-                        _inspect: util.inspect,
-                        _target : target,
-                        material: require('./src/grunt/material-colors'),
-                        getRandomId: function(length) {
+                        _          : _,
+                        _s         : _s,
+                        _inspect   : util.inspect,
+                        _target    : target,
+                        material   : require('./src/grunt/material-colors'),
+                        getRandomId: function (length) {
                             if ( ! _.isNumber(length) ) {
                                 length = 15;
                             }
@@ -126,8 +127,8 @@ module.exports = function (_grunt) {
                             }
                             return text;
                         },
-                        sources : {
-                            md: function(name){
+                        sources    : {
+                            md: function (name) {
                                 var file = name + (_s.endsWith(name, '.md') ? '' : '.md');
                                 return fs.readFileSync(path.join(__dirname, 'src', 'md', file));
                             }
@@ -136,11 +137,12 @@ module.exports = function (_grunt) {
                 }.call()
             },
             views    : {files: [{expand: true, cwd: 'src/views', src: ['**/*.jade', '!{document,typedoc}.jade', '!metalshark/**/*.jade', '!partials/**/*.jade', '!layouts/**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>'}]},
+            demo     : {files: [{expand: true, cwd: 'src/views', src: ['**/*.jade'], ext: '.html', dest: '<%= target.dest %>'}]},
             templates: {
                 options: {client: true, amd: false, namespace: 'JST'},
                 files  : [{expand: true, cwd: 'src/templates', src: ['**/*.jade', '!**/_*.jade'], ext: '.js', dest: '<%= target.dest %>/assets/scripts/templates'}]
             },
-            angular: {files: [{expand: true, cwd: 'src/angular', src: ['**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>/app'}]}
+            angular  : {files: [{expand: true, cwd: 'src/angular', src: ['**/*.jade', '!**/_*.jade'], ext: '.html', dest: '<%= target.dest %>/app'}]}
         },
 
         sass: {
@@ -150,7 +152,7 @@ module.exports = function (_grunt) {
                     '<%= target.dest %>/assets/styles/stylesheet.css'               : 'src/styles/stylesheet.scss',
                     '<%= target.dest %>/assets/styles/themes/theme-default.css'     : 'src/styles/themes/theme-default.scss',
                     '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css': 'src/styles/themes/theme-dark-sidebar.scss',
-                    '<%= target.dest %>/assets/styles/themes/theme-codex.css': 'src/styles/themes/theme-codex.scss'
+                    '<%= target.dest %>/assets/styles/themes/theme-codex.css'       : 'src/styles/themes/theme-codex.scss'
                 }
             }
         },
@@ -191,10 +193,10 @@ module.exports = function (_grunt) {
                 src    : ['src/ts/packadic/@init.ts', 'src/ts/packadic/{util,lib}/**/*.ts', 'src/ts/packadic/~bootstrap.ts'],
                 out    : 'src/ts/packadic.js'
             },
-            angular: {
-                options: { module: 'commonjs', outDir: '<%= target.dest %>/app' },
-                src: ['src/angular/**/*.ts'],
-                outDir: '<%= target.dest %>/app'
+            angular : {
+                options: {module: 'commonjs', outDir: '<%= target.dest %>/app'},
+                src    : ['src/angular/**/*.ts'],
+                outDir : '<%= target.dest %>/app'
             }
         },
         packadic: {
@@ -254,10 +256,11 @@ module.exports = function (_grunt) {
 
             noty : {files: ['src/js/noty/**/*.js'], tasks: ['concat:noty', 'wrap:noty']},
             bower: {files: ['bower.json'], tasks: ['bower']},
+            jspm: {files: ['jspm_packages/**/*', 'system.config.js'], tasks: ['copy:jspm']},
 
-            angularts: {files: ['src/angular/**/*.ts'], tasks: ['ts:angular']},
+            angularts  : {files: ['src/angular/**/*.ts'], tasks: ['ts:angular']},
             angularjade: {files: ['src/angular/**/*.jade'], tasks: ['jade:angular']},
-            livereload: {
+            livereload : {
                 options: {livereload: 35729},
                 files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/bower_components/**/*']
             }
@@ -296,9 +299,9 @@ module.exports = function (_grunt) {
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build
         ['docs', 'Generate the docs', ['clean:docs', 'typedoc:ts']],
-        ['demo', 'Build the theme', ['clean:all', 'bower', 'images', 'styles', 'scripts', 'views', 'docs']],
-        ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'images', 'styles', 'scripts']],
-        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'styles', 'scripts', 'images',   'jade:views']],
+        ['demo', 'Build the theme', ['clean:all', 'bower', 'copy:jspm', 'images', 'styles', 'scripts', 'views', 'docs']],
+        ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'copy:jspm', 'images', 'styles', 'scripts']],
+        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'copy:jspm', 'styles', 'scripts', 'images', 'jade:views']],
         // dev
         ['lib', 'Compile typescript files in lib for node.', ['typescript:lib']],
         ['watch', 'Watch for file changes and fire tasks.', ['concurrent:watch']],
