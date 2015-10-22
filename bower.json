@@ -67,6 +67,9 @@
   },
   "dependencies": {
     "angular": "~1.4.7",
-    "angular-material": "~0.11.4"
+    "angular-material": "~0.11.4",
+    "polymer-ts": "~0.1.21",
+    "anno.js": "~0.2.0",
+    "jquery-scrollintoview": "litera/jquery-scrollintoview#06834cf7fdba0e86cac84ed7761ea64a3a5fbec8"
   }
 }

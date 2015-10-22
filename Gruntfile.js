@@ -105,7 +105,7 @@ module.exports = function (_grunt) {
             bower          : {cwd: 'bower_components', src: ['**/*.{js,css,woff*,ttf,swf}'], dest: '<%= target.dest %>/assets/bower_components/', expand: true},
             js             : {cwd: 'src/js', src: ['**/*.js'], dest: '<%= target.dest %>/assets/scripts/', expand: true},
             angular_bundles: {cwd: 'node_modules/angular2/bundles', src: ['**/*.{js,js.map}'], dest: '<%= target.dest %>/assets/angular2', expand: true},
-            jspm           : {cwd: '', src: ['jspm_packages/**/*', 'system.config.js'], dest: '<%= target.dest %>/assets/', expand: true},
+            //jspm           : {cwd: '', src: ['jspm_packages/**/*', 'system.config.js'], dest: '<%= target.dest %>/assets/', expand: true},
         },
         jade : {
             options  : {
@@ -256,13 +256,13 @@ module.exports = function (_grunt) {
 
             noty : {files: ['src/js/noty/**/*.js'], tasks: ['concat:noty', 'wrap:noty']},
             bower: {files: ['bower.json'], tasks: ['bower']},
-            jspm: {files: ['jspm_packages/**/*', 'system.config.js'], tasks: ['copy:jspm']},
+            //jspm: {files: ['system.config.js'], tasks: [target === 'dev' ? 'copy:jspm']},
 
             angularts  : {files: ['src/angular/**/*.ts'], tasks: ['ts:angular']},
             angularjade: {files: ['src/angular/**/*.jade'], tasks: ['jade:angular']},
             livereload : {
                 options: {livereload: 35729},
-                files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/bower_components/**/*']
+                files  : ['<%= target.dest %>/**/*', '!<%= target.dest %>/assets/{bower_components,jspm_packages}/**/*']
             }
         }
     };
@@ -299,9 +299,9 @@ module.exports = function (_grunt) {
         ['views', 'Compile the jade view', ['clean:views', 'jade:' + target.name]],
         // build
         ['docs', 'Generate the docs', ['clean:docs', 'typedoc:ts']],
-        ['demo', 'Build the theme', ['clean:all', 'bower', 'copy:jspm', 'images', 'styles', 'scripts', 'views', 'docs']],
-        ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'copy:jspm', 'images', 'styles', 'scripts']],
-        ['dev', 'Build a dev thingy', ['clean:all', 'bower', 'copy:jspm', 'styles', 'scripts', 'images', 'jade:views']],
+        ['demo', 'Build the theme', ['clean:all', 'bower',  'images', 'styles', 'scripts', 'views', 'docs']],
+        ['dist', 'Build the distribution version (optimized)', ['clean:all', 'bower', 'images', 'styles', 'scripts']],
+        ['dev', 'Build a dev thingy', ['clean:all', 'styles', 'scripts', 'images', 'jade:views', 'link:bower' ]],
         // dev
         ['lib', 'Compile typescript files in lib for node.', ['typescript:lib']],
         ['watch', 'Watch for file changes and fire tasks.', ['concurrent:watch']],
@@ -312,6 +312,29 @@ module.exports = function (_grunt) {
             } else {
                 grunt.task.run([target.name, 'connect:' + target.name, 'watch'])
             }
+        }],
+        ['link', '', function(opt){
+            makeLink = function(to){
+                var cwd = process.cwd();
+                grunt.log.ok(cwd);
+                process.chdir(path.join(target.dest, 'assets'));
+                var relPath = path.relative(
+                    process.cwd(),
+                    path.join(cwd, to)
+                );
+                if(fs.existsSync(path.join(process.cwd(), to))){
+                    grunt.log.warn('skipping ' + to + ' - already exists')
+                } else {
+                    fs.symlinkSync(relPath, to);
+                    grunt.log.ok('symlink created: ' + relPath + ' -> ' + path.join(target.dest, 'assets', to));
+                }
+                process.chdir(cwd);
+            };
+
+            if(opt === 'bower') {
+                makeLink('bower_components');
+            }
+
         }],
         ['copy_ts_scripts', 'Copy declarations to other paths', function () {
             globule.find('src/ts/**/*.{js,js.map}').forEach(function (file) {

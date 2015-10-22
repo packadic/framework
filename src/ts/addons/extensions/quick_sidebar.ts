@@ -332,6 +332,12 @@ module packadic.extensions {
                 'qs-toggle': (target?:string) => {
                     (self.isClosed() && self.show().openTab(target)) || self.hide();
                 },
+                'qs-show': () => {
+                    self.show().openTab();
+                },
+                'qs-hide': () => {
+                    self.hide();
+                },
                 'qs-open': (target?:string) => {
                     self.openTab(target);
                 },

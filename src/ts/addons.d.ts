@@ -150,6 +150,52 @@ declare module packadic.directives {
     }
 }
 declare module packadic.extensions {
+    module timedTour {
+        class Progress {
+            protected _el: JQuery;
+            protected value: number;
+            protected max: number;
+            protected percent: number;
+            protected timeoutRef: number;
+            protected intervalRef: number;
+            protected destroyed: boolean;
+            constructor(value?: number, max?: number);
+            static create(value?: number, max?: number): Progress;
+            setValue(value: number): Progress;
+            getValue(): number;
+            el: JQuery;
+            destroy(): Progress;
+            setTimeout(timeoutMs: number, onReady: Function): Progress;
+        }
+    }
+    interface Anno extends AnnoJS {
+        constructor(opts?: any): any;
+    }
+    class Manno extends Anno {
+        timeout: number;
+        constructor(arg?: any);
+        _chainNext: any;
+        chainTo(obj: any): Manno;
+        onShow(anno: any, $target: JQuery, $annoElem: JQuery): any;
+        onHide(anno: any, $target: JQuery, $annoElem: JQuery, returnFromOnShow: any): any;
+        _onShow: Function;
+        _onHide: Function;
+    }
+    class DemoTour extends Extension {
+        static dependencies: string[];
+        protected tour: Manno;
+        start(): void;
+        protected qsApiButton(timeout: number, action: string, content: string, onShow?: Function, onHide?: Function): any;
+        protected timedStep(timeout: number, target: string, position: string, content: string, options?: any): any;
+        protected step(target: string, position: string, content: string, options?: any): AnnoJSOptions;
+        init(): void;
+        boot(): void;
+        protected _initLayoutApiActions(): void;
+        protected layout: LayoutExtension;
+        protected quick_sidebar: QuickSidebarExtension;
+    }
+}
+declare module packadic.extensions {
     class LayoutExtension extends Extension {
         openCloseInProgress: boolean;
         closing: boolean;

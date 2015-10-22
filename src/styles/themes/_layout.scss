@@ -11,7 +11,7 @@ body {
             color: $header-logo-color;
         }
     }
-    .page-actions .btn {
+    .page-actions .btn.btn-primary {
         color: $header-action-button-color !important;
         background-color: $header-action-button-bg-color !important;
         border-color: $header-action-button-border-color !important;

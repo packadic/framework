@@ -1,12 +1,19 @@
-$code-block-top-height: 27px;
-$code-block-border-color: #bdaea3;
-$code-block-code-bg: #f5f2f0;
-$code-block-transition-speed: 150ms;
-$code-block-scroll-rail-bg-color: #e1d7d1;
-$code-block-scroll-dragger-bg-color: #98A0A4;
+$code-block-top-height:                 20px;
+$code-block-transition-speed:           150ms;
+
+
+$code-block-top-header-bg-color:        #F5F2F0;
+$code-block-top-info-bg-color:          #EAE6E3;
+$code-block-top-info-bg-color-odd:      #f5f2f0;
+$code-block-content-border-color:       rgba(230, 226, 223, 0.69);
+$code-block-code-bg:                    #f5f2f0;
+$code-block-scroll-rail-bg-color:       #e1d7d1;
+$code-block-scroll-dragger-bg-color:    #98A0A4;
+
+
 .code-block {
     margin: 15px 0;
-    border: 1px solid $code-block-border-color;
+    //border: 1px solid $code-block-border-color;
     width: 100%;
     opacity: 0;
     transition: opacity $code-block-transition-speed linear;
@@ -34,8 +41,10 @@ $code-block-scroll-dragger-bg-color: #98A0A4;
                 @include clearfix;
                 font-size: 11px;
                 h4 {
+                    background-color: $code-block-top-header-bg-color;
+
                     height: $code-block-top-height;
-                    padding: 6px 10px;
+                    padding: 2px 10px;
                     font-size: 13px;
                     span {
                         padding-right: 10px;
@@ -54,23 +63,23 @@ $code-block-scroll-dragger-bg-color: #98A0A4;
                     margin: 0;
                 }
                 dl {
-                    border-left: 1px solid $code-block-border-color;
+                    //border-left: 1px solid $code-block-border-color;
                 }
                 dt, dd {
                     height: $code-block-top-height;
                     display: block;
-                    padding: 6px 10px;
-                    border-right: 1px solid $code-block-border-color;
+                    padding: 2px 10px;
+                    //border-right: 1px solid $code-block-border-color;
                     float: left;
                     text-align: center;
                     width: 25%;
                     color: #757779;
                 }
                 dt {
-                    background: darken($code-block-code-bg, 10);
+                    background: $code-block-top-info-bg-color;
                 }
                 dd {
-                    background: $code-block-code-bg;
+                    background: $code-block-top-info-bg-color-odd;
                 }
             }
         }
@@ -80,6 +89,7 @@ $code-block-scroll-dragger-bg-color: #98A0A4;
             height: $code-block-top-height;
         }
     }
+
 
 
     .code-block-actions #cb-minmax i.fa {
@@ -95,8 +105,8 @@ $code-block-scroll-dragger-bg-color: #98A0A4;
         a.btn {
             display: table-cell;
             @include btn-sm;
-            font-size: 14px;
-            padding: 0;
+            font-size: 12px;
+            padding: 2px 0;
             line-height: 1;
             opacity: 0.5;
             &:hover {
@@ -121,8 +131,7 @@ $code-block-scroll-dragger-bg-color: #98A0A4;
     }
 
     .code-block-content {
-        border-top: 1px solid $code-block-border-color;
-
+        border: 1px solid $code-block-content-border-color;
         pre {
             margin: 0;
             width: 100%;
@@ -135,9 +144,11 @@ $code-block-scroll-dragger-bg-color: #98A0A4;
                 box-shadow: none !important;
             }
         }
-
     }
-
+    
+    &:not(.code-block-hide-top) .code-block-content {
+        border-top: 0;
+    }
 
     &.code-block-minimized {
         cursor: pointer; // clicking op the code-block will open it

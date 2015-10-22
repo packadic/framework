@@ -1,6 +1,4 @@
 /// <reference path="types.d.ts" />
-declare class MyEle extends polymer.Base {
-}
 declare module packadic {
     var app: Application;
     var debug: Debug;

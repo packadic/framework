@@ -26,7 +26,6 @@ html(lang="en")
                 +stylesheet('stylesheet')
                 +stylesheet('themes/theme-' +themeStyle)(id='theme-style')
                 +stylesheet('animate')
-                +javascript('../jspm_packages/system.js')
 
     block body
         body.page-loading(class=bodyClass, v-el='body')
@@ -66,8 +65,29 @@ html(lang="en")
                                                 +dd-submenu('Submenu')
                                                     +dd-item('#') First
                                                     +dd-item('#') Second
+                                                    +dd-footer
+                                                        +a Left
+                                                        +a Right
                                                 +dd-item('#') Third
+                                                +dd-divider
                                                 +dd-item('#') Fourth
+                                                +dd-item('#') Second 3
+                                                    +dd-submenu('Submenu')
+                                                        +dd-item('#') First
+                                                        +dd-item('#') Second
+                                                        +dd-item('#') First
+                                                        +dd-item('#') Second
+                                                        +dd-footer
+                                                            +a Left
+                                                            +a Right
+                                                    +dd-item('#') Third
+                                                +dd-footer
+                                                    +a Left
+                                                    +a Right
+
+
+                                    .btn-group
+                                        a(data-layout-api='demo-tour-start').btn.btn-success.btn-sm Check all features in 30 Seconds
 
                             block header-responsive-toggler
                                 a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
@@ -136,9 +156,17 @@ html(lang="en")
                     +javascript('system.js/dist/system.src', true)
                     +javascript('vue.dev') //+javascript('vue/dist/vue', true)
                     +javascript('vendor')
-                    +javascript('noty')
+                    +javascript('malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js', true)
                     +javascript('templates.min')
                     +javascript('packadic')
+
+                    // noty for notify
+                    +javascript('noty')
+                    // anno.js for demo-tour
+                    +javascript('jquery-scrollintoview/jquery.scrollintoview.min', true)
+                    +javascript('anno.js/anno', true)
+                    +stylesheet('anno.js/anno', true)
+
                     +javascript('addons')
 
 

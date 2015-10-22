@@ -6832,7 +6832,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    if (this.elID) {
 	      this.vm.$$[this.elID] = this.vms.map(function (vm) {
-	        return vm.$el
+	        return vm._el
 	      })
 	    }
 	  },
@@ -6933,7 +6933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      prevEl = targetPrev
 	        ? targetPrev._staggerCb
 	          ? targetPrev._staggerAnchor
-	          : targetPrev._fragmentEnd || targetPrev.$el
+	          : targetPrev._fragmentEnd || targetPrev._el
 	        : start
 	      if (vm._reused && !vm._staggerCb) {
 	        currentPrev = findPrevVm(vm, start, this.id)
@@ -7440,7 +7440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    transition.blockAppend(frag, this.end, vm)
 	    // call attached for all the child components created
 	    // during the compilation
-	    if (_.inDoc(vm.$el)) {
+	    if (_.inDoc(vm._el)) {
 	      var children = this.getContainedComponents()
 	      if (children) children.forEach(callAttach)
 	    }
@@ -7450,7 +7450,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (!this.unlink) return
 	    // collect children beforehand
 	    var children
-	    if (_.inDoc(this.vm.$el)) {
+	    if (_.inDoc(this.vm._el)) {
 	      children = this.getContainedComponents()
 	    }
 	    transition.blockRemove(this.start, this.end, this.vm)
@@ -7470,8 +7470,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      while (next !== end) {
 	        next = cur.nextSibling
 	        if (
-	          cur === c.$el ||
-	          cur.contains && cur.contains(c.$el)
+	          cur === c._el ||
+	          cur.contains && cur.contains(c._el)
 	        ) {
 	          return true
 	        }

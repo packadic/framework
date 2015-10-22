@@ -8,7 +8,7 @@ module packadic.components {
         static replace:boolean = true;
 
         @prop({type: String, required: false, 'default': '', twoWay: true})language:string;
-        @prop({type: String, required: false, 'default': '', twoWay: true})title:string;
+        @prop({type: String, required: false, 'default': 'Code preview', twoWay: true})title:string;
         @prop({type: String, required: false, 'default': '', twoWay: true})description:string;
         @prop({type: Boolean, required: false, 'default': true, twoWay: true})showTop:boolean;
         @prop({type: String, required: false, 'default': 'prism'})theme:string;
@@ -42,9 +42,9 @@ module packadic.components {
             return [
                 {id: 'cb-copy', title: 'Copy to clipboard', icon: 'fa-copy', onClick: this.onCopyClick },
                 {id: 'cb-open', title: 'Open in window', icon: 'fa-external-link', onClick: this.onOpenInWindowClick},
-                {id: 'cb-more', title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick},
                 {id: 'cb-less', title: 'Show less lines', icon: 'fa-minus', onClick: this.onDecreaseLinesClick},
-                {id: 'cb-minmax', title: 'Minimize/maximize', icon: "fa-chevron-up", onClick: this.onMinimizeToggleClick}
+                {id: 'cb-more', title: 'Show more lines', icon: 'fa-plus', onClick: this.onIncreaseLinesClick},
+                //{id: 'cb-minmax', title: 'Minimize/maximize', icon: "fa-chevron-up", onClick: this.onMinimizeToggleClick}
             ];
         }
 

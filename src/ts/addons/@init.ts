@@ -2,6 +2,4 @@
 /// <reference path="./../packadic.d.ts" />
 
 module packadic {
-
-
 }
