@@ -1,0 +1,15 @@
+.page-content
+    .page-head
+        .page-title
+            h1
+                | {{title}}
+                small(ng-if="subtitle.length > 0")
+                    | {{subtitle}}
+    ul.page-breadcrumb.breadcrumb
+        li(ng-repeat="(key, crumb) in breadcrumbs")
+            a(href="javascript:;")
+                | {{crumb.title}}
+            i.fa.fa-arrow-right(ng-if="$last === false")
+
+    .page-content-seperator(ng-if="showSeperator")
+    .page-content-inner(ng-transclude)

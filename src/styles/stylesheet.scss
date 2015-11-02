@@ -1,0 +1,148 @@
+////
+/// Stylesheet main file
+/// @group stylesheet
+/// @author Robin Radic
+////
+// 1. Base
+// 2. Bootstrap
+// 3. Layout
+// 4. Plugins
+// 5. Components
+// 6. Utilities
+//
+/****************************/
+// 1. Base
+/****************************/
+//
+@import "base";
+@import url($web-font);
+@import "../../jspm_packages/npm/font-awesome@4.4.0/scss/font-awesome";
+//
+/****************************/
+// 2. Bootstrap
+/****************************/
+//
+// Reset and dependencies
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/normalize";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/print";
+// Core CSS
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/reboot";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/type";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/images";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/code";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/grid";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/tables";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/forms";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/buttons";
+// // Components
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/animation";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/dropdown";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/button-group";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/input-group";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/custom-forms";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/nav";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/navbar";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/card";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/breadcrumb";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/pagination";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/pager";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/labels";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/jumbotron";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/alert";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/progress";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/media";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/list-group";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/responsive-embed";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/close";
+// Components w/ JavaScript
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/modal";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/tooltip";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/popover";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/carousel";
+// Utility classes
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/utilities";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/utilities-spacing";
+@import "../../jspm_packages/github/twbs/bootstrap@4.0.0-alpha/scss/utilities-responsive";
+//
+/****************************/
+// 3. Layout
+/****************************/
+//
+@import 'layout/print';
+@import 'layout/header';
+@import 'layout/page-container';
+@import 'layout/sidebar';
+@import 'layout/content';
+@import 'layout/footer';
+
+.page-header {
+    .page-logo > .logo-default {
+        margin: 19px 10px 0 10px !important;
+    }
+}
+
+//
+/****************************/
+// 4. Plugins
+/****************************/
+//
+@import "plugins/noty";
+@import "plugins/slimscroll";
+@import "plugins/sass-material-colors-classes";
+@import "plugins/mCustomScrollbar";
+//@import "plugins/jstree2";
+//@import "plugins/spectrum";
+//@import "plugins/bootstrap3-editable";
+//@import "plugins/bootstrap-switch";
+//@import "plugins/bootstrap3-xeditable";
+//@import "plugins/select2";
+
+.bg-color-white {
+    background-color: #ffffff !important;
+}
+
+.bg-color-black {
+    background-color: #000000 !important;
+}
+
+//
+/****************************/
+// 5. Components
+/****************************/
+//
+@import "components/grid";
+@import "components/styler";
+@import "components/loader";
+@import "components/typography";
+@import "components/list-group";
+@import "components/code";
+@import "components/dropdown";
+@import "components/popover";
+@import "components/buttons";
+@import "components/navs";
+@import "components/labels";
+@import "components/tables";
+@import "components/tooltip";
+@import "components/code-block";
+@import "components/ibox";
+@import "components/progressbar";
+
+//@import "components/preferences";
+//@import "components/quick_sidebar";
+//@import "components/form-inputs-material";
+
+
+//
+/****************************/
+// 6. Utilities
+/****************************/
+//
+@import "utilities/positioning";
+@import "scss-json";
+
+
+
+// tmp angular stuff
+a[ui-sref]{
+    &:hover, &:hover * { cursor: hand }
+}

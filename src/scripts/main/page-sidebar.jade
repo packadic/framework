@@ -1,0 +1,15 @@
+.page-sidebar.navbar-collapse.collapse
+    ul.page-sidebar-menu
+        li(ng-repeat="(key, item) in items")
+
+            a( ng-if="item.isItemType('router')", ui-sref="{{item.data}}" )
+                i(ng-if="item.icon", ng-class="item.icon")
+                span.title
+                    | {{item.title}}
+                span.array(ng-if="item.hasChildren()")
+
+            a( ng-if="item.isItemType('href')", href="{{item.data}}")
+                i(ng-if="item.icon", ng-class="item.icon")
+                span.title
+                    | {{item.title}}
+                span.array(ng-if="item.hasChildren()")

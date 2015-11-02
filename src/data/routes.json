@@ -1,0 +1,9 @@
+[
+    {
+        "stateName": "books",
+        "urlPrefix": "/books",
+        "type": "load",
+        "src": "app/modules/books/books"
+    }
+]
+

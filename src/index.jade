@@ -1,0 +1,48 @@
+include views/_base
+- var bodyClass = 'page-header-fixed page-footer-fixed page-edged page-sidebar-condensed'
+- var sidebarClass = ''
+- var pageHeadClass = ''
+- var pageHeaderClass = 'navbar-fixed-top';
+- rootPath = rootPath || '';
+- var assetPath = rootPath + 'assets/';
+- var themeStyle = 'codex';
+block vars
+doctype html
+<!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html lang="en" class="ie9"><![endif]-->
+<!--[if !IE]><!-->
+html(lang="en",data-framework="angularjs", ng-app='app', ng-controller='RootController')
+    <!--<![endif]-->
+    head
+        block head
+            title
+                block title
+                    |  !{typeof config !== 'undefined' ? config.title : 'Default'}
+            block meta
+                meta(charset="UTF-8")
+                meta(name="viewport", content="width=device-width, initial-scale=1")
+                meta(http-equiv="X-UA-Compatible", content="IE=edge")
+                base(href=baseHref)
+            block styles
+                // injector:css
+                // endinjector
+
+            block scripts
+                // injector:js
+                // endinjector
+
+
+                script.
+                    System.import('app').catch(function (e) {
+                        console.log(e);
+                        console.error(e);
+                    });
+
+    block body
+        body(class=bodyClass, ng-cloak, ui-view="root")
+            #page-loader
+                .loader.loader-page
+
+
+
+

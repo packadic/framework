@@ -1,0 +1,12 @@
+.page-header.navbar.navbar-fixed-top
+    .page-header-inner
+        .page-logo
+            .logo-packadic.pull-left
+                | {{title}}
+            .menu-toggler.sidebar-toggler(ng-click="toggleSidebar()" data-layout-api='sidebar-toggle', uib-tooltip='Toggle the sidebar menu', tooltip-placement='right')
+
+
+        a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
+
+        .pull-right
+            .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', uib-tooltip='Toggle the quick sidebar menu', tooltip-placement='left', data-offset='0 10px')

@@ -1,0 +1,15 @@
+
+page-header
+
+.clearfix
+
+.page-container
+
+    .page-sidebar-wrapper
+        page-sidebar(ng-if='sidebarItems.length > 0', items='sidebarItems')
+        page-sidebar(ng-if='!sidebarItems')
+
+    .page-content-wrapper(ui-view="main")
+
+page-footer
+
