@@ -14,7 +14,6 @@ Vue.config.debug = true;
 
 
 export {Vue}
-export * from './addons/index';
 
 export enum AppState {
     PRE_INIT, INITIALISING, INITIALISED, STARTING, STARTED
@@ -48,6 +47,12 @@ export class App extends Vue {
     public get state() {
         return this._state;
     }
+
+    // Vue.js data
+    public $data:any = {
+        showPageLoader: true
+    };
+
 
     constructor() {
         //call super with false to defer compilation in Vue (dev build)
@@ -94,6 +99,16 @@ export class App extends Vue {
         return defer.promise;
     }
 
+
+    public mergeData(newData:Object={}){
+        Object.keys(newData).forEach((key:string) => {
+            if(typeof this.$get(key) !== 'undefined') {
+                this.$set(key, newData[key]);
+            } else {
+                this.$set(key, newData[key]);
+            }
+        });
+    }
 
 
 

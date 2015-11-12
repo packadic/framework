@@ -36,8 +36,9 @@ html(lang="en")
                         console.error(e);
                     });
 
+
     block body
-        body.page-loading(class=bodyClass)
+        body.page-loading(v-page-loader="showPageLoader", loader="#page-loader",  class=bodyClass)
                 #page-loader
                     .loader.loader-page
 

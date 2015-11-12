@@ -1,4 +1,5 @@
 /// <reference path="typings/tsd/tsd.d.ts" />
+/// <reference path="typings/jquery.d.ts" />
 /// <reference path="typings/zone.d.ts" />
 /// <reference path="typings/eventemitter2.d.ts" />
 /// <reference path="typings/underscore.string.d.ts" />
