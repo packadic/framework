@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import {App,Vue,AppState,app} from './../index';
-import {defined,kindOf} from './../../util/index';
-import {MetaStore} from './../../util/metastore';
+import {defined,kindOf,MetaStore} from './../../lib';
 
 MetaStore.template('directive', {
     params: [],

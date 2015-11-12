@@ -1,12 +1,13 @@
 import Vue from 'vue';
 import * as _ from 'lodash';
 import $ from 'jquery';
-import {defined} from './../index';
-import {applyMixins} from './../util/obj';
-import {defaultConfig as eventConfig} from './events';
-import {create as createPromise, PromiseInterface, DeferredInterface} from './../util/promise';
-import {ConfigObject,IConfigProperty} from './../util/config';
 import EventEmitter2 from 'eventemitter2';
+
+import {
+    applyMixins,defined,
+    create as createPromise, PromiseInterface, DeferredInterface,
+    ConfigObject,IConfigProperty,
+} from './../lib';
 
 Vue.config.async = true;
 Vue.config.debug = true;
@@ -122,5 +123,3 @@ export class App extends Vue {
 
 
 }
-
-//applyMixins(App, [EventEmitter]);
