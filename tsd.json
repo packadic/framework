@@ -1,0 +1,36 @@
+{
+    "version": "v4",
+    "repo": "borisyankov/DefinitelyTyped",
+    "ref": "master",
+    "path": "src/typings/tsd",
+    "bundle": "src/typings/tsd/tsd.d.ts",
+    "installed": {
+        "vue/vue.d.ts": {
+            "commit": "708609e0764daeb5eb64104af7aca50c520c4e6e"
+        },
+        "fs-extra/fs-extra.d.ts": {
+            "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
+        },
+        "node/node.d.ts": {
+            "commit": "44cbde48eecd1918ed54b3be49a9752688b6c65a"
+        },
+        "lodash/lodash.d.ts": {
+            "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
+        },
+        "systemjs/systemjs.d.ts": {
+            "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
+        },
+        "async/async.d.ts": {
+            "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
+        },
+        "gruntjs/gruntjs.d.ts": {
+            "commit": "44cbde48eecd1918ed54b3be49a9752688b6c65a"
+        },
+        "es6-shim/es6-shim.d.ts": {
+            "commit": "44cbde48eecd1918ed54b3be49a9752688b6c65a"
+        },
+        "jquery/jquery.d.ts": {
+            "commit": "eb59a40d3c2f3257e34ec2ede181046230814a41"
+        }
+    }
+}

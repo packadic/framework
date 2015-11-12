@@ -1,0 +1,43 @@
+.btn-group
+    .btn-group
+        +dd-toggler.btn.btn-primary.btn-sm Actions
+        +dd-menu
+            +dd-item('#') First
+            +dd-divider
+            +dd-item('#') Second
+            +dd-item('#') Third
+            +dd-item('#') Fourth
+            +dd-footer
+                +a Left
+                +a Right
+    .btn-group
+        +dd-toggler.btn.btn-primary.btn-sm Options
+        +dd-menu
+            +dd-item('#') First
+            +dd-item('#') Second
+            +dd-submenu('Submenu')
+                +dd-item('#') First
+                +dd-item('#') Second
+                +dd-footer
+                    +a Left
+                    +a Right
+            +dd-item('#') Third
+            +dd-divider
+            +dd-item('#') Fourth
+            +dd-item('#') Second 3
+                +dd-submenu('Submenu')
+                    +dd-item('#') First
+                    +dd-item('#') Second
+                    +dd-item('#') First
+                    +dd-item('#') Second
+                    +dd-footer
+                        +a Left
+                        +a Right
+                +dd-item('#') Third
+            +dd-footer
+                +a Left
+                +a Right
+
+
+.btn-group
+    a(data-layout-api='demo-tour-start').btn.btn-success.btn-sm Check all features in 30 Seconds
