@@ -107,6 +107,44 @@ export function ParamWatcher(id?:string):MethodDecorator {
     }
 }
 
+export class BaseDirective {
+    el:HTMLElement;
+    vm:vuejs.Vue;
+    expression:string;
+    arg:any;
+    raw:string;
+    name:string;
+
+
+    constructor() {
+        // remove all members, they are only needed at compile time.
+        var myPrototype = (<Function>Directive).prototype;
+        $.each(myPrototype, (propertyName, value)=> {
+            delete myPrototype[propertyName];
+        });
+    }
+
+    get $el():JQuery {
+        return $(this.el);
+    }
+
+    // methods: http://vuejs.org/api/instance-methods.html
+    $set(exp:string, val:any):void {
+    }
+    $delete(key:string):void {}
+
+    set(value:any):void {}
+    on(event:string, handler:Function):void {}
+
+    bind():void {
+    }
+
+    unbind():void {
+    }
+
+    update(newValue:any, oldValue:any):void {
+    }
+}
 
 
 var internalHooks = [

@@ -4,7 +4,7 @@ import 'es6-shim';
 
 import * as _ from 'lodash';
 import {App,Vue,app} from './../packadic/index';
-import {Directive,ParamWatcher} from './../packadic/app/decorators';
+import {Directive,ParamWatcher,BaseDirective} from './../packadic/index';
 
 app.on('*', function(){
     console.log('event', this, arguments);
@@ -26,7 +26,7 @@ Vue.component('my-component', {
 
 
 @Directive('test-directive')
-export class TestDir {
+export class TestDirective extends BaseDirective {
     static params:any[] = ['a'];
 
     @ParamWatcher('a')

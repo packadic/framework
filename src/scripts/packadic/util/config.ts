@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {objectExists,objectGet, objectSet, copyObject, recurse} from './../util/obj';
+import {objectExists,objectGet, objectSet, copyObject, recurse} from './obj';
 
 export interface IDelimitersCollection {
     [index: string]: IDelimiter;
