@@ -43,6 +43,8 @@ export function Directive(id:string, elementDirective:boolean=false):ClassDecora
             Vue.directive(id, options);
         }
         console.log('Directive', id, options);
+
+        MetaStore.for(target.prototype).cleanTarget();
         return target;
     }
 

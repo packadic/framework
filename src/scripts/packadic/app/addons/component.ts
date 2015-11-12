@@ -1,0 +1,254 @@
+import * as _ from 'lodash';
+import {App,Vue,AppState,app} from './../../index';
+import {defined,kindOf,MetaStore} from './../../lib';
+
+MetaStore.template('component', {
+
+    props : {},
+    events: {},
+
+    eventMethodKeys: [],
+    propKeys       : []
+});
+
+export function Component(id:string, parent?:any):ClassDecorator {
+    return (target:any) => {
+        var meta:any    = MetaStore.for(target.prototype, 'component');
+        var options:any = {
+            template  : '',
+            components: {},
+            props     : meta.store('props'),
+            data      : {},
+            methods   : {},
+            events    : meta.store('events'),
+        };
+
+
+        // PROPERTIES. go over the statics. properties like: el, template, data
+        Object.keys(target).forEach(function (key) {
+            options[key] = target[key];
+            console.log('Component key', key);
+        });
+
+
+        var ignoreMethods:string[] =
+                ['constructor', '_decoratorMetaStore', 'configurable', 'data']
+                    .concat(meta.store('eventMethodKeys'));
+
+        Object.getOwnPropertyNames(target.prototype).forEach((key:string) => {
+            if (ignoreMethods.indexOf(key) !== -1) return;
+            var desc = Object.getOwnPropertyDescriptor(target.prototype, key);
+            // METHODS
+            if (kindOf(desc.value) === 'function') {
+                options.methods[key] = desc.value;
+                console.log('added method', key);
+            }
+            // DATA
+            else if (meta.store('propKeys').indexOf(key) === -1) {
+                options.data[key] = desc.value;
+                console.log('added data', key);
+            }
+        });
+
+        // DATA
+        var cls:any = new target();
+
+        Object.getOwnPropertyNames(cls).forEach((key:string) => {
+            var desc = Object.getOwnPropertyDescriptor(cls, key);
+            if (key !== 'data')                 options.data[key] = desc.value;
+            console.log('found data property, adding', key);
+        });
+
+        //console.log('Object.getOwnPropertyNames(target', Object.getOwnPropertyNames(new target()));
+
+        // MERGE DATA
+        if (cls.hasOwnProperty('data')) {
+            var desc:any = Object.getOwnPropertyDescriptor(cls, 'data');
+            var data:any = desc.value;
+            if (kindOf(desc.value) === 'function') {
+                data = desc.value.call(cls)
+            }
+            options.data = _.merge(options.data, data);
+            console.log('foudn "data" and added it', data);
+        }
+
+        var data = _.cloneDeep(options.data);
+        options.data = () => { return data; };
+
+        var CustomComponent = Vue.extend(options);
+
+        if (!defined(parent)) {
+            Vue.component(id, CustomComponent);
+        }
+
+        console.log('Component', id, options);
+        MetaStore.for(target.prototype, 'component').cleanTarget();
+        return target;
+    }
+}
+
+export function Handles(event?:string):MethodDecorator {
+    return (target:any, key:string | symbol, desc:TypedPropertyDescriptor<any>) => {
+        var meta:MetaStore = MetaStore.for(target, 'component');
+        event              = event || key;
+
+        if (kindOf(desc.value) === 'function') {
+            meta.store.set('events.' + event, desc.value);
+            meta.storePush('eventMethodKeys', key);
+        }
+        console.log('Handles ', event, target);
+        return target;
+    }
+}
+
+export function Prop(typeOrObj?:any, required:boolean = false, def?:any):PropertyDecorator {
+
+    return (target:Object, key:string) => {
+        var prop:any = {
+            type     : String,
+            required : false,
+            'default': undefined,
+            twoWay   : false,
+            validator: undefined
+
+        };
+        if (kindOf(typeOrObj) === 'object') {
+            _.merge(prop, typeOrObj);
+        } else if (kindOf(typeOrObj) === 'function') {
+            if (defined(typeOrObj)) prop.type = typeOrObj;
+            if (defined(required)) prop.required = required;
+            if (defined(def)) prop.default = def;
+        }
+        var meta:MetaStore = MetaStore.for(target, 'component');
+        meta.store.set('props.' + key, prop);
+        meta.storePush('propKeys', key);
+        return target;
+    }
+}
+
+export class BaseComponent {
+
+    // public properties: http://vuejs.org/api/instance-properties.html
+    /** An object that holds child components that have v-ref registered. For more details see v-ref. */
+    $:any;
+
+    /** An object that holds DOM elements that have v-el registered. For more details see v-el. */
+    $$:any;
+
+    /** The data object that the Vue instance is observing. You can swap it with a new object. The Vue instance proxies access to the properties on its data object. */
+    $data:any;
+
+    /** The direct child components of the current instance. */
+    $children:Array<Vue>;
+
+    /** The DOM element that the Vue instance is managing. Note that for Fragment Instances, vm.$el will return an anchor node that indicates the starting position of the fragment. */
+    $el:HTMLElement;
+
+    /** The instantiation options used for the current Vue instance. This is useful when you want to include custom properties in the options */
+    $options:any;
+
+    /** The parent instance, if the current instance has one. */
+    $parent:Vue;
+
+    /** The root Vue instance of the current component tree. If the current instance has no parents this value will be itself. */
+    $root:Vue;
+
+    // methods: http://vuejs.org/api/instance-methods.html
+    $add(key:string, val:any):void {
+    }
+
+    $addChild(options?:any, constructor?:()=>void):void {
+    }
+
+    $after(target:HTMLElement|string, cb:()=>void):void {
+    }
+
+    $appendTo(target:HTMLElement|string, cb?:()=>void):void {
+    }
+
+    $before(target:HTMLElement|string, cb?:()=>void):void {
+    }
+
+    $broadcast(event:string, ...args:Array<any>):void {
+    }
+
+    $compile(el:HTMLElement):Function {
+        return ():void => {
+        }
+    }
+
+    $delete(key:string):void {
+    }
+
+    $destroy(remove:boolean):void {
+    }
+
+    $dispatch(event:string, ...args:Array<any>):void {
+    }
+
+    $emit(event:string, ...args:Array<any>):void {
+    }
+
+    $eval(text:string):void {
+    }
+
+    $get(exp:string):any {
+    }
+
+    $interpolate(text:string):void {
+    }
+
+    $log(path?:string):void {
+    }
+
+    $mount(el:HTMLElement|string):void {
+    }
+
+    $nextTick(fn:()=>void):void {
+    }
+
+    $off(event:string, fn:(...args:Array<any>)=>void|boolean):void {
+    }
+
+    $on(event:string, fn:(...args:Array<any>)=>void|boolean):void {
+    }
+
+    $once(event:string, fn:(...args:Array<any>)=>void|boolean):void {
+    }
+
+    $remove(cb?:()=>void):void {
+    }
+
+    $set(exp:string, val:any):void {
+    }
+
+    /**
+     * Watch an expression or a computed function on the Vue instance for changes. The expression can be a single keypath or actual expressions
+     * ```typescript
+     * vm.$watch('a + b', function (newVal, oldVal) {
+             * // do something
+             * })
+     * // or
+     * vm.$watch(
+     *  function () {
+             *      return this.a + this.b
+             *      },
+     *  function (newVal, oldVal) {
+             *      // do something
+             *  }
+     * )
+     * ```
+     * To also detect nested value changes inside Objects, you need to pass in deep: true in the options argument. Note that you don’t need to do so to listen for Array mutations.
+     * ```typescript
+     * vm.$watch('someObject', callback, { deep: true })
+     * vm.someObject.nestedValue = 123
+     * ```
+     * @param exp
+     * @param cb
+     * @param options
+     */
+    $watch(exp:string|(()=>string),
+           cb:(val:any, old?:any)=>any,
+           options?:{ deep?: boolean; immediate?: boolean }):void {
+    }
+}

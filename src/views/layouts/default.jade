@@ -38,12 +38,12 @@ html(lang="en")
 
 
     block body
-        body.page-loading(v-page-loader="showPageLoader", loader="#page-loader",  class=bodyClass)
-                #page-loader
+        body.page-loading(v-page-loader="showPageLoader", class=bodyClass)
+                #page-loader(v-if="showPageLoader", transition="fade")
                     .loader.loader-page
 
                 block page-header
-                    .page-header.navbar(class=pageHeaderClass)
+                    .page-header.navbar(v-if="!showPageLoader", transition="fade", class=pageHeaderClass)
                         block page-header-inner
                             .page-header-inner
                                 block header-logo
@@ -70,7 +70,7 @@ html(lang="en")
 
 
                 block page-container
-                    .page-container
+                    .page-container(v-if="!showPageLoader", transition="fade")
                         .page-sidebar-wrapper
                             .page-sidebar.navbar-collapse.collapse
                                 block page-sidebar
@@ -95,7 +95,7 @@ html(lang="en")
 
 
                 block page-footer
-                    .page-footer(v-el='footer')
+                    .page-footer(v-if="!showPageLoader", transition="fade")
                         .page-footer-inner
                             block page-footer-inner
                                 - var year = (new Date()).getFullYear()

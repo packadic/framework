@@ -6,15 +6,17 @@ import {
 } from './../packadic/index';
 
 
-
+/* */
+//      page-loader
+/* */
 @Directive('page-loader')
 export class PageLoaderDirective extends BaseDirective {
-    static params:any[] = ['loader'];
-
-    @ParamWatcher('show')
-    watchShow(val:any, oldVal:any) {
-        console.log('watch show');
-    }
+    //static params:any[] = ['loader'];
+    //
+    //@ParamWatcher('show')
+    //watchShow(val:any, oldVal:any) {
+    //    console.log('watch show');
+    //}
 
     update(showLoader:any,odlval:any){          // console.log('page-laode update', showLoader);
         var hasClass:boolean = this.el.classList.contains('page-loading');
@@ -24,6 +26,9 @@ export class PageLoaderDirective extends BaseDirective {
 }
 
 
+/* */
+//      test-directive
+/* */
 @Directive('test-directive')
 export class TestDirective extends BaseDirective {
     static params:any[] = ['a'];

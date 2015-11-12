@@ -1,0 +1,47 @@
+mixin sb-item(title, href, icon, hasChildren)
+    - href = href || '#';
+    - var attr = {};
+    - attr[ href[0] === '[' ? 'bind-router-link' : 'href'] = href;
+    li&attributes(attributes)
+        a&attributes(attr)
+            if icon
+                i(class=icon)
+            span.title= title
+            if hasChildren
+                span.arrow
+        block
+
+mixin sb-submenu()
+    ul.sub-menu&attributes(attributes)
+        block
+
+
+
+
++sb-item('Home', '/index.html', 'fa fa-home').start
+
++sb-item('API', '/layout-api.html', 'fa fa-bitcoin')
++sb-item('Angular2', '/angular.html', 'fa fa-css3')
++sb-item('Document', '/doc.html', 'fa fa-file')
++sb-item('Chatter', '/chatter.html', 'fa fa-comment')
+
++sb-item('Components', 'javascript:;', 'fa fa-puzzle-piece color-teal-800', true)
+    +sb-submenu
+        +sb-item('Box', '/box.html')
+        +sb-item('Bootstrap', '/bootstrap-components.html')
+        +sb-item('Code block', '/code-block.html')
+        +sb-item('Notifications', '/noty.html')
+        +sb-item('Buttons', '/buttons.html')
+        +sb-item('Forms', '/forms.html')
+        +sb-item('Dropdowns', '/dropdowns.html')
+        +sb-item('Labels & Badges', '/labels-badges.html')
+        +sb-item('Breadcrumbs', '/breadcrumbs.html')
+        +sb-item('Tables', '/tables.html')
+        +sb-item('Navs', '/navs.html')
+
++sb-item('Documentation', 'javascript:;', 'fa fa-book color-teal-800', true)
+    +sb-submenu
+        +sb-item('Javascript', '/docs/packadic')
+        +sb-item('Components', '/docs/components')
+        +sb-item('SCSS', '/docs/ts')
+

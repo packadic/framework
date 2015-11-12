@@ -132,6 +132,7 @@ export = function (grunt) {
         watch: {
             options   : {livereload: true},
             jade_index: {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
+            jadescripts: {files: ['src/scripts/**/*.jade'], tasks: ['copy:ts_jade']},
             //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
             scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
             demoscripts   : {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},

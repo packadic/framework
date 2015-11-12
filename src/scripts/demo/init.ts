@@ -9,6 +9,8 @@ import {
 } from './../packadic/index';
 
 import './directives';
+import './transitions';
+import './components';
 
 
 window['app'] = app;
@@ -24,6 +26,6 @@ Vue.component('my-component', {
 
 app.init({ debug: true });
 app.mergeData({
-    showPageL: true
+
 });
 app.start();

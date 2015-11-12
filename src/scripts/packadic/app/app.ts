@@ -33,8 +33,13 @@ export class App extends Vue {
 
     public static defaults:Object = {
         debug     : false,
-        app       : {mount: 'html'},
-        startScene: 'main'
+        app       : {
+            mount: 'html',
+            loader: {
+                enabled: true,
+                autoHideOnStart: true
+            }
+        }
     };
     protected _config:ConfigObject;
     public config:IConfigProperty;
@@ -77,6 +82,9 @@ export class App extends Vue {
         this._state = AppState.INITIALISING;
 
         this.config.merge(options);
+        if(this.config('app.loader.enabled')) {
+            this.$set('showPageLoader', false);
+        }
 
         this._state = AppState.INITIALISED;
         this.emit('init:after');
@@ -91,6 +99,9 @@ export class App extends Vue {
         $(() => {
             this.$mount(this.config('app.mount'));
             this._state = AppState.STARTED;
+            if(this.config('app.loader.enabled') && this.config('app.loader.autoHideOnStart')) {
+                this.$set('showPageLoader', false);
+            }
             this.emit('start:after');
             defer.resolve(this);
         });
@@ -98,7 +109,6 @@ export class App extends Vue {
 
         return defer.promise;
     }
-
 
     public mergeData(newData:Object={}){
         Object.keys(newData).forEach((key:string) => {
