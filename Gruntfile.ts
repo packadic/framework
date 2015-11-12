@@ -118,7 +118,8 @@ export = function (grunt) {
             options: {starttag: '<!-- injector:{{ext}}-->', endtag: '<!-- endinjector-->', ignorePath: ['<%= target.dest %>/']},
             index  : {
                 files: {
-                    './<%= target.dest %>/index.html': ['<%= target.dest %>/jspm_packages/system.src.js', '<%= target.dest %>/system.config.js']
+                    './<%= target.dest %>/index.html': ['<%= target.dest %>/jspm_packages/system.src.js', '<%= target.dest %>/system.config.js',
+                        ]
                         .concat(['<%= target.dest %>/assets/styles/stylesheet.css', '<%= target.dest %>/assets/styles/themes/theme-default.css'])
                 }
             }
@@ -131,7 +132,8 @@ export = function (grunt) {
         watch: {
             options   : {livereload: true},
             jade_index: {files: 'src/index.jade', tasks: ['jade:index', 'injector:index']},
-            scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
+            //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
+            scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
             demoscripts   : {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},
             //ts_copy   : {files: 'src/{scripts,typings}/**/*.{ts,d.ts}', tasks: ['clean:ts', 'copy:ts']}
         }

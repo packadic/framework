@@ -3,12 +3,36 @@ import 'reflect-metadata';
 import 'es6-shim';
 
 import * as _ from 'lodash';
-import {app} from './../packadic/index';
+import {App,Vue,app} from './../packadic/index';
+import {Directive,ParamWatcher} from './../packadic/app/decorators';
 
-app
-    .init({
-        debug: true
-    })
-    .start()
-    ;
+app.on('*', function(){
+    console.log('event', this, arguments);
+});
 
+app.init({ debug: true });
+
+
+
+
+window['app'] = app;
+
+// register
+Vue.component('my-component', {
+    template: '<div>A custom component!</div>'
+});
+
+//console.log(Reflect.getMetadataKeys(MySecondComponent), MySecondComponent);
+
+
+@Directive('test-directive')
+export class TestDir {
+    static params:any[] = ['a'];
+
+    @ParamWatcher('a')
+    watchA(val:any, oldVal:any) {
+        console.log('watch a')
+    }
+}
+
+app.start();

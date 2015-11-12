@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import EventEmitter2 from 'eventemitter2';
 
+export {EventEmitter2};
+
 export var defaultConfig:EventEmitter2Configuration = <EventEmitter2Configuration> {
     wildcard    : true,
     delimiter   : ':',

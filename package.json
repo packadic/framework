@@ -31,7 +31,7 @@
       "scss": "github:mobilexag/plugin-sass@^0.0.10",
       "text": "github:systemjs/plugin-text@^0.0.2",
       "underscore.string": "npm:underscore.string@^3.2.2",
-      "vue": "npm:vue@^1.0.7",
+      "vue": "github:vuejs/vue@^1.0.7",
       "zone.js": "npm:zone.js@^0.5.8"
     },
     "devDependencies": {
@@ -50,6 +50,9 @@
           "js",
           "scss"
         ]
+      },
+      "github:vuejs/vue@1.0.7": {
+        "main": "dist/vue.js"
       }
     }
   },

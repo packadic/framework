@@ -191,8 +191,8 @@ declare module vuejs {
     }
 }
 
-declare var Vue:typeof vuejs.Vue;
 
 declare module "vue" {
-    export = Vue;
+    export var v:typeof vuejs.Vue;
+    export default v;
 }
