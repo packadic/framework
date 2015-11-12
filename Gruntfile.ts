@@ -60,7 +60,7 @@ export = function (grunt) {
             ts_jade       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts', src: ['**/*.jade'], dest: '<%= target.dest %>/assets/scripts', expand: true}]},
             ts_demo       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts/demo', src: ['**/*.ts'], dest: '<%= target.dest %>/assets/scripts/demo', expand: true}]},
             htaccess      : {src: 'src/.htaccess', dest: '<%= target.dest %>/.htaccess'},
-            packadic_ts_js: {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts', src: ['packadic.{ts,js,js.map}'], dest: '<%= target.dest %>/assets/scripts', expand: true}]},
+            packadic_ts_js: {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts/packadic', src: ['**/*.{ts,js,js.map}'], dest: '<%= target.dest %>/assets/scripts/packadic', expand: true}]},
         },
 
         jade: {
@@ -82,7 +82,7 @@ export = function (grunt) {
             options : {
                 compiler              : 'node_modules/typescript/bin/tsc',
                 target                : 'ES5',
-                module                : 'amd',
+                module                : 'umd',
                 sourceMap             : ifTarget('dev', true),
                 experimentalDecorators: true,
                 emitDecoratorMetadata : true,
@@ -90,8 +90,8 @@ export = function (grunt) {
                 noImplicitAny         : false
             },
             packadic: {
-                options: {declaration: true}, out: 'src/scripts/packadic.js',
-                src    : ['src/types.d.ts', tsp('packadic', '@init.ts'), tsp('packadic', 'util/*.ts'), tsp('packadic', 'app/*.ts'), tsp('packadic', '~bootstrap.ts')]
+                options: {declaration: true}, outDir: '<%= target.dest %>/assets/scripts/packadic',
+                src    : [tsp('packadic', 'types.d.ts'), tsp('packadic', '**/*.ts')] //, tsp('packadic', 'util/*.ts'), tsp('packadic', 'app/*.ts'), tsp('packadic', '~bootstrap.ts')]
             },
             demo    : {
                 outDir: '<%= target.dest %>/assets/scripts/demo',
@@ -150,7 +150,7 @@ export = function (grunt) {
 
     [
         ['default', 'Default task', ['build']],
-        ['scripts', 'Build scripts', ['ts:packadic', 'copy:packadic_ts_js', 'copy:ts_demo', 'clean:nosrc']],
+        ['scripts', 'Build scripts', ['ts:packadic', 'copy:packadic_ts_js', 'copy:ts_demo', 'clean:nosrc', 'clean:basedir']],
         ['demo', 'Build dev demo', ['clean:all', 'copy:ts_jade', 'copy:ts_demo', 'jspm', 'sass:styles', 'jade:index', 'injector:index', 'scripts']],
 
 

@@ -33,27 +33,6 @@ System.config({
         }
     },
 
-    meta: {
-        "packadic"         : {
-            "format" : "global",
-            "exports": "packadic",
-            "globals": {
-                _: "lodash",
-                _s: "underscore.string",
-                EventEmitter2: "eventemitter2",
-                $: 'jquery',
-                Vue: 'vue'
-            },
-            "deps"   : [
-                "lodash",
-                "vue",
-                "lodash",
-                "jquery",
-                "eventemitter2",
-                "underscore.string"
-            ]
-        }
-    },
 
     map: {
         "ModuleLoader/es6-module-loader"            : "github:ModuleLoader/es6-module-loader@0.17.8",

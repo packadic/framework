@@ -1,309 +1,306 @@
+export interface ImmediateSuccessCB<T, TP> {
+    (value:T): TP;
+}
 
-module packadic.util {
-    export interface ImmediateSuccessCB<T, TP> {
-        (value:T): TP;
+export interface ImmediateErrorCB<TP> {
+    (err:any): TP;
+}
+
+export interface DeferredSuccessCB<T, TP> {
+    (value:T): ThenableInterface<TP>;
+}
+
+export interface DeferredErrorCB<TP> {
+    (error:any): ThenableInterface<TP>;
+}
+
+export interface ThenableInterface<T> {
+    then<TP>(successCB?:DeferredSuccessCB<T, TP>,
+             errorCB?:DeferredErrorCB<TP>): ThenableInterface<TP>;
+
+    then<TP>(successCB?:DeferredSuccessCB<T, TP>,
+             errorCB?:ImmediateErrorCB<TP>): ThenableInterface<TP>;
+
+    then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
+             errorCB?:DeferredErrorCB<TP>): ThenableInterface<TP>;
+
+    then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
+             errorCB?:ImmediateErrorCB<TP>): ThenableInterface<TP>;
+}
+
+export interface PromiseInterface<T> extends ThenableInterface<T> {
+    then<TP>(successCB?:DeferredSuccessCB<T, TP>,
+             errorCB?:DeferredErrorCB<TP>): PromiseInterface<TP>;
+
+    then<TP>(successCB?:DeferredSuccessCB<T, TP>,
+             errorCB?:ImmediateErrorCB<TP>): PromiseInterface<TP>;
+
+    then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
+             errorCB?:DeferredErrorCB<TP>): PromiseInterface<TP>;
+
+    then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
+             errorCB?:ImmediateErrorCB<TP>): PromiseInterface<TP>;
+
+
+    otherwise(errorCB?:DeferredErrorCB<T>) : PromiseInterface<T>;
+
+    otherwise(errorCB?:ImmediateErrorCB<T>): PromiseInterface<T>;
+
+    always<TP>(errorCB?:DeferredErrorCB<TP>) : PromiseInterface<TP>;
+
+    always<TP>(errorCB?:ImmediateErrorCB<TP>): PromiseInterface<TP>;
+}
+
+export interface DeferredInterface<T> {
+    resolve(value?:ThenableInterface<T>): DeferredInterface<T>;
+
+    resolve(value?:T): DeferredInterface<T>;
+
+    reject(error?:any): DeferredInterface<T>;
+
+    promise: PromiseInterface<T>;
+}
+
+export function create<T>():DeferredInterface<T> {
+    return new Deferred(DispatchDeferred);
+}
+
+export function when<T>(value?:ThenableInterface<T>):PromiseInterface<T>;
+
+export function when<T>(value?:T):PromiseInterface<T>;
+
+export function when(value?:any):any {
+    if (value instanceof Promise) {
+        return value;
+    }
+    return create().resolve(value).promise;
+}
+
+interface DispatcherInterface {
+    (closure:() => void): void;
+}
+
+function DispatchDeferred(closure:() => void) {
+    setTimeout(closure, 0);
+}
+
+enum PromiseState {Pending, ResolutionInProgress, Resolved, Rejected}
+
+class Client {
+    constructor(private _dispatcher:DispatcherInterface,
+                private _successCB:any,
+                private _errorCB:any) {
+        this.result = new Deferred<any>(_dispatcher);
     }
 
-    export interface ImmediateErrorCB<TP> {
-        (err:any): TP;
-    }
-
-    export interface DeferredSuccessCB<T, TP> {
-        (value:T): ThenableInterface<TP>;
-    }
-
-    export interface DeferredErrorCB<TP> {
-        (error:any): ThenableInterface<TP>;
-    }
-
-    export interface ThenableInterface<T> {
-        then<TP>(successCB?:DeferredSuccessCB<T, TP>,
-                 errorCB?:DeferredErrorCB<TP>): ThenableInterface<TP>;
-
-        then<TP>(successCB?:DeferredSuccessCB<T, TP>,
-                 errorCB?:ImmediateErrorCB<TP>): ThenableInterface<TP>;
-
-        then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
-                 errorCB?:DeferredErrorCB<TP>): ThenableInterface<TP>;
-
-        then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
-                 errorCB?:ImmediateErrorCB<TP>): ThenableInterface<TP>;
-    }
-
-    export interface PromiseInterface<T> extends ThenableInterface<T> {
-        then<TP>(successCB?:DeferredSuccessCB<T, TP>,
-                 errorCB?:DeferredErrorCB<TP>): PromiseInterface<TP>;
-
-        then<TP>(successCB?:DeferredSuccessCB<T, TP>,
-                 errorCB?:ImmediateErrorCB<TP>): PromiseInterface<TP>;
-
-        then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
-                 errorCB?:DeferredErrorCB<TP>): PromiseInterface<TP>;
-
-        then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
-                 errorCB?:ImmediateErrorCB<TP>): PromiseInterface<TP>;
-
-
-        otherwise(errorCB?:DeferredErrorCB<T>) : PromiseInterface<T>;
-
-        otherwise(errorCB?:ImmediateErrorCB<T>): PromiseInterface<T>;
-
-        always<TP>(errorCB?:DeferredErrorCB<TP>) : PromiseInterface<TP>;
-
-        always<TP>(errorCB?:ImmediateErrorCB<TP>): PromiseInterface<TP>;
-    }
-
-    export interface DeferredInterface<T> {
-        resolve(value?:ThenableInterface<T>): DeferredInterface<T>;
-
-        resolve(value?:T): DeferredInterface<T>;
-
-        reject(error?:any): DeferredInterface<T>;
-
-        promise: PromiseInterface<T>;
-    }
-
-    export function create<T>():DeferredInterface<T> {
-        return new Deferred(DispatchDeferred);
-    }
-
-    export function when<T>(value?:ThenableInterface<T>):PromiseInterface<T>;
-
-    export function when<T>(value?:T):PromiseInterface<T>;
-
-    export function when(value?:any):any {
-        if (value instanceof Promise) {
-            return value;
+    resolve(value:any, defer:boolean):void {
+        if (typeof(this._successCB) !== 'function') {
+            this.result.resolve(value);
+            return;
         }
-        return create().resolve(value).promise;
+
+        if (defer) {
+            this._dispatcher(() => this._dispatchCallback(this._successCB, value));
+        } else {
+            this._dispatchCallback(this._successCB, value);
+        }
     }
 
-    interface DispatcherInterface {
-        (closure:() => void): void;
-    }
-
-    function DispatchDeferred(closure:() => void) {
-        setTimeout(closure, 0);
-    }
-
-    enum PromiseState {Pending, ResolutionInProgress, Resolved, Rejected}
-
-    class Client {
-        constructor(private _dispatcher:DispatcherInterface,
-                    private _successCB:any,
-                    private _errorCB:any) {
-            this.result = new Deferred<any>(_dispatcher);
+    reject(error:any, defer:boolean):void {
+        if (typeof(this._errorCB) !== 'function') {
+            this.result.reject(error);
+            return;
         }
 
-        resolve(value:any, defer:boolean):void {
-            if (typeof(this._successCB) !== 'function') {
-                this.result.resolve(value);
-                return;
-            }
+        if (defer) {
+            this._dispatcher(() => this._dispatchCallback(this._errorCB, error));
+        } else {
+            this._dispatchCallback(this._errorCB, error);
+        }
+    }
 
-            if (defer) {
-                this._dispatcher(() => this._dispatchCallback(this._successCB, value));
+    private _dispatchCallback(callback:(arg:any) => any, arg:any):void {
+        var result:any,
+            then:any,
+            type:string;
+
+        try {
+            result = callback(arg);
+            this.result.resolve(result);
+        } catch (err) {
+            this.result.reject(err);
+            return;
+        }
+    }
+
+    result:DeferredInterface<any>;
+}
+
+class Deferred<T> implements DeferredInterface<T> {
+    constructor(private _dispatcher:DispatcherInterface) {
+        this.promise = new Promise<T>(this);
+    }
+
+    _then(successCB:any, errorCB:any):any {
+        if (typeof(successCB) !== 'function' && typeof(errorCB) !== 'function') {
+            return this.promise;
+        }
+
+        var client = new Client(this._dispatcher, successCB, errorCB);
+
+        switch (this._state) {
+            case PromiseState.Pending:
+            case PromiseState.ResolutionInProgress:
+                this._stack.push(client);
+                break;
+
+            case PromiseState.Resolved:
+                client.resolve(this._value, true);
+                break;
+
+            case PromiseState.Rejected:
+                client.reject(this._error, true);
+                break;
+        }
+
+        return client.result.promise;
+    }
+
+    resolve(value?:T):DeferredInterface<T>;
+
+    resolve(value?:PromiseInterface<T>):DeferredInterface<T>;
+
+    resolve(value?:any):DeferredInterface<T> {
+        if (this._state !== PromiseState.Pending) {
+            return this;
+        }
+
+        return this._resolve(value);
+    }
+
+    private _resolve(value:any):DeferredInterface<T> {
+        var type    = typeof(value),
+            then:any,
+            pending = true;
+
+        try {
+            if (value !== null &&
+                (type === 'object' || type === 'function') &&
+                typeof(then = value.then) === 'function') {
+                if (value === this.promise) {
+                    throw new TypeError('recursive resolution');
+                }
+
+                this._state = PromiseState.ResolutionInProgress;
+                then.call(value,
+                    (result:any):void => {
+                        if (pending) {
+                            pending = false;
+                            this._resolve(result);
+                        }
+                    },
+                    (error:any):void => {
+                        if (pending) {
+                            pending = false;
+                            this._reject(error);
+                        }
+                    }
+                );
             } else {
-                this._dispatchCallback(this._successCB, value);
-            }
-        }
+                this._state = PromiseState.ResolutionInProgress;
 
-        reject(error:any, defer:boolean):void {
-            if (typeof(this._errorCB) !== 'function') {
-                this.result.reject(error);
-                return;
-            }
+                this._dispatcher(() => {
+                    this._state = PromiseState.Resolved;
+                    this._value = value;
 
-            if (defer) {
-                this._dispatcher(() => this._dispatchCallback(this._errorCB, error));
-            } else {
-                this._dispatchCallback(this._errorCB, error);
-            }
-        }
+                    var i:number,
+                        stackSize = this._stack.length;
 
-        private _dispatchCallback(callback:(arg:any) => any, arg:any):void {
-            var result:any,
-                then:any,
-                type:string;
-
-            try {
-                result = callback(arg);
-                this.result.resolve(result);
-            } catch (err) {
-                this.result.reject(err);
-                return;
-            }
-        }
-
-        result:DeferredInterface<any>;
-    }
-
-    class Deferred<T> implements DeferredInterface<T> {
-        constructor(private _dispatcher:DispatcherInterface) {
-            this.promise = new Promise<T>(this);
-        }
-
-        _then(successCB:any, errorCB:any):any {
-            if (typeof(successCB) !== 'function' && typeof(errorCB) !== 'function') {
-                return this.promise;
-            }
-
-            var client = new Client(this._dispatcher, successCB, errorCB);
-
-            switch (this._state) {
-                case PromiseState.Pending:
-                case PromiseState.ResolutionInProgress:
-                    this._stack.push(client);
-                    break;
-
-                case PromiseState.Resolved:
-                    client.resolve(this._value, true);
-                    break;
-
-                case PromiseState.Rejected:
-                    client.reject(this._error, true);
-                    break;
-            }
-
-            return client.result.promise;
-        }
-
-        resolve(value?:T):DeferredInterface<T>;
-
-        resolve(value?:PromiseInterface<T>):DeferredInterface<T>;
-
-        resolve(value?:any):DeferredInterface<T> {
-            if (this._state !== PromiseState.Pending) {
-                return this;
-            }
-
-            return this._resolve(value);
-        }
-
-        private _resolve(value:any):DeferredInterface<T> {
-            var type    = typeof(value),
-                then:any,
-                pending = true;
-
-            try {
-                if (value !== null &&
-                    (type === 'object' || type === 'function') &&
-                    typeof(then = value.then) === 'function') {
-                    if (value === this.promise) {
-                        throw new TypeError('recursive resolution');
+                    for (i = 0; i < stackSize; i++) {
+                        this._stack[i].resolve(value, false);
                     }
 
-                    this._state = PromiseState.ResolutionInProgress;
-                    then.call(value,
-                        (result:any):void => {
-                            if (pending) {
-                                pending = false;
-                                this._resolve(result);
-                            }
-                        },
-                        (error:any):void => {
-                            if (pending) {
-                                pending = false;
-                                this._reject(error);
-                            }
-                        }
-                    );
-                } else {
-                    this._state = PromiseState.ResolutionInProgress;
-
-                    this._dispatcher(() => {
-                        this._state = PromiseState.Resolved;
-                        this._value = value;
-
-                        var i:number,
-                            stackSize = this._stack.length;
-
-                        for (i = 0; i < stackSize; i++) {
-                            this._stack[i].resolve(value, false);
-                        }
-
-                        this._stack.splice(0, stackSize);
-                    });
-                }
-            } catch (err) {
-                if (pending) {
-                    this._reject(err);
-                }
+                    this._stack.splice(0, stackSize);
+                });
             }
-
-            return this;
-        }
-
-        reject(error?:any):DeferredInterface<T> {
-            if (this._state !== PromiseState.Pending) {
-                return this;
+        } catch (err) {
+            if (pending) {
+                this._reject(err);
             }
-
-            return this._reject(error);
         }
 
-        private _reject(error?:any):DeferredInterface<T> {
-            this._state = PromiseState.ResolutionInProgress;
-
-            this._dispatcher(() => {
-                this._state = PromiseState.Rejected;
-                this._error = error;
-
-                var stackSize = this._stack.length,
-                    i         = 0;
-
-                for (i = 0; i < stackSize; i++) {
-                    this._stack[i].reject(error, false);
-                }
-
-                this._stack.splice(0, stackSize);
-            });
-
-            return this;
-        }
-
-        promise:PromiseInterface<T>;
-
-        private _stack:Array<Client> = [];
-        private _state               = PromiseState.Pending;
-        private _value:T;
-        private _error:any;
+        return this;
     }
 
-    class Promise<T> implements PromiseInterface<T> {
-        constructor(private _deferred:Deferred<T>) {
+    reject(error?:any):DeferredInterface<T> {
+        if (this._state !== PromiseState.Pending) {
+            return this;
         }
 
-        then<TP>(successCB?:DeferredSuccessCB<T, TP>,
-                 errorCB?:DeferredErrorCB<TP>):PromiseInterface<TP>;
+        return this._reject(error);
+    }
 
-        then<TP>(successCB?:DeferredSuccessCB<T, TP>,
-                 errorCB?:ImmediateErrorCB<TP>):PromiseInterface<TP>;
+    private _reject(error?:any):DeferredInterface<T> {
+        this._state = PromiseState.ResolutionInProgress;
 
-        then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
-                 errorCB?:DeferredErrorCB<TP>):PromiseInterface<TP>;
+        this._dispatcher(() => {
+            this._state = PromiseState.Rejected;
+            this._error = error;
 
-        then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
-                 errorCB?:ImmediateErrorCB<TP>):PromiseInterface<TP>;
+            var stackSize = this._stack.length,
+                i         = 0;
 
-        then(successCB:any, errorCB:any):any {
-            return this._deferred._then(successCB, errorCB);
-        }
+            for (i = 0; i < stackSize; i++) {
+                this._stack[i].reject(error, false);
+            }
 
-        otherwise(errorCB?:ImmediateErrorCB<T>):PromiseInterface<T>;
+            this._stack.splice(0, stackSize);
+        });
 
-        otherwise(errorCB?:DeferredErrorCB<T>):PromiseInterface<T>;
+        return this;
+    }
 
-        otherwise(errorCB:any):any {
-            return this._deferred._then(undefined, errorCB);
-        }
+    promise:PromiseInterface<T>;
 
-        always<TP>(errorCB?:ImmediateErrorCB<TP>):PromiseInterface<TP>;
+    private _stack:Array<Client> = [];
+    private _state               = PromiseState.Pending;
+    private _value:T;
+    private _error:any;
+}
 
-        always<TP>(errorCB?:DeferredErrorCB<TP>):PromiseInterface<TP>;
+class Promise<T> implements PromiseInterface<T> {
+    constructor(private _deferred:Deferred<T>) {
+    }
 
-        always<TP>(errorCB?:any):any {
-            return this._deferred._then(errorCB, errorCB);
-        }
+    then<TP>(successCB?:DeferredSuccessCB<T, TP>,
+             errorCB?:DeferredErrorCB<TP>):PromiseInterface<TP>;
+
+    then<TP>(successCB?:DeferredSuccessCB<T, TP>,
+             errorCB?:ImmediateErrorCB<TP>):PromiseInterface<TP>;
+
+    then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
+             errorCB?:DeferredErrorCB<TP>):PromiseInterface<TP>;
+
+    then<TP>(successCB?:ImmediateSuccessCB<T, TP>,
+             errorCB?:ImmediateErrorCB<TP>):PromiseInterface<TP>;
+
+    then(successCB:any, errorCB:any):any {
+        return this._deferred._then(successCB, errorCB);
+    }
+
+    otherwise(errorCB?:ImmediateErrorCB<T>):PromiseInterface<T>;
+
+    otherwise(errorCB?:DeferredErrorCB<T>):PromiseInterface<T>;
+
+    otherwise(errorCB:any):any {
+        return this._deferred._then(undefined, errorCB);
+    }
+
+    always<TP>(errorCB?:ImmediateErrorCB<TP>):PromiseInterface<TP>;
+
+    always<TP>(errorCB?:DeferredErrorCB<TP>):PromiseInterface<TP>;
+
+    always<TP>(errorCB?:any):any {
+        return this._deferred._then(errorCB, errorCB);
     }
 }

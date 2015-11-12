@@ -5,9 +5,6 @@
     "path": "src/typings/tsd",
     "bundle": "src/typings/tsd/tsd.d.ts",
     "installed": {
-        "vue/vue.d.ts": {
-            "commit": "708609e0764daeb5eb64104af7aca50c520c4e6e"
-        },
         "fs-extra/fs-extra.d.ts": {
             "commit": "418ef25d7f814ac2544ee65726b86bf929260212"
         },

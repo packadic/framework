@@ -1,5 +1,4 @@
 
-/// <reference path="vue/vue.d.ts" />
 /// <reference path="async/async.d.ts" />
 /// <reference path="es6-shim/es6-shim.d.ts" />
 /// <reference path="fs-extra/fs-extra.d.ts" />
