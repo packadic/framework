@@ -38,70 +38,70 @@ html(lang="en")
 
 
     block body
-        body.page-loading(v-page-loader="showPageLoader", class=bodyClass)
-                #page-loader(v-if="showPageLoader", transition="fade")
-                    .loader.loader-page
+        body.page-loading(v-page-loader="showPageLoader", v-bind:class="layout.body.classes.toString()")
+            #page-loader(v-if="showPageLoader", transition="fade")
+                .loader.loader-page
 
-                block page-header
-                    .page-header.navbar(v-if="!showPageLoader", transition="fade", class=pageHeaderClass)
-                        block page-header-inner
-                            .page-header-inner
-                                block header-logo
-                                    .page-logo
-                                        .logo-packadic.pull-left
-                                            block header-logo-inner
-                                                | Codex
-                                        block header-sidebar-toggler
-                                            .menu-toggler.sidebar-toggler(data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
+            block page-header
+                .page-header.navbar(v-if="!showPageLoader", transition="fade", class=pageHeaderClass)
+                    block page-header-inner
+                        .page-header-inner
+                            block header-logo
+                                .page-logo
+                                    .logo-packadic.pull-left(v-html="layout.header.title")
+                                        block header-logo-inner
+                                            | Codex
+                                    block header-sidebar-toggler
+                                        .menu-toggler.sidebar-toggler(v-sidebar-toggler, data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
 
-                                block header-actions
-                                    .page-actions
-                                        include ../partials/header-actions
+                            block header-actions
+                                .page-actions
+                                    include ../partials/header-actions
 
-                                block header-responsive-toggler
-                                    a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
+                            block header-responsive-toggler
+                                a(href='javascript:;', data-toggle='collapse', data-target='.navbar-collapse').menu-toggler.responsive-toggler
 
-                                block header-right
-                                    .pull-right
-                                        .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
+                            block header-right
+                                .pull-right
+                                    .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
 
-                    .clearfix
-
-
-
-                block page-container
-                    .page-container(v-if="!showPageLoader", transition="fade")
-                        .page-sidebar-wrapper
-                            .page-sidebar.navbar-collapse.collapse
-                                block page-sidebar
-                                    ul.page-sidebar-menu(class=sidebarClass)
-                                        block page-sidebar-menu
-                                            include ../partials/sidebar-items
+                .clearfix
 
 
-                        .page-content-wrapper
-                            block page-content-wrapper
-                                .page-content
-                                    .page-head(class=pageHeadClass)
-                                        .page-title
-                                            h1
-                                                block page-title
-                                    ul.page-breadcrumb.breadcrumb
-                                        block breadcrumb
-                                    .page-content-seperator
-                                    block page-content
-                                        .page-content-inner
-                                            block content
+
+            block page-container
+                .page-container(v-if="!showPageLoader", transition="fade")
+                    .page-sidebar-wrapper
+                        block page-sidebar
+                            sidebar
+                            //.page-sidebar.navbar-collapse.collapse
+                                ul.page-sidebar-menu
+                                    block page-sidebar-menu
+                                        include ../partials/sidebar-items
 
 
-                block page-footer
-                    .page-footer(v-if="!showPageLoader", transition="fade")
-                        .page-footer-inner
-                            block page-footer-inner
-                                - var year = (new Date()).getFullYear()
-                                | Copyright &copy; Codex #{year}
-                        block scroll-to-top
-                            .scroll-to-top
-                                i.fa.fa-level-up
+                    .page-content-wrapper
+                        block page-content-wrapper
+                            .page-content
+                                .page-head(class=pageHeadClass)
+                                    .page-title
+                                        h1
+                                            block page-title
+                                ul.page-breadcrumb.breadcrumb
+                                    block breadcrumb
+                                .page-content-seperator
+                                block page-content
+                                    .page-content-inner
+                                        block content
+
+
+            block page-footer
+                .page-footer(v-if="!showPageLoader", transition="fade")
+                    .page-footer-inner(v-html="layout.footer.text")
+                        - var year = (new Date()).getFullYear()
+                        | Copyright &copy; Codex #{year}
+                    block scroll-to-top
+                        .scroll-to-top
+                            i.fa.fa-level-up
 
 

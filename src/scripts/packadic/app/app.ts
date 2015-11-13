@@ -2,21 +2,51 @@ import Vue from 'vue';
 import * as _ from 'lodash';
 import $ from 'jquery';
 import EventEmitter2 from 'eventemitter2';
-
 import {
     applyMixins,defined,
     create as createPromise, PromiseInterface, DeferredInterface,
-    ConfigObject,IConfigProperty,
+    ConfigObject,IConfigProperty, IConfigObserver
 } from './../lib';
 
-Vue.config.async = true;
-Vue.config.debug = true;
+import {log, out} from './../lib/logger';
+out.addDefaults();
+out.macro('title', 'Awesome!!');
+
+out.macro('title', 'Awesome!!', 'With description');
 
 
-export {Vue}
+export {Vue, log, out}
 
 export enum AppState {
     PRE_INIT, INITIALISING, INITIALISED, STARTING, STARTED
+}
+
+//_.cloneDeep(Array.prototype
+class BodyClass extends Array {
+    constructor(){
+        super();
+        this.push('page-header-fixed', 'page-footer-fixed', 'page-edged')
+    }
+    has(name:string){
+        return this.indexOf(name) !== -1;
+    }
+    remove(name:string):BodyClass{
+        if(this.has(name)){
+            this.splice(this.indexOf(name), 1);
+        }
+        return this;
+    }
+    ensure(name:string, shouldExist:boolean=true):BodyClass{
+        if(shouldExist && !this.has(name)){
+            this.push(name);
+        } else if(!shouldExist && this.has(name)){
+            this.remove(name);
+        }
+        return this;
+    }
+    toString(){
+        return this.join(' ');
+    }
 }
 
 export class App extends Vue {
@@ -32,15 +62,16 @@ export class App extends Vue {
     protected _events:EventEmitter2;
 
     public static defaults:Object = {
-        debug     : false,
-        app       : {
-            mount: 'html',
+        debug: false,
+        app  : {
+            mount : 'html',
             loader: {
-                enabled: true,
+                enabled        : true,
                 autoHideOnStart: true
             }
         }
     };
+
     protected _config:ConfigObject;
     public config:IConfigProperty;
 
@@ -53,9 +84,22 @@ export class App extends Vue {
         return this._state;
     }
 
+    public get out() {
+        return out;
+    }
+    public get log() {
+        return log;
+    }
+
     // Vue.js data
     public $data:any = {
-        showPageLoader: true
+        showPageLoader: true,
+        layout        : {
+            body  : {classes: new BodyClass()},
+            footer: {fixed: true, text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
+            header: {fixed: true, title: 'Codex'},
+            page  : {edged: true, boxed: false}
+        }
     };
 
 
@@ -72,9 +116,11 @@ export class App extends Vue {
             throw new Error('Trying to create a new instance on App while its a singleton')
         }
 
+        Vue.config.async = true;
+        Vue.config.debug = true;
         this._config = new ConfigObject(_.merge(Vue.config, App.defaults));
         this.config  = ConfigObject.makeProperty(this._config);
-
+        var obs:IConfigObserver = ConfigObject.makeObserver(this._config);
     }
 
     public init(options:Object = {}):App {
@@ -82,7 +128,7 @@ export class App extends Vue {
         this._state = AppState.INITIALISING;
 
         this.config.merge(options);
-        if(this.config('app.loader.enabled')) {
+        if (this.config('app.loader.enabled')) {
             this.$set('showPageLoader', false);
         }
 
@@ -99,7 +145,7 @@ export class App extends Vue {
         $(() => {
             this.$mount(this.config('app.mount'));
             this._state = AppState.STARTED;
-            if(this.config('app.loader.enabled') && this.config('app.loader.autoHideOnStart')) {
+            if (this.config('app.loader.enabled') && this.config('app.loader.autoHideOnStart')) {
                 this.$set('showPageLoader', false);
             }
             this.emit('start:after');
@@ -110,17 +156,18 @@ export class App extends Vue {
         return defer.promise;
     }
 
-    public mergeData(newData:Object={}){
-        Object.keys(newData).forEach((key:string) => {
-            if(typeof this.$get(key) !== 'undefined') {
-                this.$set(key, newData[key]);
-            } else {
-                this.$set(key, newData[key]);
-            }
+    public mergeData(newData:Object = {}) {
+        var data:any = {};
+        Object.keys(this.$data).forEach((key:string)=> {
+            data[key] = this.$get(key);
+        });
+
+        data = _.merge(data, newData);
+
+        _.each(data, (item:any, key:any) => {
+            this.$set(key, item);
         });
     }
-
-
 
 
     public on(event:string, listener:Function):App {

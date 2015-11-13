@@ -25,13 +25,18 @@
       "jquery": "github:components/jquery@^2.1.4",
       "json": "github:systemjs/plugin-json@^0.1.0",
       "lodash": "npm:lodash@^3.10.1",
+      "loglevel": "npm:loglevel@^1.4.0",
+      "object.observe": "npm:object.observe@^0.2.6",
+      "observe-js": "github:Polymer/observe-js@^0.5.7",
       "raw": "github:matthewbauer/plugin-raw@^1.0.0",
       "reflect-metadata": "npm:reflect-metadata@^0.1.2",
       "sass-material-colors": "npm:sass-material-colors@^0.0.5",
       "scss": "github:mobilexag/plugin-sass@^0.0.10",
       "text": "github:systemjs/plugin-text@^0.0.2",
       "underscore.string": "npm:underscore.string@^3.2.2",
-      "vue": "github:vuejs/vue@^1.0.7",
+      "vue": "github:vuejs/vue@^1.0.8",
+      "vue-router": "github:vuejs/vue-router@^0.7.5",
+      "vue-strap": "npm:vue-strap@^0.1.2",
       "zone.js": "npm:zone.js@^0.5.8"
     },
     "devDependencies": {
@@ -51,8 +56,14 @@
           "scss"
         ]
       },
-      "github:vuejs/vue@1.0.7": {
+      "github:vuejs/vue-router@0.7.5": {
+        "main": "dist/vue-router.js"
+      },
+      "github:vuejs/vue@1.0.8": {
         "main": "dist/vue.js"
+      },
+      "npm:object.observe@0.2.6": {
+        "main": "dist/object-observe.js"
       }
     }
   },

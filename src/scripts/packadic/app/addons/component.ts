@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import {App,Vue,AppState,app} from './../../index';
+import Vue from 'vue';
+import {App,AppState,app} from './../../index';
 import {defined,kindOf,MetaStore} from './../../lib';
 
 MetaStore.template('component', {
@@ -15,12 +16,12 @@ export function Component(id:string, parent?:any):ClassDecorator {
     return (target:any) => {
         var meta:any    = MetaStore.for(target.prototype, 'component');
         var options:any = {
-            template  : '',
-            components: {},
-            props     : meta.store('props'),
-            data      : {},
-            methods   : {},
-            events    : meta.store('events'),
+            template: '',
+            computed: {},
+            props   : meta.store('props'),
+            data    : {},
+            methods : {},
+            events  : meta.store('events'),
         };
 
 
@@ -44,10 +45,16 @@ export function Component(id:string, parent?:any):ClassDecorator {
                 console.log('added method', key);
             }
             // DATA
-            else if (meta.store('propKeys').indexOf(key) === -1) {
-                options.data[key] = desc.value;
-                console.log('added data', key);
-            }
+            // if getter and setter are defied, pass the function as computed property
+            else if (typeof desc.set === 'function')
+                options.computed[key] = {
+                    get: desc.get,
+                    set: desc.set
+                };
+
+            // if the method only has a getter, just put the getter to the component
+            else if (typeof desc.get === 'function')
+                options.computed[key] = desc.get;
         });
 
         // DATA
@@ -72,23 +79,30 @@ export function Component(id:string, parent?:any):ClassDecorator {
             console.log('foudn "data" and added it', data);
         }
 
-        var data = _.cloneDeep(options.data);
-        options.data = () => { return data; };
+        var data     = _.cloneDeep(options.data);
+        options.data = () => {
+            return data;
+        };
 
-        var CustomComponent = Vue.extend(options);
-
-        if (!defined(parent)) {
-            Vue.component(id, CustomComponent);
+        if (defined(parent) && parent !== false) {
+            options.parent = parent;
         }
 
-        console.log('Component', id, options);
-        MetaStore.for(target.prototype, 'component').cleanTarget();
+        Vue.component(id, options);
+        //var CustomComponent = Vue.extend(options);
+        //if (!defined(parent) || parent === false) {
+        //    Vue.component(id, CustomComponent);
+        //}
+
+
+        console.log('Component', id, options, meta);
+        //MetaStore.for(target.prototype, 'component').cleanTarget();
         return target;
     }
 }
 
 export function Handles(event?:string):MethodDecorator {
-    return (target:any, key:string | symbol, desc:TypedPropertyDescriptor<any>) => {
+    return (target:any, key:string , desc:TypedPropertyDescriptor<any>) => {
         var meta:MetaStore = MetaStore.for(target, 'component');
         event              = event || key;
 
@@ -139,7 +153,7 @@ export class BaseComponent {
     $data:any;
 
     /** The direct child components of the current instance. */
-    $children:Array<Vue>;
+    $children:Array<any>;
 
     /** The DOM element that the Vue instance is managing. Note that for Fragment Instances, vm.$el will return an anchor node that indicates the starting position of the fragment. */
     $el:HTMLElement;
@@ -148,10 +162,10 @@ export class BaseComponent {
     $options:any;
 
     /** The parent instance, if the current instance has one. */
-    $parent:Vue;
+    $parent:BaseComponent;
 
     /** The root Vue instance of the current component tree. If the current instance has no parents this value will be itself. */
-    $root:Vue;
+    $root:BaseComponent;
 
     // methods: http://vuejs.org/api/instance-methods.html
     $add(key:string, val:any):void {

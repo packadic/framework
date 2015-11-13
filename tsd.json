@@ -25,6 +25,9 @@
         },
         "es6-shim/es6-shim.d.ts": {
             "commit": "44cbde48eecd1918ed54b3be49a9752688b6c65a"
+        },
+        "loglevel/loglevel.d.ts": {
+            "commit": "4f7b7e01d3a9622bfab0bef469e169529e60c66b"
         }
     }
 }

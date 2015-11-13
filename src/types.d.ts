@@ -5,6 +5,7 @@
 /// <reference path="typings/underscore.string.d.ts" />
 /// <reference path="typings/jspm.d.ts" />
 /// <reference path="typings/vue.d.ts" />
+/// <reference path="typings/observe-js.d.ts" />
 declare module 'globule' {
     var asdf:any;
     export = asdf
@@ -28,4 +29,9 @@ interface BrowserNodeGlobal {
     clearTimeout: Function;
     setInterval: Function;
     clearInterval: Function;
+}
+
+declare module 'vue-router' {
+    var v:Object;
+    export default v;
 }

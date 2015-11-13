@@ -11,6 +11,10 @@ import {
 import './directives';
 import './transitions';
 import './components';
+import './sidebar/sidebar.ts';
+
+
+
 
 
 window['app'] = app;
