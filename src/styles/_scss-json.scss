@@ -15,7 +15,11 @@ $scss-json: (
         shadows: $enable-shadows,
         gradients: $enable-gradients,
         transitions: $enable-transitions,
-        hover-media-query: $enable-hover-media-query,
+        hover-media-query: $enable-hover-media-query
+    ),
+    dimensions: (
+        sidebar-width: $sidebar-width,
+        sidebar-collapsed-width: $sidebar-collapsed-width
     )
 );
 

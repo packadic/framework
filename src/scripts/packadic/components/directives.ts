@@ -1,9 +1,9 @@
 
 import * as _ from 'lodash';
 import {
-    App,Vue,app,
+    App,Vue,
     Directive,ParamWatcher,BaseDirective
-} from './../packadic/index';
+} from './../app';
 
 
 /* */

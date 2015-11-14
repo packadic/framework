@@ -5,14 +5,16 @@ import EventEmitter2 from 'eventemitter2';
 import {
     applyMixins,defined,
     create as createPromise, PromiseInterface, DeferredInterface,
-    ConfigObject,IConfigProperty, IConfigObserver
+    ConfigObject,IConfigProperty, IConfigObserver,
+    log, out, BrowserPrettyConsole
 } from './../lib';
+//import vuestrap from 'vue-strap';
+//var aside = vuestrap.aside;
 
-import {log, out} from './../lib/logger';
-out.addDefaults();
-out.macro('title', 'Awesome!!');
 
-out.macro('title', 'Awesome!!', 'With description');
+Vue.config.async = true;
+Vue.config.debug = true;
+
 
 
 export {Vue, log, out}
@@ -59,10 +61,19 @@ export class App extends Vue {
         return App._instance;
     }
 
+    public get log() : typeof log {
+        return log;
+    }
+    public get out() : BrowserPrettyConsole {
+        return out;
+    }
     protected _events:EventEmitter2;
 
     public static defaults:Object = {
         debug: false,
+        logging: {
+            level: log.levels.DEBUG
+        },
         app  : {
             mount : 'html',
             loader: {
@@ -71,27 +82,14 @@ export class App extends Vue {
             }
         }
     };
-
     protected _config:ConfigObject;
     public config:IConfigProperty;
-
-    public get debugging() {
-        return this.config('debug');
-    }
 
     protected _state:AppState = AppState.PRE_INIT;
     public get state() {
         return this._state;
     }
 
-    public get out() {
-        return out;
-    }
-    public get log() {
-        return log;
-    }
-
-    // Vue.js data
     public $data:any = {
         showPageLoader: true,
         layout        : {
@@ -99,12 +97,13 @@ export class App extends Vue {
             footer: {fixed: true, text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
             header: {fixed: true, title: 'Codex'},
             page  : {edged: true, boxed: false}
+        },
+        sidebar: {
+            items: [],
         }
     };
 
-
     constructor() {
-        //call super with false to defer compilation in Vue (dev build)
         super();
         this._events = new EventEmitter2({
             wildcard    : true,
@@ -116,11 +115,15 @@ export class App extends Vue {
             throw new Error('Trying to create a new instance on App while its a singleton')
         }
 
-        Vue.config.async = true;
-        Vue.config.debug = true;
+        this.out.addDefaults();
+        this.out.macro('title', 'Packadic');
+        this.out.macro('alert', 'v1.0.0-alpha');
+
         this._config = new ConfigObject(_.merge(Vue.config, App.defaults));
         this.config  = ConfigObject.makeProperty(this._config);
         var obs:IConfigObserver = ConfigObject.makeObserver(this._config);
+
+
     }
 
     public init(options:Object = {}):App {

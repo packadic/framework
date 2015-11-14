@@ -7,3 +7,5 @@
 /// <reference path="node/node.d.ts" />
 /// <reference path="systemjs/systemjs.d.ts" />
 /// <reference path="loglevel/loglevel.d.ts" />
+/// <reference path="createjs-lib/createjs-lib.d.ts" />
+/// <reference path="tweenjs/tweenjs.d.ts" />

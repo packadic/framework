@@ -120,7 +120,7 @@ export = function (grunt) {
                 files: {
                     './<%= target.dest %>/index.html': ['<%= target.dest %>/jspm_packages/system.src.js', '<%= target.dest %>/system.config.js',
                         ]
-                        .concat(['<%= target.dest %>/assets/styles/stylesheet.css', '<%= target.dest %>/assets/styles/themes/theme-default.css'])
+                        .concat(['<%= target.dest %>/assets/styles/stylesheet.css', '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css'])
                 }
             }
         },
@@ -133,6 +133,7 @@ export = function (grunt) {
             options   : {livereload: true},
             jade_index: {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
             jadescripts: {files: ['src/scripts/**/*.jade'], tasks: ['copy:ts_jade']},
+            sass: {files: ['src/styles/**/*.{sass,scss}'], tasks: ['sass:styles']},
             //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
             scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
             demoscripts   : {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},

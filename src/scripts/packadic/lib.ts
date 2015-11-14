@@ -8,7 +8,9 @@ export * from './lib/JSON';
 export * from './lib/material';
 export * from './lib/metastore';
 
-export * from './lib/obj';
+export * from './lib/object';
 export * from './lib/promise';
 export * from './lib/version';
 
+
+export * from './lib/logger';

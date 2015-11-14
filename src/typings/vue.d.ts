@@ -68,6 +68,8 @@ declare module vuejs {
         $data:{};
         $options:{};
         $parent:Vue;
+        $refs:any;
+        $children:{[name:string]:Vue};
         $root:Vue;
         $:{};
         $$:{};
@@ -158,6 +160,9 @@ declare module vuejs {
 
         static use(plugin:{}, ...args:any[]):Vue;
         static use(plugin:VueCallback, ...args:any[]):Vue;
+
+        static set(object:any, key:any, value:any):void;
+
 
         /**
          * exports members.

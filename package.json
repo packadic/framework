@@ -17,6 +17,7 @@
       "babylon": "github:BabylonJS/Babylon.js@^2.2.0",
       "bootstrap": "github:twbs/bootstrap@v4-dev",
       "bourbon": "npm:bourbon@^4.2.6",
+      "createjs": "github:CreateJS/TweenJS@^0.6.1",
       "css": "github:systemjs/plugin-css@^0.1.19",
       "es6-shim": "github:es-shims/es6-shim@^0.33.6",
       "eventemitter2": "github:asyncly/EventEmitter2@^0.4.14",
@@ -33,10 +34,11 @@
       "sass-material-colors": "npm:sass-material-colors@^0.0.5",
       "scss": "github:mobilexag/plugin-sass@^0.0.10",
       "text": "github:systemjs/plugin-text@^0.0.2",
+      "tweenjs": "github:CreateJS/TweenJS@^0.6.1",
       "underscore.string": "npm:underscore.string@^3.2.2",
       "vue": "github:vuejs/vue@^1.0.8",
       "vue-router": "github:vuejs/vue-router@^0.7.5",
-      "vue-strap": "npm:vue-strap@^0.1.2",
+      "vue-strap": "github:amanpatel/vue-strap@master",
       "zone.js": "npm:zone.js@^0.5.8"
     },
     "devDependencies": {
@@ -64,6 +66,9 @@
       },
       "npm:object.observe@0.2.6": {
         "main": "dist/object-observe.js"
+      },
+      "github:amanpatel/vue-strap@master": {
+        "main": "dist/vue-strap.js"
       }
     }
   },

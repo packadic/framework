@@ -45,6 +45,7 @@ System.config({
     "bootstrap": "github:twbs/bootstrap@v4-dev",
     "bourbon": "npm:bourbon@4.2.6",
     "core-js": "npm:core-js@1.2.6",
+    "createjs": "github:CreateJS/TweenJS@0.6.1",
     "css": "github:systemjs/plugin-css@0.1.19",
     "es6-shim": "github:es-shims/es6-shim@0.33.11",
     "eventemitter2": "github:asyncly/EventEmitter2@0.4.14",
@@ -63,11 +64,12 @@ System.config({
     "text": "github:systemjs/plugin-text@0.0.2",
     "traceur": "github:jmcriffey/bower-traceur@0.0.92",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.92",
+    "tweenjs": "github:CreateJS/TweenJS@0.6.1",
     "typescript": "npm:typescript@1.6.2",
     "underscore.string": "npm:underscore.string@3.2.2",
     "vue": "github:vuejs/vue@1.0.8",
     "vue-router": "github:vuejs/vue-router@0.7.5",
-    "vue-strap": "npm:vue-strap@0.1.2",
+    "vue-strap": "github:amanpatel/vue-strap@master",
     "zone.js": "npm:zone.js@0.5.8",
     "github:johnsoftek/plugin-jade@0.5.1": {
       "jade-compiler": "npm:jade@1.11.0"
@@ -367,16 +369,7 @@ System.config({
       "inherits": "npm:inherits@2.0.1",
       "systemjs-json": "github:systemjs/plugin-json@0.1.0"
     },
-    "npm:envify@3.4.0": {
-      "jstransform": "npm:jstransform@10.1.0",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "through": "npm:through@2.3.8"
-    },
     "npm:es6-promise@3.0.2": {
-      "process": "github:jspm/nodelibs-process@0.1.2"
-    },
-    "npm:esprima-fb@13001.1001.0-dev-harmony-fb": {
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:evp_bytestokey@1.0.0": {
@@ -414,14 +407,6 @@ System.config({
       "uglify-js": "npm:uglify-js@2.5.0",
       "void-elements": "npm:void-elements@2.0.1",
       "with": "npm:with@4.0.3"
-    },
-    "npm:jstransform@10.1.0": {
-      "base62": "npm:base62@0.1.1",
-      "buffer": "github:jspm/nodelibs-buffer@0.1.0",
-      "esprima-fb": "npm:esprima-fb@13001.1001.0-dev-harmony-fb",
-      "fs": "github:jspm/nodelibs-fs@0.1.2",
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "source-map": "npm:source-map@0.1.31"
     },
     "npm:jstransformer@0.0.2": {
       "assert": "github:jspm/nodelibs-assert@0.1.0",
@@ -556,10 +541,6 @@ System.config({
     "npm:string_decoder@0.10.31": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0"
     },
-    "npm:through@2.3.8": {
-      "process": "github:jspm/nodelibs-process@0.1.2",
-      "stream": "github:jspm/nodelibs-stream@0.1.0"
-    },
     "npm:transformers@2.1.0": {
       "css": "npm:css@1.0.8",
       "fs": "github:jspm/nodelibs-fs@0.1.2",
@@ -610,13 +591,6 @@ System.config({
     },
     "npm:void-elements@2.0.1": {
       "http": "github:jspm/nodelibs-http@1.7.1"
-    },
-    "npm:vue-strap@0.1.2": {
-      "vue": "npm:vue@0.12.16"
-    },
-    "npm:vue@0.12.16": {
-      "envify": "npm:envify@3.4.0",
-      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:window-size@0.1.0": {
       "process": "github:jspm/nodelibs-process@0.1.2",

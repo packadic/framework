@@ -146,3 +146,64 @@
 a[ui-sref]{
     &:hover, &:hover * { cursor: hand }
 }
+
+$sidebar-animation-collapse-speed: 400ms;
+
+@media (min-width: 992px) {
+    .page-sidebar {
+        width: $sidebar-width;
+        transition: $sidebar-animation-collapse-speed linear width;
+
+        .page-sidebar-closed & {
+            width: $sidebar-collapsed-width;
+            transition: $sidebar-animation-collapse-speed linear width;
+        }
+
+    }
+
+    .page-sidebar-menu {
+        > li a span.title {
+            position: absolute;
+            visibility: visible;
+            opacity: 1;
+            white-space: pre;
+            letter-spacing: 1px;
+            transition: $sidebar-animation-collapse-speed / 2 linear all;
+        }
+        .page-sidebar-closed & > li > a {
+
+            &:hover {
+                width: $sidebar-width;
+                span.title {
+                    padding-left: 20px;
+                }
+            }
+
+            &:not(:hover) span.title {
+                opacity: 0;
+                visibility: hidden;
+                letter-spacing: -5px;
+                transition: $sidebar-animation-collapse-speed / 2 linear all;
+            }
+        }
+    }
+
+
+    .page-content {
+        margin-left: $sidebar-width;
+        transition: $sidebar-animation-collapse-speed linear margin-left;
+        & .page-sidebar-closed {
+            margin-left: $sidebar-collapsed-width;
+            transition: $sidebar-animation-collapse-speed linear margin-left;
+        }
+    }
+}
+
+
+
+.page-sidebar {
+
+}
+.page-content-wrapper {
+
+}

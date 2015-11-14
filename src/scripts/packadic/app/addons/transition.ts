@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
-import {App,Vue,AppState,app} from './../../index';
+import {App,Vue,AppState} from './../../index';
 import {defined,kindOf,MetaStore} from './../../lib';
 
 export function Transition(id:string, css:boolean = true):ClassDecorator {
 
     return (target:any) => {
-        console.log('Transition', id, target.prototype);
+        console.groupCollapsed('Transition: ' + id);
+        console.log(id, target.prototype);
 
         var options:any = {css: css};
 
@@ -24,7 +25,8 @@ export function Transition(id:string, css:boolean = true):ClassDecorator {
         });
 
         Vue.transition(id, options);
-        console.log('transition', id, options);
+        console.log('options', options);
+        console.groupEnd();
         return target;
     }
 

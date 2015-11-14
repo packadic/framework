@@ -1,0 +1,7 @@
+li(v-for="item in items")
+    a(href="#")
+        i(v-if="item.icon", class="{{item.icon}}")
+        span.title(v-text="item.title")
+        span.arrow(v-if="item.hasChildren")
+
+

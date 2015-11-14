@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import Vue from 'vue';
-import {App,AppState,app} from './../../index';
+import {App,AppState} from './../../index';
 import {defined,kindOf,MetaStore} from './../../lib';
 
 MetaStore.template('component', {
@@ -24,13 +24,13 @@ export function Component(id:string, parent?:any):ClassDecorator {
             events  : meta.store('events'),
         };
 
+        console.groupCollapsed('Component: ' + id);
 
         // PROPERTIES. go over the statics. properties like: el, template, data
         Object.keys(target).forEach(function (key) {
             options[key] = target[key];
             console.log('Component key', key);
         });
-
 
         var ignoreMethods:string[] =
                 ['constructor', '_decoratorMetaStore', 'configurable', 'data']
@@ -66,8 +66,6 @@ export function Component(id:string, parent?:any):ClassDecorator {
             console.log('found data property, adding', key);
         });
 
-        //console.log('Object.getOwnPropertyNames(target', Object.getOwnPropertyNames(new target()));
-
         // MERGE DATA
         if (cls.hasOwnProperty('data')) {
             var desc:any = Object.getOwnPropertyDescriptor(cls, 'data');
@@ -88,15 +86,13 @@ export function Component(id:string, parent?:any):ClassDecorator {
             options.parent = parent;
         }
 
-        Vue.component(id, options);
-        //var CustomComponent = Vue.extend(options);
-        //if (!defined(parent) || parent === false) {
-        //    Vue.component(id, CustomComponent);
-        //}
-
+        var CustomComponent = Vue.extend(options);
+        Vue.component(id, CustomComponent);
 
         console.log('Component', id, options, meta);
         //MetaStore.for(target.prototype, 'component').cleanTarget();
+
+        console.groupEnd();
         return target;
     }
 }
@@ -110,7 +106,7 @@ export function Handles(event?:string):MethodDecorator {
             meta.store.set('events.' + event, desc.value);
             meta.storePush('eventMethodKeys', key);
         }
-        console.log('Handles ', event, target);
+        //console.log('Handles ', event, target);
         return target;
     }
 }

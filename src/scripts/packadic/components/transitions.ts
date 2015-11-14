@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import {
-    App,Vue,app,
+    App,Vue,
     Transition,ITransition
-} from './../packadic/index';
+} from './../app';
 
 
 /* */

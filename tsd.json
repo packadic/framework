@@ -28,6 +28,12 @@
         },
         "loglevel/loglevel.d.ts": {
             "commit": "4f7b7e01d3a9622bfab0bef469e169529e60c66b"
+        },
+        "tweenjs/tweenjs.d.ts": {
+            "commit": "4f7b7e01d3a9622bfab0bef469e169529e60c66b"
+        },
+        "createjs-lib/createjs-lib.d.ts": {
+            "commit": "4f7b7e01d3a9622bfab0bef469e169529e60c66b"
         }
     }
 }

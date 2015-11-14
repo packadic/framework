@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import {App,Vue,AppState,app} from './../../index';
+import {App,Vue,AppState} from './../../index';
 import {defined,kindOf,MetaStore} from './../../lib';
 
 MetaStore.template('directive', {
@@ -18,7 +18,9 @@ MetaStore.template('directive', {
 export function Directive(id:string, elementDirective:boolean=false):ClassDecorator {
 
     return (target:any) => {
-        console.log('Directive', id, target.prototype);
+
+        console.groupCollapsed('Directive: ' + id);
+        console.log('prototype', target.prototype);
 
         var options:any = MetaStore.for(target.prototype, 'directive').store.get();
 
@@ -45,18 +47,18 @@ export function Directive(id:string, elementDirective:boolean=false):ClassDecora
         console.log('Directive', id, options);
 
         MetaStore.for(target.prototype).cleanTarget();
+        console.groupEnd();
         return target;
     }
 
 }
 
 export function ParamWatcher(id?:string):MethodDecorator {
-    console.log('ParamWatcher', id);
+
     return (target:any, key:any) => {
         id = id || key;
-
+        console.log('ParamWatcher', id);
         MetaStore.for(target, 'directive').store.set('paramWatchers.' + id,  target[key]);
-        console.log('ParamWatcher', target);
         return target;
     }
 }
