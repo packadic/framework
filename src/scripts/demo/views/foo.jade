@@ -1,2 +1,11 @@
 page(title='Foo', subtitle='This is foo')
+    page-breadcrumbs(slot='breadcrumb')
+        page-breadcrumb(route="home") Home
+        page-breadcrumb(path="/foo") Foo
+
     p This is foo
+    alink(path='/asdfbar', class='btn btn-primary', data-test='asdf') Asdfbar path
+    alink(path='/foo', class='btn btn-success') Foo path
+    alink(route='home', class='btn btn-warning') Home route
+    alink(route='bar', class='btn btn-info') Bar route
+    alink(href='https://github.com', class='btn btn-secondary') Some href

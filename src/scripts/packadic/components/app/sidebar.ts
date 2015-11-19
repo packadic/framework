@@ -26,7 +26,7 @@ export class SidebarItemComponent extends BaseComponent {
 
         <h3 v-if="isType('heading')">{{title}}</h3>
 
-        <a v-if="isType('folder')" href="#" v-on:click="toggle()">
+        <a v-if="isType('folder')" href="javascript:;" v-on:click="toggle()">
             <i v-if="icon" class="{{icon}}"></i>
             <span class="title">{{title}}</span>
             <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
