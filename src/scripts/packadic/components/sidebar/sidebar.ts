@@ -87,8 +87,10 @@ export interface ISidebarItem {
     icon?: string;
     children?: ISidebarItem[];
     href?:string;
+    route?:string;
+    path?:string;
     active?:boolean;
-    type?: string; // href | folder | heading
+    type?: string; // path | route | href | folder | heading
 }
 
 @Component('item')
@@ -101,11 +103,17 @@ export class SidebarItemComponent extends BaseComponent {
 
         <h3 v-if="isType('heading')">{{title}}</h3>
 
-        <a v-if="isType('folder', 'href')" href="#" v-on:click="toggle()">
+        <a v-if="isType('folder')" href="#" v-on:click="toggle()">
             <i v-if="icon" class="{{icon}}"></i>
             <span class="title">{{title}}</span>
             <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
         </a>
+
+        <a v-if="isType('href')" href="{{href}}"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
+
+        <a v-if="isType('route')" v-link="{ 'name': route }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
+
+        <a v-if="isType('path')" v-link="{ 'path': path }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
 
         <ul v-if="hasSubmenu && isType('folder', 'href')" v-show="isOpen" class="sub-menu" transition="sidebar-submenu">
             <slot> <item v-for="subitem in children" :item="subitem" :index="$index"></item> </slot>

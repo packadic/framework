@@ -3,24 +3,29 @@ import 'reflect-metadata';
 import 'es6-shim';
 
 import * as _ from 'lodash';
-import {App,Router} from './../packadic/index';
+import {App, view, route} from './../packadic/index';
 
-
-export var app:App = new App({
-    data: {
-        sidebar: { items: [] }
-    }
-});
-app.$on('INITIALISING', function(){
-    console.warn('INITIALISING');
-    app.$http.get('/data/main.json', function(data:any, status:number, request:XMLHttpRequest){
-        console.warn('$http get', arguments);
-        app.$set('sidebar.items', data.menus.sidebar);
-    })
-});
 
 window['App'] = App;
-window['app'] = app;
 
-app.init({ debug: true });
-app.start();
+App.config.set('router.options.hashbang', false);
+App.config.set('router.options.history', false);
+App.init();
+App.router.map({
+    '/foo': { component: view('demo/views/foo') }
+});
+route('home', '/', 'demo/views/home');
+route('bar', '/bar', 'demo/views/bar');
+
+App.start({
+    data: {
+        sidebar: {items: []}
+    }
+}).then(() => {
+
+    console.warn('INITIALISING');
+    App.vm.$http.get('/data/main.json', function (data:any, status:number, request:XMLHttpRequest) {
+        console.warn('$http get', arguments);
+        App.vm.$set('sidebar.items', data.menus.sidebar);
+    })
+});

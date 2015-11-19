@@ -50,6 +50,7 @@ declare module vuejs {
     export interface VueRouter {
         app?:Vue;
         mode?:string;
+        hashbang?:boolean;
         start(app:Vue|Object, el:string|Element);
         stop();
         map(routeMap:any);

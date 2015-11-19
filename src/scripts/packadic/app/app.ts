@@ -12,16 +12,14 @@ import {
     ConfigObject,IConfigProperty, IConfigObserver,
     log, out, BrowserPrettyConsole
 } from './../lib';
-//import vuestrap from 'vue-strap';
-//var aside = vuestrap.aside;
+
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.config.async = true;
 Vue.config.debug = true;
 
-
-console.log('VueRouter', VueRouter);
+var VueApp:typeof Vue = Vue.extend({});
 
 export {Vue, log, out}
 
@@ -29,95 +27,136 @@ export enum AppState {
     PRE_INIT, INITIALISING, INITIALISED, STARTING, STARTED
 }
 
-export class App extends Vue {
+export function view(viewPath:string){
+    return (resolve) => {
+        System.import(viewPath).then(resolve);
+    }
+}
+export function route(name:string, path:string, viewPath:string){
+    App.router.on(path, {
+        name: name,
+        component: view(viewPath)
+    })
+}
 
-    public static get log() : typeof log {
+
+export class App {
+
+    constructor() {
+        throw new Error('App should not be instantiated');
+    }
+
+    public static get log():typeof log {
         return log;
     }
-    public static get out() : BrowserPrettyConsole {
+
+    public static get out():BrowserPrettyConsole {
         return out;
     }
 
+    protected static _VM:any = VueApp;
+
+    protected static _vm:vuejs.Vue;
+    static get vm():vuejs.Vue {
+        return App._vm;
+    }
+
+    protected static _state:AppState = AppState.PRE_INIT;
+    public static get state() {
+        return this._state;
+    }
+
+    protected static _router:vuejs.VueRouter;
+    public static get router():vuejs.VueRouter {
+        return App._router;
+    }
+
     public static defaults:Object = {
-        debug: false,
+        debug  : false,
         logging: {
             level: log.levels.DEBUG
         },
-        app  : {
-            mount : 'html',
-            loader: {
+        router: {
+            enabled: true,
+            mount: '<%= app.mount %>',
+            options: {
+                hashbang: true,
+                history: false,
+                abstract: false,
+                root: null,
+                linkActiveClass: 'v-link-active',
+                saveScrollPosition: false,
+                transitionOnLoad: false
+            }
+        },
+        app    : {
+            mount    : 'html',
+            loader   : {
                 enabled        : true,
                 autoHideOnStart: true
             }
         }
     };
 
-    public config:IConfigProperty;
-    public router:vuejs.VueRouter;
-    protected _Router:Vue;
+    public static config:IConfigProperty;
 
-    protected _state:AppState = AppState.PRE_INIT;
-    public get state() {
-        return this._state;
-    }
-
-    constructor(opts:any={}) {
-        super(_.merge({
-            data: {
-                showPageLoader: true,
-                layout        : {
-                    footer: {fixed: true, text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
-                    header: {fixed: true, title: 'Codex'},
-                    page  : {edged: true, boxed: false}
-                },
-                sidebar       : {
-                    items: [],
-                }
-            }
-        }, opts));
+    public static init(opts:Object = {}) {
+        App._state = AppState.INITIALISING;
 
         App.out.addDefaults();
         App.out.macro('title', 'Packadic');
         App.out.macro('alert', 'v1.0.0-alpha');
 
-        var config:ConfigObject = new ConfigObject(App.defaults);
-        this.config  = ConfigObject.makeProperty(config);
-        var obs:IConfigObserver = ConfigObject.makeObserver(config);
+        if(App.config('router.enabled')) {
+            App._router = new VueRouter(App.config('router.options'));
+        }
+
+        this._VM    = Vue.extend(_.merge({
+            data: () => {
+                return {
+                    showPageLoader: true,
+                    layout        : {
+                        footer: {fixed: true, text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
+                        header: {fixed: true, title: 'Codex'},
+                        page  : {edged: true, boxed: false}
+                    },
+                    sidebar       : {
+                        items: [],
+                    }
+                }
+            }
+        }, opts));
 
 
-        this.router = new VueRouter();
-        this._Router = App.extend({})
-    }
-
-    public init(config:Object = {}):App {
-        this._state = AppState.INITIALISING;
-        this.$emit('INITIALISING').$broadcast('INITIALISING');
-
-        this.config.merge(config);
-
-        this._state = AppState.INITIALISED;
-        this.$emit('INITIALISED').$broadcast('INITIALISED');
+        App._state = AppState.INITIALISED;
         return this;
     }
 
-    public start():PromiseInterface<any> {
+    public static start(opts:Object = {}):PromiseInterface<any> {
         var defer:DeferredInterface<any> = createPromise();
-        this._state = AppState.STARTING;
-        this.$broadcast('STARTING');
+        App._state                       = AppState.STARTING;
 
         $(() => {
-            this.$mount(this.config('app.mount'));
-            //this.router.start(this._Router, 'body');
-            if (this.config('app.loader.enabled') && this.config('app.loader.autoHideOnStart')) {
-                this.$set('showPageLoader', false);
+            if(App.config('router.enabled')){
+                App.router.start(App._VM, App.config('router.mount'));
+                App._vm = App.router.app;
+            } else {
+                App._vm = new App._VM(opts);
+                App.vm.$mount(App.config('app.mount'));
             }
-            this._state = AppState.STARTED;
-            this.$broadcast('STARTED');
-            defer.resolve(this);
+            //this.
+            if (App.config('app.loader.enabled') && App.config('app.loader.autoHideOnStart')) {
+                App.vm.$set('showPageLoader', false);
+            }
+            App._state = AppState.STARTED;
+            defer.resolve();
         });
-
 
         return defer.promise;
     }
 
+
 }
+
+var config:ConfigObject = new ConfigObject(App.defaults);
+App.config              = ConfigObject.makeProperty(config);

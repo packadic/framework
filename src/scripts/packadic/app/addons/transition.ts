@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {App} from './../../index';
+import {App, Vue} from './../../index';
 import {defined,kindOf,MetaStore} from './../../lib';
 
 export function Transition(id:string, css:boolean = true):ClassDecorator {
@@ -24,7 +24,7 @@ export function Transition(id:string, css:boolean = true):ClassDecorator {
             }
         });
 
-        App.transition(id, options);
+        Vue.transition(id, options);
         console.log('options', options);
         console.groupEnd();
         return target;

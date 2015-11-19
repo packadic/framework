@@ -7,6 +7,10 @@ block breadcrumb
     +breadcrumb('index.html', true) Home
 
 block content
+    a(v-link="{ path: '/' }") Home
+    a(v-link="{ path: '/foo' }") Foo
+    a(v-link="{ name: 'bar' }") Bar
+
     router-view
     .row
         .col-md-12

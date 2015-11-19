@@ -10,11 +10,11 @@ export class BaseComponent {
     $:any;
     $$:any;
     $data:any;
-    $children:Array<App>;
+    $children:Array<vuejs.Vue>;
     $el:HTMLElement;
     $options:any;
-    $parent:App;
-    $root:App;
+    $parent:vuejs.Vue;
+    $root:vuejs.Vue;
     //$http:vuejs.VueResourceHttp;
 
     // methods: http://vuejs.org/api/instance-methods.html
@@ -160,7 +160,7 @@ export function Component(name:string):(cls:any)=>void {
             options.events = proto.__events__;
 
         if (proto.hasOwnProperty('__hooks__'))
-            App['util'].extend(options, proto.__hooks__);
+            Vue['util'].extend(options, proto.__hooks__);
 
         // get methods
         Object.getOwnPropertyNames(proto).forEach((method:string):void => {
@@ -188,7 +188,7 @@ export function Component(name:string):(cls:any)=>void {
         });
 
         // create a Vue component
-        App.component(name, options);
+        Vue.component(name, options);
     };
 }
 

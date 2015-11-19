@@ -1,7 +1,9 @@
 {
     "menus": {
         "sidebar": [
-            {"title": "Home", "icon": "fa fa-home", "type": "href", "href": "/index.html"},
+            {"title": "Home", "icon": "fa fa-home", "type": "route", "route": "home"},
+            {"title": "Foo", "icon": "fa fa-github", "type": "path", "path": "/foo"},
+            {"title": "Bar", "icon": "fa fa-bitcoin", "type": "route", "route": "bar"},
             {"title": "Sidebar", "icon": "fa fa-list", "type": "folder", "children": [
                 {"title": "Normal", "type": "href", "href": "/sidebar.html"}
             ]}
