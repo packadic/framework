@@ -38,7 +38,7 @@ html(lang="en")
 
 
     block body
-        body.page-loading(v-page-loader="showPageLoader", v-bind:class="layout.bodyClass.toString()")
+        body.page-loading.page-header-fixed.page-footer-fixed.page-edged(v-page-loader="showPageLoader")
             #page-loader(v-if="showPageLoader", transition="fade")
                 .loader.loader-page
 
@@ -73,7 +73,7 @@ html(lang="en")
                 .page-container(v-if="!showPageLoader", transition="fade")
                     .page-sidebar-wrapper
                         block page-sidebar
-                            sidebar(:items="sidebarItems", v-ref:sidebar)
+                            sidebar(:items="sidebar.items", v-ref:sidebar)
 
                             //sidebar(v-ref:sidebar)
                                 item(title="Hello", icon="fa fa-github", children=true)

@@ -64,6 +64,10 @@ declare module 'vue-router' {
     var v:Object;
     export default v;
 }
+declare module 'vue-resource' {
+    var v:Object;
+    export default v;
+}
 declare module 'loglevel'{
     export = log;
 }

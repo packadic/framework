@@ -1,4 +1,8 @@
 import Vue from 'vue';
+import VueResource from 'vue-resource';
+import 'vue-router';
+declare var VueRouter:any;
+
 import * as _ from 'lodash';
 import $ from 'jquery';
 import EventEmitter2 from 'eventemitter2';
@@ -11,44 +15,18 @@ import {
 //import vuestrap from 'vue-strap';
 //var aside = vuestrap.aside;
 
-
+Vue.use(VueRouter);
+Vue.use(VueResource);
 Vue.config.async = true;
 Vue.config.debug = true;
 
 
+console.log('VueRouter', VueRouter);
 
 export {Vue, log, out}
 
 export enum AppState {
     PRE_INIT, INITIALISING, INITIALISED, STARTING, STARTED
-}
-
-//_.cloneDeep(Array.prototype
-class BodyClass extends Array {
-    constructor(){
-        super();
-        this.push('page-header-fixed', 'page-footer-fixed', 'page-edged')
-    }
-    has(name:string){
-        return this.indexOf(name) !== -1;
-    }
-    remove(name:string):BodyClass{
-        if(this.has(name)){
-            this.splice(this.indexOf(name), 1);
-        }
-        return this;
-    }
-    ensure(name:string, shouldExist:boolean=true):BodyClass{
-        if(shouldExist && !this.has(name)){
-            this.push(name);
-        } else if(!shouldExist && this.has(name)){
-            this.remove(name);
-        }
-        return this;
-    }
-    toString(){
-        return this.join(' ');
-    }
 }
 
 export class App extends Vue {
@@ -75,6 +53,8 @@ export class App extends Vue {
     };
 
     public config:IConfigProperty;
+    public router:vuejs.VueRouter;
+    protected _Router:Vue;
 
     protected _state:AppState = AppState.PRE_INIT;
     public get state() {
@@ -86,7 +66,6 @@ export class App extends Vue {
             data: {
                 showPageLoader: true,
                 layout        : {
-                    bodyClass : new BodyClass(),
                     footer: {fixed: true, text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
                     header: {fixed: true, title: 'Codex'},
                     page  : {edged: true, boxed: false}
@@ -106,74 +85,39 @@ export class App extends Vue {
         var obs:IConfigObserver = ConfigObject.makeObserver(config);
 
 
+        this.router = new VueRouter();
+        this._Router = App.extend({})
     }
 
     public init(config:Object = {}):App {
-        this.$broadcast('init:before');
         this._state = AppState.INITIALISING;
+        this.$emit('INITIALISING').$broadcast('INITIALISING');
 
         this.config.merge(config);
 
         this._state = AppState.INITIALISED;
-        this.$broadcast('init:after');
+        this.$emit('INITIALISED').$broadcast('INITIALISED');
         return this;
     }
 
     public start():PromiseInterface<any> {
         var defer:DeferredInterface<any> = createPromise();
-        this.$broadcast('start:before');
         this._state = AppState.STARTING;
+        this.$broadcast('STARTING');
 
         $(() => {
             this.$mount(this.config('app.mount'));
-            this._state = AppState.STARTED;
+            //this.router.start(this._Router, 'body');
             if (this.config('app.loader.enabled') && this.config('app.loader.autoHideOnStart')) {
                 this.$set('showPageLoader', false);
             }
-            this.$broadcast('start:after');
+            this._state = AppState.STARTED;
+            this.$broadcast('STARTED');
             defer.resolve(this);
         });
 
 
         return defer.promise;
     }
-
-    //public mergeData(newData:Object = {}) {
-    //    var data:any = {};
-    //    Object.keys(this.$data).forEach((key:string)=> {
-    //        data[key] = this.$get(key);
-    //    });
-    //
-    //    data = _.merge(data, newData);
-    //
-    //    _.each(data, (item:any, key:any) => {
-    //        this.$set(key, item);
-    //    });
-    //}
-    //
-    //
-    //public on(event:string, listener:Function):App {
-    //    this._events.on(event, listener);
-    //    return this;
-    //}
-    //
-    //public once(event:string, listener:Function):App {
-    //    this._events.once(event, listener);
-    //    return this;
-    //}
-    //
-    //public off(event:string, listener:Function):App {
-    //    this._events.off(event, listener);
-    //    return this;
-    //}
-    //
-    //public emit(event:string, ...args:any[]):App {
-    //    if (this.config('debug')) {
-    //        //this.debug.logEvent(event, args);
-    //    }
-    //    this._events.emit(event, args);
-    //    return this;
-    //}
-
 
 }

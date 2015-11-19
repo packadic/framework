@@ -53,6 +53,7 @@ export = function (grunt) {
         },
 
         copy: {
+            data        : {files: [{cwd: 'src/data', src: ['**'], dest: '<%= target.dest %>/data/', expand: true}]},
             images        : {files: [{cwd: 'src/images', src: ['**'], dest: '<%= target.dest %>/assets/images/', expand: true}]},
             systemConfig  : {files: [{cwd: '', src: ['system.config.js'], dest: '<%= target.dest %>/assets', expand: true}]},
             jspm          : {files: [{cwd: '', src: ['jspm_packages/**/*', 'system.config.js'], dest: '<%= target.dest %>/', expand: true}]},
@@ -139,6 +140,7 @@ export = function (grunt) {
             //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
             scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
             demoscripts: {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},
+            data: {files: 'src/data/**/*.*', tasks: ['copy:data']},
             //ts_copy   : {files: 'src/{scripts,typings}/**/*.{ts,d.ts}', tasks: ['clean:ts', 'copy:ts']}
         }
     };
@@ -147,7 +149,6 @@ export = function (grunt) {
     require('time-grunt')(grunt);
     //grunt.loadTasks('src/tasks');
     log(require('./src/tasks/jspm_bundle')(grunt)); //(grunt);
-    require('./src/tasks/animatecss')(grunt)
 
     config.ts['app_watch']       = _.clone(config.ts.packadic);
     config.ts['app_watch'].watch = 'src/scripts';

@@ -149,7 +149,6 @@ a[ui-sref]{
 }
 
 $sidebar-animation-collapse-speed: 400ms;
-/*
 @media (min-width: 992px) {
     .page-sidebar {
         width: $sidebar-width;
@@ -159,21 +158,29 @@ $sidebar-animation-collapse-speed: 400ms;
             width: $sidebar-collapsed-width;
             transition: $sidebar-animation-collapse-speed linear width;
         }
-
     }
 
-
-    @include animate-keyframe(sidebar-submenu-slideDown){
-        0% {
-            transform: translate3d(0, -100%, 0);
-            visibility: visible;
-        }
-
-        100% {
-            -webkit-transform: translate3d(0, 0, 0);
+    .page-content {
+        margin-left: $sidebar-width;
+        transition: $sidebar-animation-collapse-speed linear margin-left;
+        & .page-sidebar-closed {
+            margin-left: $sidebar-collapsed-width;
+            transition: $sidebar-animation-collapse-speed linear margin-left;
         }
     }
+}
+/*
 
+@media (min-width: 992px) {
+    .page-sidebar {
+        width: $sidebar-width;
+        transition: $sidebar-animation-collapse-speed linear width;
+
+        .page-sidebar-closed & {
+            width: $sidebar-collapsed-width;
+            transition: $sidebar-animation-collapse-speed linear width;
+        }
+    }
     .page-sidebar-menu {
 
 

@@ -8,12 +8,6 @@ import {
 } from './../../app';
 import {BaseJqueryTransition} from "../../app/addons/transition";
 
-//import sidebarTemplate from './sidebar.jade!';
-
-
-function sbitem(title:string, icon:string = 'fa fa-github', type:string = 'href', children:any[] = []) {
-    return {title: title, icon: icon, hasChildren: children.length > 0, children: children, href: '#', type: type}
-}
 
 /* */
 // C    sidebar
@@ -35,33 +29,44 @@ export class SidebarComponent extends BaseComponent {
 
     @Prop({type: Array, required: false}) items:ISidebarItem[];
 
-    //hidden:boolean;
-    //condensed:boolean; //@Prop(Boolean, false, false)
+    get bodyClass():DOMTokenList {
+        return document.body.classList;
+    }
+
+    ensureBodyClass(name:string, shouldExist:boolean=true):SidebarComponent {
+        if(shouldExist && !this.bodyClass.contains(name)){
+            this.bodyClass.add(name);
+        } else if(!shouldExist && this.bodyClass.contains(name)){
+            this.bodyClass.remove(name);
+        }
+        this._digest();
+        return this;
+    }
 
     get closed():boolean {
-
-        return this.$root.$get('layout.bodyClass').has('page-sidebar-closed');
+        return this.bodyClass.contains('page-sidebar-closed');
     };
 
     set closed(value:boolean) {
         this.closeSubmenus();
-        this.$root.$get('layout.bodyClass').ensure('page-sidebar-closed', value);
+        this.ensureBodyClass('page-sidebar-closed', value);
     };
 
     get hidden():boolean {
-        return this.$root.$get('layout.bodyClass').has('page-sidebar-hide');
+        return this.bodyClass.contains('page-sidebar-hide');
     };
 
     set hidden(value:boolean) {
-        this.$root.$get('layout.bodyClass').ensure('page-sidebar-closed', value).ensure('page-sidebar-hide', value);
+        this.ensureBodyClass('page-sidebar-closed', value)
+            .ensureBodyClass('page-sidebar-hide', value);
     };
 
     get condensed():boolean {
-        return this.$root.$get('layout.bodyClass').has('page-sidebar-condensed');
+        return this.bodyClass.contains('page-sidebar-condensed');
     };
 
     set condensed(value:boolean) {
-        this.$root.$get('layout.bodyClass').ensure('page-sidebar-condensed', value);
+        this.ensureBodyClass('page-sidebar-condensed', value);
     };
 
     toggle() {
@@ -92,7 +97,7 @@ export class SidebarItemComponent extends BaseComponent {
     static replace:boolean = true;
 
     static template:string = `
-    <li v-bind:class="{ 'open': isOpen && hasSubmenu, 'active': isActive }">
+    <li v-bind:class="{ 'open': isOpen && hasSubmenu, 'active': isActive, 'heading': isType('heading') }">
 
         <h3 v-if="isType('heading')">{{title}}</h3>
 
@@ -141,15 +146,6 @@ export class SidebarItemComponent extends BaseComponent {
         this.isOpen = true;
     }
 
-    @LifecycleHook('beforeCompile') beforeCompile():void {
-        console.log('itemPropToOthers', _.cloneDeep(this));
-        if (defined(this.item))
-            Object.keys(this.item).forEach((key:string) => {
-                this[key] = this.item[key];
-            });
-        console.log('itemPropToOthers', _.cloneDeep(this));
-    }
-
     /**
      * the event propagation will follow many different “paths”. The propagation for each path will stop when a listener callback is fired along that path, unless the callback returns true.
      * http://vuejs.org/api/#vm-broadcast
@@ -160,8 +156,17 @@ export class SidebarItemComponent extends BaseComponent {
         return true;
     }
 
+    @LifecycleHook('beforeCompile') beforeCompile():void {
+        //console.log('itemPropToOthers', _.cloneDeep(this));
+        if (defined(this.item))
+            Object.keys(this.item).forEach((key:string) => {
+                this[key] = this.item[key];
+            });
+        //console.log('itemPropToOthers', _.cloneDeep(this));
+    }
+
     @LifecycleHook('compiled') compiled():void {
-        console.log('COMPILED', _.cloneDeep(this))
+        //console.log('COMPILED', _.cloneDeep(this))
     }
 }
 

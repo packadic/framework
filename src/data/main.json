@@ -1,0 +1,11 @@
+{
+    "menus": {
+        "sidebar": [
+            {"title": "Home", "icon": "fa fa-home", "type": "href", "href": "/index.html"},
+            {"title": "Sidebar", "icon": "fa fa-list", "type": "folder", "children": [
+                {"title": "Normal", "type": "href", "href": "/sidebar.html"}
+            ]}
+
+        ]
+    }
+}

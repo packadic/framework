@@ -1,13 +1,12 @@
-
 import * as _ from 'lodash';
 import {
-    App,Vue,
-    Directive,ParamWatcher,BaseDirective
+    App,
+    Directive,ParamWatcher,BaseDirective, LifecycleHook
 } from './../app';
-
+import {EventListener} from './../lib';
 
 /* */
-//      page-loader
+// D     page-loader
 /* */
 @Directive('page-loader')
 export class PageLoaderDirective extends BaseDirective {
@@ -18,7 +17,7 @@ export class PageLoaderDirective extends BaseDirective {
     //    console.log('watch show');
     //}
 
-    update(showLoader:any,odlval:any){          // console.log('page-laode update', showLoader);
+    update(showLoader:any, odlval:any) {          // console.log('page-laode update', showLoader);
         var hasClass:boolean = this.el.classList.contains('page-loading');
         showLoader === true && hasClass === false && this.el.classList.add('page-loading');
         showLoader === false && hasClass === true && this.el.classList.remove('page-loading');
@@ -27,7 +26,7 @@ export class PageLoaderDirective extends BaseDirective {
 
 
 /* */
-//      test-directive
+// D     test-directive
 /* */
 @Directive('test-directive')
 export class TestDirective extends BaseDirective {

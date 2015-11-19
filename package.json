@@ -38,6 +38,7 @@
       "tweenjs": "github:CreateJS/TweenJS@^0.6.1",
       "underscore.string": "npm:underscore.string@^3.2.2",
       "vue": "github:vuejs/vue@^1.0.8",
+      "vue-resource": "github:vuejs/vue-resource@^0.1.17",
       "vue-router": "github:vuejs/vue-router@^0.7.5",
       "vue-strap": "github:amanpatel/vue-strap@master",
       "zone.js": "npm:zone.js@^0.5.8"
@@ -70,6 +71,9 @@
       },
       "github:amanpatel/vue-strap@master": {
         "main": "dist/vue-strap.js"
+      },
+      "github:vuejs/vue-resource@0.1.17": {
+        "main": "dist/vue-resource"
       }
     }
   },

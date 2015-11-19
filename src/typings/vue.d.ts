@@ -4,6 +4,64 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 declare module vuejs {
+    export interface VueResourceCallback {
+        (data:{}, status:number, request:XMLHttpRequest): void;
+    }
+    export interface VueResourceOptions {
+        url?:string;
+        data?:string|{};
+        method?:string;
+        params?:{};
+        headers?:{};
+        success?:VueResourceCallback;
+        error?:VueResourceCallback;
+        beforeSend?:VueResourceCallback;
+        emulateHTTP?:boolean;
+        emulateJSON?:boolean;
+        xhr?:{};
+        jsonp?:string;
+    }
+    export interface VueResourceHttp {
+        get(url:string, data?:{}, success?:VueResourceCallback, options?:{}):Promise;
+        get(url:string, success?:VueResourceCallback, options?:{}):Promise;
+        get(url:string, success?:VueResourceCallback):Promise;
+
+        post(url:string, data?:{}, success?:VueResourceCallback, options?:{}):Promise;
+        post(url:string, success?:VueResourceCallback, options?:{}):Promise;
+        post(url:string, success?:VueResourceCallback):Promise;
+
+        put(url:string, data?:{}, success?:VueResourceCallback, options?:{}):Promise;
+        put(url:string, success?:VueResourceCallback, options?:{}):Promise;
+        put(url:string, success?:VueResourceCallback):Promise;
+
+        patch(url:string, data?:{}, success?:VueResourceCallback, options?:{}):Promise;
+        patch(url:string, success?:VueResourceCallback, options?:{}):Promise;
+        patch(url:string, success?:VueResourceCallback):Promise;
+
+        'delete'(url:string, data?:{}, success?:VueResourceCallback, options?:{}):Promise;
+        'delete'(url:string, success?:VueResourceCallback, options?:{}):Promise;
+        'delete'(url:string, success?:VueResourceCallback):Promise;
+
+        jsonp(url:string, data?:{}, success?:VueResourceCallback, options?:{}):Promise;
+        jsonp(url:string, success?:VueResourceCallback, options?:{}):Promise;
+        jsonp(url:string, success?:VueResourceCallback):Promise;
+    }
+
+    export interface VueRouter {
+        app?:Vue;
+        mode?:string;
+        start(app:Vue|Object, el:string|Element);
+        stop();
+        map(routeMap:any);
+        on(path:string, config:any);
+        go(path:string);
+        replace(path:string);
+        redirect(redirectMap:any);
+        alias(aliasMap:any);
+        beforeEach(hook:any);
+        afterEach(hook:any);
+    }
+
     export class Vue {
         /**
          * The Vue Constructor
@@ -172,6 +230,9 @@ declare module vuejs {
         _cleanup():void;
 
         // static require(module:string) : void;
+
+        /* VueResource */
+        $http:VueResourceHttp;
     }
 
     class VueConfig {

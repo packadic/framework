@@ -15,6 +15,7 @@ export class BaseComponent {
     $options:any;
     $parent:App;
     $root:App;
+    //$http:vuejs.VueResourceHttp;
 
     // methods: http://vuejs.org/api/instance-methods.html
     $add(key:string, val:any):void {
@@ -89,6 +90,9 @@ export class BaseComponent {
            cb:(val:any, old?:any)=>any,
            options?:{ deep?: boolean; immediate?: boolean }):void {
     }
+
+    _digest(){}
+
 }
 
 // register a lifecycl hook, http://vuejs.org/api/options.html#Lifecycle
