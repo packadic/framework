@@ -5,13 +5,14 @@ import {defined,kindOf,MetaStore} from './../../lib';
 
 
 export class BaseComponent {
-
+    public static COMPONENT:boolean=true;
     // public properties: http://vuejs.org/api/instance-properties.html
     $:any;
     $$:any;
     $data:any;
     $children:Array<vuejs.Vue>;
     $el:HTMLElement;
+    $els:{[name:string]:HTMLElement};
     $options:any;
     $parent:vuejs.Vue;
     $root:vuejs.Vue;
@@ -130,9 +131,8 @@ export function Prop(options) {
     }
 }
 
-// register a class as component in vue
-export function Component(name:string):(cls:any)=>void {
-    return (cls:any):void => {
+export function componentOptions(cls:any){
+
 
         let options:any = {
             data    : (():any => {
@@ -187,7 +187,21 @@ export function Component(name:string):(cls:any)=>void {
                 options.computed[method] = desc.get;
         });
 
-        // create a Vue component
+        return options;
+}
+
+// register a class as component in vue
+export function Component(name:string, children?:any):(cls:any)=>void {
+    return (cls:any):void => {
+        var options:any = componentOptions(cls);
+
+        if(defined(children)){
+            options.components = options.components || {};
+            Object.keys(children).forEach((key:string) => {
+                options.components[key] = componentOptions(children[key]);
+                options.components[key].name = key;
+            })
+        }
         Vue.component(name, options);
     };
 }

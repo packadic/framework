@@ -1,4 +1,5 @@
 import './components/directives';
 import './components/transitions';
-import './components/sidebar/sidebar';
-import './components/dropdown';
+import './components/app/sidebar';
+import './components/app/page';
+import './components/bootstrap/dropdown';

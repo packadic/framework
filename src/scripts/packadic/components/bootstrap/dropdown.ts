@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import {defined,EventListener} from './../lib';
+import {defined,EventListener} from './../../lib';
 import {
     App,
     Component, LifecycleHook, BaseComponent
-} from './../app';
+} from './../../app';
 
 @Component('dropdown')
 export class DropdownComponent extends BaseComponent {

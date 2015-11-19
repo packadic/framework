@@ -27,18 +27,6 @@ export enum AppState {
     PRE_INIT, INITIALISING, INITIALISED, STARTING, STARTED
 }
 
-export function view(viewPath:string){
-    return (resolve) => {
-        System.import(viewPath).then(resolve);
-    }
-}
-export function route(name:string, path:string, viewPath:string){
-    App.router.on(path, {
-        name: name,
-        component: view(viewPath)
-    })
-}
-
 
 export class App {
 

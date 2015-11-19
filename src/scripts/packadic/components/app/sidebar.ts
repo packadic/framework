@@ -9,12 +9,100 @@ import {
 import {BaseJqueryTransition} from "../../app/addons/transition";
 
 
+export interface ISidebarItem {
+    title?: string;
+    icon?: string;
+    children?: ISidebarItem[];
+    href?:string;
+    route?:string;
+    path?:string;
+    active?:boolean;
+    type?: string; // path | route | href | folder | heading
+}
+
+export class SidebarItemComponent extends BaseComponent {
+    static template:string = `
+    <li v-bind:class="{ 'open': isOpen && hasSubmenu, 'active': isActive, 'heading': isType('heading') }">
+
+        <h3 v-if="isType('heading')">{{title}}</h3>
+
+        <a v-if="isType('folder')" href="#" v-on:click="toggle()">
+            <i v-if="icon" class="{{icon}}"></i>
+            <span class="title">{{title}}</span>
+            <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
+        </a>
+
+        <a v-if="isType('href')" href="{{href}}"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
+
+        <a v-if="isType('route')" v-link="{ 'name': route }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
+
+        <a v-if="isType('path')" v-link="{ 'path': path }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
+
+        <ul v-if="hasSubmenu && isType('folder', 'href')" v-show="isOpen" class="sub-menu" transition="sidebar-submenu">
+            <slot> <item v-for="subitem in children" :item="subitem" :index="$index"></item> </slot>
+        </ul>
+    </li>`;
+
+
+    @Prop({type: Object, required: false}) item:ISidebarItem;
+    @Prop({type: String, required: false, 'default': ()=>''}) title:string;
+    @Prop({type: String, required: false}) icon:string;
+    @Prop({type: String, required: false, 'default': ()=>'javascript:;'}) href:string;
+    @Prop({type: String, required: false, 'default': ()=>'href'}) type:string;
+    @Prop({type: Boolean, required: false, 'default': ()=>false}) isActive:boolean;
+    @Prop({type: Boolean, required: false, 'default': ()=>false}) hasChildren:boolean;
+    @Prop({type: String, required: false, 'default': ()=>''}) route:string;
+    @Prop({type: String, required: false, 'default': ()=>''}) path:string;
+
+    children:any[] = [];
+    isOpen:boolean = false;
+
+    get hasSubmenu() {
+        return (this.hasChildren === true || this.children.length > 0) && this.type === 'folder';
+    }
+
+    toggle() {
+        this.isOpen ? this.close() : this.open(true);
+    }
+
+    isType(...args:string[]) {
+        return args.indexOf(this.type) !== -1;
+    }
+
+    close() {
+        this.isOpen = false;
+    }
+
+    open(closeOthers:boolean = false) {
+        if (!this.hasSubmenu) return;
+        if (closeOthers) this.$parent.$eval('closeSubmenus()');
+        this.isOpen = true;
+    }
+
+    /**
+     * the event propagation will follow many different “paths”. The propagation for each path will stop when a listener callback is fired along that path, unless the callback returns true.
+     * http://vuejs.org/api/#vm-broadcast
+     * @returns {boolean}
+     */
+    @EventHook('closeSubmenus') closeSubmenus():boolean {
+        this.close();
+        return true;
+    }
+
+    @LifecycleHook('beforeCompile') beforeCompile():void {
+        if (defined(this.item))
+            Object.keys(this.item).forEach((key:string) => {
+                this[key] = this.item[key];
+            });
+    }
+}
+
 /* */
 // C    sidebar
 /* */
-@Component('sidebar')
+@Component('sidebar', { 'item': SidebarItemComponent })
 export class SidebarComponent extends BaseComponent {
-    static replace:boolean = true;
+
     static template:string = `
     <div class="page-sidebar navbar-collapse collapse" v-el="sidebar">
         <ul class="page-sidebar-menu" v-bind:class="{ 'page-sidebar-menu-closed': closed }" v-el="menu">
@@ -33,10 +121,10 @@ export class SidebarComponent extends BaseComponent {
         return document.body.classList;
     }
 
-    ensureBodyClass(name:string, shouldExist:boolean=true):SidebarComponent {
-        if(shouldExist && !this.bodyClass.contains(name)){
+    ensureBodyClass(name:string, shouldExist:boolean = true):SidebarComponent {
+        if (shouldExist && !this.bodyClass.contains(name)) {
             this.bodyClass.add(name);
-        } else if(!shouldExist && this.bodyClass.contains(name)){
+        } else if (!shouldExist && this.bodyClass.contains(name)) {
             this.bodyClass.remove(name);
         }
         this._digest();
@@ -82,112 +170,16 @@ export class SidebarComponent extends BaseComponent {
     }
 }
 
-export interface ISidebarItem {
-    title?: string;
-    icon?: string;
-    children?: ISidebarItem[];
-    href?:string;
-    route?:string;
-    path?:string;
-    active?:boolean;
-    type?: string; // path | route | href | folder | heading
-}
-
-@Component('item')
-export class SidebarItemComponent extends BaseComponent {
-
-    static replace:boolean = true;
-
-    static template:string = `
-    <li v-bind:class="{ 'open': isOpen && hasSubmenu, 'active': isActive, 'heading': isType('heading') }">
-
-        <h3 v-if="isType('heading')">{{title}}</h3>
-
-        <a v-if="isType('folder')" href="#" v-on:click="toggle()">
-            <i v-if="icon" class="{{icon}}"></i>
-            <span class="title">{{title}}</span>
-            <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
-        </a>
-
-        <a v-if="isType('href')" href="{{href}}"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
-
-        <a v-if="isType('route')" v-link="{ 'name': route }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
-
-        <a v-if="isType('path')" v-link="{ 'path': path }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
-
-        <ul v-if="hasSubmenu && isType('folder', 'href')" v-show="isOpen" class="sub-menu" transition="sidebar-submenu">
-            <slot> <item v-for="subitem in children" :item="subitem" :index="$index"></item> </slot>
-        </ul>
-    </li>`;
-
-
-    @Prop({type: Object, required: false}) item:ISidebarItem;
-    @Prop({type: String, required: false, 'default': ()=>''}) title:string;
-    @Prop({type: String, required: false}) icon:string;
-    @Prop({type: String, required: false, 'default': ()=>'#'}) href:string;
-    @Prop({type: String, required: false, 'default': ()=>'href'}) type:string;
-    @Prop({type: Boolean, required: false, 'default': ()=>false}) isActive:boolean;
-    @Prop({type: Boolean, required: false, 'default': ()=>false}) hasChildren:boolean;
-
-    children:any[] = [];
-    isOpen:boolean = false;
-
-    get hasSubmenu() {
-        return (this.hasChildren === true || this.children.length > 0) && this.type === 'folder';
-    }
-
-    toggle() {
-        this.isOpen ? this.close() : this.open(true);
-    }
-
-    isType(...args:string[]) {
-        return args.indexOf(this.type) !== -1;
-    }
-
-    close() {
-        this.isOpen = false;
-    }
-
-    open(closeOthers:boolean = false) {
-        if (!this.hasSubmenu) return;
-        if (closeOthers) this.$parent.$eval('closeSubmenus()');
-        this.isOpen = true;
-    }
-
-    /**
-     * the event propagation will follow many different “paths”. The propagation for each path will stop when a listener callback is fired along that path, unless the callback returns true.
-     * http://vuejs.org/api/#vm-broadcast
-     * @returns {boolean}
-     */
-    @EventHook('closeSubmenus') closeSubmenus():boolean {
-        this.close();
-        return true;
-    }
-
-    @LifecycleHook('beforeCompile') beforeCompile():void {
-        //console.log('itemPropToOthers', _.cloneDeep(this));
-        if (defined(this.item))
-            Object.keys(this.item).forEach((key:string) => {
-                this[key] = this.item[key];
-            });
-        //console.log('itemPropToOthers', _.cloneDeep(this));
-    }
-
-    @LifecycleHook('compiled') compiled():void {
-        //console.log('COMPILED', _.cloneDeep(this))
-    }
-}
-
 @Transition('sidebar-submenu', false)
-export class SlideToggleTransition extends BaseJqueryTransition{
+export class SlideToggleTransition extends BaseJqueryTransition {
     enter(el:HTMLElement, done) {
         $(el).slideDown(400, 'linear', done);
     }
+
     leave(el:HTMLElement, done) {
         $(el).slideUp(250, 'linear', done);
     }
 }
-
 
 
 /* */
