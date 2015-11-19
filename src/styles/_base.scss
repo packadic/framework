@@ -5,13 +5,16 @@
 @import "functions";
 @import "variables/main-variables";                             // main variables
 @import "variables/overriding-variables";                       // variables that override default variables (like bootstrap variables)
+@import "variables/animation-variables";                        // also override variables, but only for animate scss
 @import "mixins";
 
 @import "../../jspm_packages/npm/font-awesome@4.4.0/scss/variables";
 @import "../../jspm_packages/github/twbs/bootstrap@v4-dev/scss/variables";      // the local bootstrap-variables is just for quick reference. its not used
-@import "variables/extending-variables";                        // extending variables that depends on other variables (like bootstrap)
+@import "../../jspm_packages/github/tgdev/animate-sass@0.6.4/helpers/settings";
+@import "variables/extending-variables";                                        // extending variables that depends on other variables (like bootstrap)
 @import "../../jspm_packages/github/twbs/bootstrap@v4-dev/scss/mixins";
 @import "../../jspm_packages/npm/font-awesome@4.4.0/scss/mixins";
+@import "../../jspm_packages/github/tgdev/animate-sass@0.6.4/helpers/mixins";
 
 @import "components/mixins/size";
 @import "components/mixins/tables"; // component mixins should go after vendor(bootstrap) mixins, as they might replace/extend em

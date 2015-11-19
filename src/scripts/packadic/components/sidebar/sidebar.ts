@@ -1,20 +1,79 @@
 import * as _ from 'lodash';
 import {defined} from './../../lib';
 import {
-    App,Vue,
-    Component, BaseComponent, Prop, Handles,
+    App,
+    Component, LifecycleHook, BaseComponent, Prop, EventHook,
     Directive,ParamWatcher,BaseDirective,
-    Transition,ITransition, log
+    Transition,ITransition,BaseJqueryTransition, log,
 } from './../../app';
+import {BaseJqueryTransition} from "../../app/addons/transition";
 
-import sidebarTemplate from './sidebar.jade!';
+//import sidebarTemplate from './sidebar.jade!';
 
 
 function sbitem(title:string, icon:string = 'fa fa-github', type:string = 'href', children:any[] = []) {
-    return {
-        title      : title, icon: icon,
-        hasChildren: children.length > 0, children: children,
-        href       : '#', type: type
+    return {title: title, icon: icon, hasChildren: children.length > 0, children: children, href: '#', type: type}
+}
+
+/* */
+// C    sidebar
+/* */
+@Component('sidebar')
+export class SidebarComponent extends BaseComponent {
+    static replace:boolean = true;
+    static template:string = `
+    <div class="page-sidebar navbar-collapse collapse" v-el="sidebar">
+        <ul class="page-sidebar-menu" v-bind:class="{ 'page-sidebar-menu-closed': closed }" v-el="menu">
+        <slot>
+            <item v-for="item in items"
+            :item="item"
+            :index="$index"
+            ></item>
+        </slot>
+        </ul>
+    </div>`;
+
+    @Prop({type: Array, required: false}) items:ISidebarItem[];
+
+    //hidden:boolean;
+    //condensed:boolean; //@Prop(Boolean, false, false)
+
+    get closed():boolean {
+
+        return this.$root.$get('layout.bodyClass').has('page-sidebar-closed');
+    };
+
+    set closed(value:boolean) {
+        this.closeSubmenus();
+        this.$root.$get('layout.bodyClass').ensure('page-sidebar-closed', value);
+    };
+
+    get hidden():boolean {
+        return this.$root.$get('layout.bodyClass').has('page-sidebar-hide');
+    };
+
+    set hidden(value:boolean) {
+        this.$root.$get('layout.bodyClass').ensure('page-sidebar-closed', value).ensure('page-sidebar-hide', value);
+    };
+
+    get condensed():boolean {
+        return this.$root.$get('layout.bodyClass').has('page-sidebar-condensed');
+    };
+
+    set condensed(value:boolean) {
+        this.$root.$get('layout.bodyClass').ensure('page-sidebar-condensed', value);
+    };
+
+    toggle() {
+        if (this.closed) {
+            this.closed = false;
+        } else {
+            this.closed = true;
+        }
+    }
+
+    closeSubmenus() {
+        this.$broadcast('closeSubmenus');
     }
 }
 
@@ -23,109 +82,99 @@ export interface ISidebarItem {
     icon?: string;
     children?: ISidebarItem[];
     href?:string;
-    type?: string;
+    active?:boolean;
+    type?: string; // href | folder | heading
 }
 
-/* */
-// C    sidebar
-/* */
-@Component('sidebar')
-export class SidebarComponent extends BaseComponent {
+@Component('item')
+export class SidebarItemComponent extends BaseComponent {
+
+    static replace:boolean = true;
+
     static template:string = `
-    <div class="page-sidebar navbar-collapse collapse" v-el="sidebar">
-        <ul class="page-sidebar-menu" v-el="menu">
-        <slot></slot>
+    <li v-bind:class="{ 'open': isOpen && hasSubmenu, 'active': isActive }">
+
+        <h3 v-if="isType('heading')">{{title}}</h3>
+
+        <a v-if="isType('folder', 'href')" href="#" v-on:click="toggle()">
+            <i v-if="icon" class="{{icon}}"></i>
+            <span class="title">{{title}}</span>
+            <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
+        </a>
+
+        <ul v-if="hasSubmenu && isType('folder', 'href')" v-show="isOpen" class="sub-menu" transition="sidebar-submenu">
+            <slot> <item v-for="subitem in children" :item="subitem" :index="$index"></item> </slot>
         </ul>
-    </div>
-    `;
+    </li>`;
 
 
-    @Prop(Object, false) model:ISidebarItem;
+    @Prop({type: Object, required: false}) item:ISidebarItem;
+    @Prop({type: String, required: false, 'default': ()=>''}) title:string;
+    @Prop({type: String, required: false}) icon:string;
+    @Prop({type: String, required: false, 'default': ()=>'#'}) href:string;
+    @Prop({type: String, required: false, 'default': ()=>'href'}) type:string;
+    @Prop({type: Boolean, required: false, 'default': ()=>false}) isActive:boolean;
+    @Prop({type: Boolean, required: false, 'default': ()=>false}) hasChildren:boolean;
 
-    @Prop(Boolean, false, false) closed:boolean;
-    @Prop(Boolean, false, false) hidden:boolean;
-    @Prop(Boolean, false, false) condensed:boolean;
+    children:any[] = [];
+    isOpen:boolean = false;
 
-    ///.page-sidebar.navbar-collapse.collapse
-    // ul.page-sidebar-menu(v-el="ul")
-
-
-    // data
-    items:any[] = [sbitem('Home'), sbitem('Installing'), sbitem('API Documentation'), sbitem('Methods')];
-
-    hide() {
-        this.$root.$get('layout.body.classes')
-            .ensure('page-sidebar-hide')
-            .ensure('page-sidebar-closed');
-        this.hidden = true;
-        this.closed = true;
-        this.$emit('hide', this);
+    get hasSubmenu() {
+        return (this.hasChildren === true || this.children.length > 0) && this.type === 'folder';
     }
 
-    show() {
-        this.$root.$get('layout.body.classes').ensure('page-sidebar-hide', false);
-        this.hidden = false;
-        this.$emit('show', this);
+    toggle() {
+        this.isOpen ? this.close() : this.open(true);
     }
 
-    open() {
-        this.$root.$get('layout.body.classes')
-            .ensure('page-sidebar-hide', false)
-            .ensure('page-sidebar-closed', false);
-        this.hidden = false;
-        this.closed = false;
-        this.$emit('open', this);
+    isType(...args:string[]) {
+        return args.indexOf(this.type) !== -1;
     }
 
     close() {
-        this.$root.$get('layout.body.classes').ensure('page-sidebar-closed', true);
-        this.closed = true;
-        this.$emit('close', this);
+        this.isOpen = false;
     }
 
-    toggle() {
-        this.closed ? this.open() : this.close();
+    open(closeOthers:boolean = false) {
+        if (!this.hasSubmenu) return;
+        if (closeOthers) this.$parent.$eval('closeSubmenus()');
+        this.isOpen = true;
+    }
+
+    @LifecycleHook('beforeCompile') beforeCompile():void {
+        console.log('itemPropToOthers', _.cloneDeep(this));
+        if (defined(this.item))
+            Object.keys(this.item).forEach((key:string) => {
+                this[key] = this.item[key];
+            });
+        console.log('itemPropToOthers', _.cloneDeep(this));
+    }
+
+    /**
+     * the event propagation will follow many different “paths”. The propagation for each path will stop when a listener callback is fired along that path, unless the callback returns true.
+     * http://vuejs.org/api/#vm-broadcast
+     * @returns {boolean}
+     */
+    @EventHook('closeSubmenus') closeSubmenus():boolean {
+        this.close();
+        return true;
+    }
+
+    @LifecycleHook('compiled') compiled():void {
+        console.log('COMPILED', _.cloneDeep(this))
+    }
+}
+
+@Transition('sidebar-submenu', false)
+export class SlideToggleTransition extends BaseJqueryTransition{
+    enter(el:HTMLElement, done) {
+        $(el).slideDown(400, 'linear', done);
+    }
+    leave(el:HTMLElement, done) {
+        $(el).slideUp(250, 'linear', done);
     }
 }
 
-@Component('item', SidebarComponent)
-export class SidebarItemComponent extends BaseComponent {
-    static template:string = `
-    <li v-for="item in items">
-        <a href="#">
-            <i v-if="item.icon" class="{{item.icon}}"></i>
-            <span v-text="item.title" class="title"><slot></slot></span>
-            <span v-if="item.hasChildren" class="arrow"></span>
-        </a>
-    </li>
-    `;
-
-    @Prop(Object, false) model:ISidebarItem;
-
-    open:boolean = false;
-
-    get hasChildren():boolean {
-        return this.model.children && this.model.children.length
-    }
-
-    toggle() {
-        this.hasChildren ? this.open = !this.open : null
-    }
-
-    changeType() {
-        if (!this.hasChildren) {
-            App.set(this.model, 'children', []);
-            this.addChild();
-            this.open = true
-        }
-    }
-
-    addChild() {
-        this.model.children.push({
-            title: 'new stuff'
-        })
-    }
-}
 
 
 /* */

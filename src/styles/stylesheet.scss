@@ -17,6 +17,7 @@
 @import "base";
 @import url($web-font);
 @import "../../jspm_packages/npm/font-awesome@4.4.0/scss/font-awesome";
+@import "../../jspm_packages/github/tgdev/animate-sass@0.6.4/helpers/base";
 //
 /****************************/
 // 2. Bootstrap
@@ -148,7 +149,7 @@ a[ui-sref]{
 }
 
 $sidebar-animation-collapse-speed: 400ms;
-
+/*
 @media (min-width: 992px) {
     .page-sidebar {
         width: $sidebar-width;
@@ -161,33 +162,68 @@ $sidebar-animation-collapse-speed: 400ms;
 
     }
 
+
+    @include animate-keyframe(sidebar-submenu-slideDown){
+        0% {
+            transform: translate3d(0, -100%, 0);
+            visibility: visible;
+        }
+
+        100% {
+            -webkit-transform: translate3d(0, 0, 0);
+        }
+    }
+
     .page-sidebar-menu {
-        > li a span.title {
+
+
+        > li > a span.title {
             position: absolute;
             visibility: visible;
             opacity: 1;
-            white-space: pre;
             letter-spacing: 1px;
             transition: $sidebar-animation-collapse-speed / 2 linear all;
+            line-height: 20px;
         }
-        .page-sidebar-closed & > li > a {
+
+        li {
+            &.open > .sub-menu {
+                display: block;
+            }
+        }
+
+        //.page-sidebar-closed & > li
+        .page-sidebar-closed & > li {
 
             &:hover {
-                width: $sidebar-width;
-                span.title {
-                    padding-left: 20px;
+                position: relative;
+                width: $sidebar-width + $sidebar-collapsed-width;
+                //padding-left: $sidebar-collapsed-width;
+                > a {
+                    //width: $sidebar-width;
+                    span.title {
+                        padding-left: 20px;
+                    }
                 }
             }
 
-            &:not(:hover) span.title {
+            &:not(:hover) > a span.title {
                 opacity: 0;
                 visibility: hidden;
                 letter-spacing: -5px;
                 transition: $sidebar-animation-collapse-speed / 2 linear all;
             }
+
+            &:not(:hover) > a span.arrow {
+                display: none;
+            }
+
+
+            &.open > .sub-menu {
+                position: absolute;
+            }
         }
     }
-
 
     .page-content {
         margin-left: $sidebar-width;
@@ -207,3 +243,4 @@ $sidebar-animation-collapse-speed: 400ms;
 .page-content-wrapper {
 
 }
+*/

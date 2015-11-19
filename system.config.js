@@ -62,6 +62,7 @@ System.config({
     "sass-material-colors": "npm:sass-material-colors@0.0.5",
     "scss": "github:mobilexag/plugin-sass@0.0.10",
     "text": "github:systemjs/plugin-text@0.0.2",
+    "tgdev/animate-sass": "github:tgdev/animate-sass@0.6.4",
     "traceur": "github:jmcriffey/bower-traceur@0.0.92",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.92",
     "tweenjs": "github:CreateJS/TweenJS@0.6.1",

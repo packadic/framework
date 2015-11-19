@@ -19,7 +19,6 @@ function log(...args:any[]) {
 }
 export = function (grunt) {
 
-///    process.stdout.write(util.inspect(utils, { colors: true }));
     var targets = {
         dist: {name: 'dist', dest: 'dist'},
         dev : {name: 'dev', dest: 'dev'}
@@ -114,29 +113,32 @@ export = function (grunt) {
             app    : {files: [{"src": "./<%= target.dest %>/app/init.js", "dest": "./<%= target.dest %>/app/init.js"}]}
         },
 
-        injector: { // removed space as jade does that aswell.
+        injector  : { // removed space as jade does that aswell.
             options: {starttag: '<!-- injector:{{ext}}-->', endtag: '<!-- endinjector-->', ignorePath: ['<%= target.dest %>/']},
             index  : {
                 files: {
-                    './<%= target.dest %>/index.html': ['<%= target.dest %>/jspm_packages/system.src.js', '<%= target.dest %>/system.config.js',
-                        ]
-                        .concat(['<%= target.dest %>/assets/styles/stylesheet.css', '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css'])
+                    './<%= target.dest %>/index.html': ['<%= target.dest %>/jspm_packages/system.src.js', '<%= target.dest %>/system.config.js'].concat([
+                        '<%= target.dest %>/assets/styles/stylesheet.css',
+                        '<%= target.dest %>/assets/styles/animate.css',
+                        '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css'
+                    ])
                 }
             }
         },
+        animatecss: { full: {dest: '<%= target.dest %>/assets/styles/animate.css'} },
 
         bytesize: {app: {src: ['<%= targets.dist.dest %>/app/init.js']}},
 
         connect: {dev: {options: {port: 8000, livereload: false, base: 'dev'}}},
 
         watch: {
-            options   : {livereload: true},
-            jade_index: {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
+            options    : {livereload: true},
+            jade_index : {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
             jadescripts: {files: ['src/scripts/**/*.jade'], tasks: ['copy:ts_jade']},
-            sass: {files: ['src/styles/**/*.{sass,scss}'], tasks: ['sass:styles']},
+            sass       : {files: ['src/styles/**/*.{sass,scss}'], tasks: ['sass:styles']},
             //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
             scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
-            demoscripts   : {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},
+            demoscripts: {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},
             //ts_copy   : {files: 'src/{scripts,typings}/**/*.{ts,d.ts}', tasks: ['clean:ts', 'copy:ts']}
         }
     };
@@ -145,6 +147,7 @@ export = function (grunt) {
     require('time-grunt')(grunt);
     //grunt.loadTasks('src/tasks');
     log(require('./src/tasks/jspm_bundle')(grunt)); //(grunt);
+    require('./src/tasks/animatecss')(grunt)
 
     config.ts['app_watch']       = _.clone(config.ts.packadic);
     config.ts['app_watch'].watch = 'src/scripts';

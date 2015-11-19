@@ -1,13 +1,18 @@
 import * as _ from 'lodash';
-import {
-    App,Vue,
-    Transition,ITransition
-} from './../app';
+import { App,Vue, Transition,ITransition } from './../app';
 
+export abstract class BaseTransition implements ITransition {
+    abstract enter(el:HTMLElement, done);
 
-/* */
-//      page-loader
-/* */
+    enterCancelled(el) {
+        $(el).stop()
+    }
+
+    leaveCancelled(el) {
+        $(el).stop()
+    }
+}
+
 @Transition('fade', false)
 export class PageLoaderTransition implements ITransition {
     enter(el:HTMLElement, done) {
@@ -29,3 +34,5 @@ export class PageLoaderTransition implements ITransition {
         $(el).stop()
     }
 }
+
+

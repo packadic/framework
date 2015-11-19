@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {App,Vue,AppState} from './../../index';
+import {App} from './../../index';
 import {defined,kindOf,MetaStore} from './../../lib';
 
 export function Transition(id:string, css:boolean = true):ClassDecorator {
@@ -24,7 +24,7 @@ export function Transition(id:string, css:boolean = true):ClassDecorator {
             }
         });
 
-        Vue.transition(id, options);
+        App.transition(id, options);
         console.log('options', options);
         console.groupEnd();
         return target;
@@ -42,4 +42,19 @@ export interface ITransition {
     stagger ?: (index:number) => number;
     enterStagger ?: (index:number) =>number;
     leaveStagger ?: (index:number) =>number;
+}
+
+export abstract class BaseTransition implements ITransition {
+    abstract enter(el:HTMLElement, done);
+}
+
+export abstract class BaseJqueryTransition extends BaseTransition {
+
+    enterCancelled(el) {
+        $(el).stop()
+    }
+
+    leaveCancelled(el) {
+        $(el).stop()
+    }
 }

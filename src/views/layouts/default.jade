@@ -38,7 +38,7 @@ html(lang="en")
 
 
     block body
-        body.page-loading(v-page-loader="showPageLoader", v-bind:class="layout.body.classes.toString()")
+        body.page-loading(v-page-loader="showPageLoader", v-bind:class="layout.bodyClass.toString()")
             #page-loader(v-if="showPageLoader", transition="fade")
                 .loader.loader-page
 
@@ -73,8 +73,11 @@ html(lang="en")
                 .page-container(v-if="!showPageLoader", transition="fade")
                     .page-sidebar-wrapper
                         block page-sidebar
-                            sidebar(v-ref:sidebar)
+                            sidebar(:items="sidebarItems", v-ref:sidebar)
 
+                            //sidebar(v-ref:sidebar)
+                                item(title="Hello", icon="fa fa-github", children=true)
+                                    item(title="First child")
 
                     .page-content-wrapper
                         .page-content
