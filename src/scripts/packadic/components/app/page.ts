@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import {defined} from './../../lib';
+import {defined,getViewPort} from './../../lib';
 import {
     App,
     Component, LifecycleHook, BaseComponent, Prop, EventHook,
@@ -42,8 +42,8 @@ export class PageBreadcrumbItemComponent extends BaseComponent {
             });
     }
 
-    get link(){
-        var link:any = {
+    get link() {
+        var link:any    = {
             type: this.type
         };
         link[this.type] = this[this.type];
@@ -65,25 +65,25 @@ export class PageBreadcrumbsComponent extends BaseComponent {
     `;
 
     @Prop({type: Array, required: false}) items:IBreadcrumbLink[];
-    @Prop({type: Boolean, required: false, 'default': () => true }) autofix:boolean;
+    @Prop({type: Boolean, required: false, 'default': () => true}) autofix:boolean;
 
 
     isLast(index:number):boolean {
         return this.items.length === index - 1;
     }
 
-    @LifecycleHook('beforeCompile') beforeCompile(){
-        if(this.autofix && defined(this.items)){
+    @LifecycleHook('beforeCompile') beforeCompile() {
+        if (this.autofix && defined(this.items)) {
             this.items[this.items.length - 1]['arrow'] = false;
         }
     }
 
-    @LifecycleHook('ready') ready(){
-        if(this.autofix && !defined(this.items)){
+    @LifecycleHook('ready') ready() {
+        if (this.autofix && !defined(this.items)) {
             var lia = this.$els['pageBreadcrumbs'].querySelectorAll('li');
-            if(!lia.length > 0) return;
+            if (!lia.length > 0) return;
             var i:HTMLElement[] = lia.item(lia.length - 1).getElementsByTagName('i');
-            if(!i.length > 0) return;
+            if (!i.length > 0) return;
             i[0].remove();
         }
     }
@@ -105,8 +105,28 @@ export class PageComponent extends BaseComponent {
     </div>
     `;
 
-    @Prop({type: String, required: false }) title:string;
-    @Prop({type: String, required: false }) subtitle:string;
-    @Prop({type: Boolean, required: false, 'default': () => true }) seperator:string;
+    @Prop({type: String, required: false}) title:string;
+    @Prop({type: String, required: false}) subtitle:string;
+    @Prop({type: Boolean, required: false, 'default': () => true}) seperator:string;
 }
 
+@Directive('page-height-resizer')
+export class PageContentSizerDirective extends BaseDirective {
+    listener(){
+        //console.log('v-page-height-resizer', this, getViewPort().width, App.layout.getBreakpoint('md'))
+        if (getViewPort().width >= App.layout.getBreakpoint('md')) {
+            $(this.el).css('min-height', App.layout.calculateViewportHeight());
+        } else {
+            $(this.el).removeAttr('style');
+        }
+    };
+
+    bind() {
+        App.on('layout:resize', () => this.listener());
+        $(()=> this.listener());
+    }
+
+    unbind() {
+        App.off('layout:resize', () => this.listener());
+    }
+}

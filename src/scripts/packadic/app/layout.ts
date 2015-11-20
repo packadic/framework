@@ -1,55 +1,131 @@
-import { objectSet, objectGet } from './../lib';
+import * as _ from 'lodash';
+import { defined, objectSet, objectGet, getViewPort } from './../lib';
 import {IObjectObserver,ObjectObserver,PathObserver,Observable,CompoundObserver,ICompoundObserver} from 'observe-js';
-//var obs:MutationObserver = new MutationObserver((mutations:any) => {
-//    mutations.forEach((mutation:MutationRecord) => {
-//        console.log('mutation', mutation);
-//    })
-//});
-//obs.observe(document.body, { attributes: true });
-function makeLayoutSettings() {
-    var layout:any    = {};
-    var key2class:any = {};
+import {App} from "./app";
+
+var layoutStyle:any = {};
+(function () {
     var class2key:any = {};
-    var obs:ICompoundObserver = new CompoundObserver();
+    function getKey(className:string) {
+        return class2key[className];
+    }
 
     function getPropString(prop:any):string {
         return Array.isArray(prop) ? prop.map(this.escape).join('.') : prop;
     }
 
     function add(key:string, className:string, def:boolean = true) {
-        objectSet(layout, getPropString(key), def);
-        key2class[key]       = className;
         class2key[className] = key;
-        return layout;
+        objectSet(layoutStyle, getPropString(key), def);
+        def === true && ! document.body.classList.contains(className) && document.body.classList.add(className);
+
+        var pathObserver = new PathObserver(layoutStyle, getPropString(key), def);
+        pathObserver.open(function(newValue:any, oldValue:any) {
+            console.log('path obs.open', arguments);
+            var list:DOMTokenList = document.body.classList;
+            if(newValue === true && !list.contains(className)){
+                list.add(className);
+            } else if(newValue === false && list.contains(className)){
+                list.remove(className);
+            }
+        });
+
+        return layoutStyle;
     }
 
-    function getClass(key:string) {
-        return key2class[key];
+    var bodyObserver:MutationObserver = new MutationObserver((mutations:any) => {
+        mutations.forEach((mutation:MutationRecord) => {
+            console.log('mutation', mutation);
+            var list:DOMTokenList = document.body.classList;
+            var current:string[] = document.body.className.split(' ');
+            var old:string[] = mutation.oldValue.split(' ');
+            var added:boolean = current.length > old.length;
+            var classes:string[] = _.difference(added ? current : old, added ? old : current);
+            classes.forEach((className:string) => {
+                if(!defined(getKey(className))) return;
+                objectSet(layoutStyle, getPropString(getKey(className)), added);
+            });
+            App.vm._digest();
+        })
+    });
+    bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true });
+
+    layoutStyle._add = add;
+
+}.call(this));
+
+layoutStyle._add('footer.fixed', 'page-footer-fixed')
+    ._add('header.fixed', 'page-header-fixed')
+    ._add('page.edged', 'page-edged')
+    ._add('page.boxed', 'page-boxed');
+
+
+
+
+export class Layout {
+    public style:any = layoutStyle;
+
+    public get settings():any {
+        return JSON.parse(JSON.parse(window.getComputedStyle(document.body, '::before').getPropertyValue('content'))).style;
     }
 
-    function getKey(className:string) {
-        return class2key[className];
-    }
+    constructor(){
 
-    function start(layout:any) {
-
-
-        obs.open((newValue:any, oldValue:any) => {
-            console.log('newValue', newValue);
+        var resize:number;
+        $(window).resize(() => {
+            if (resize) {
+                clearTimeout(resize);
+            }
+            resize = setTimeout(() => {
+                App.emit('layout:resize');
+            }, 50);
         });
     }
 
-    layout._add = add;
-    layout._start = start;
+    public getBreakpoint(which:string) {
+        return parseInt(this.settings.breakpoints[which]);
+    }
 
-    return layout;
+    public calculateViewportHeight() {
+        var sidebarHeight = getViewPort().height - App.$e('header').outerHeight();
+        if (this.style.footer.fixed) {
+            sidebarHeight = sidebarHeight - App.$e('footer').outerHeight();
+        }
+
+        return sidebarHeight;
+    }
+    /**
+     * Animated scroll to the given element
+     * @param ele
+     * @param offset
+     */
+    public scrollTo(ele?:any, offset?:number) {
+        var $el:JQuery = typeof(ele) === 'string' ? $(ele) : ele;
+        var pos = ($el && $el.size() > 0) ? $el.offset().top : 0;
+
+        if ($el) {
+
+            if (App.$e('body').hasClass('page-header-fixed')) {
+                pos = pos - App.$e('header').height();
+            }
+            pos = pos + (offset ? offset : -1 * $el.height());
+        }
+
+        $('html,body').animate({
+            scrollTop: pos
+        }, 'slow');
+    }
+
+    public scrollTop() {
+        this.scrollTo();
+    }
 }
 
-export var layout = makeLayoutSettings();
-layout._add('footer.fixed', 'page-footer-fixed')
-    ._add('header.fixed', 'page-header-fixed')
-    ._add('page.edged', 'page-edged')
-    ._add('page.boxed', 'page-boxed')
-    ._start(layout);
+
+
+
+
+
+
 
 

@@ -124,6 +124,7 @@ declare module vuejs {
          * http://vuejs.org/api/instance-properties.html
          */
         $el:HTMLElement;
+        $els:{[name:string]:HTMLElement};
         $data:{};
         $options:{};
         $parent:Vue;
@@ -229,6 +230,8 @@ declare module vuejs {
         _init(options:{}):void;
 
         _cleanup():void;
+
+        _digest():void;
 
         // static require(module:string) : void;
 

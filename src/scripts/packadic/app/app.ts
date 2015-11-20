@@ -10,15 +10,15 @@ import {
     applyMixins,defined,
     create as createPromise, PromiseInterface, DeferredInterface,
     ConfigObject,IConfigProperty, IConfigObserver,
-    log, out, BrowserPrettyConsole
+    log, out, BrowserPrettyConsole,makeEventEmitter,registerJQueryHelpers
 } from './../lib';
-//import {layout} from './layout';
+import {Layout} from './layout';
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.config.async = true;
 Vue.config.debug = true;
-
+registerJQueryHelpers();
 
 export {Vue, log, out}
 
@@ -33,12 +33,29 @@ export class App {
         throw new Error('App should not be instantiated');
     }
 
+    static on(...args:any[]) {
+    }
+
+    static once(...args:any[]) {
+    }
+
+    static off(...args:any[]) {
+    }
+
+    static emit(...args:any[]) {
+    }
+
     public static get log():typeof log {
         return log;
     }
 
     public static get out():BrowserPrettyConsole {
         return out;
+    }
+
+    protected static _layout:Layout = new Layout();
+    public static get layout():Layout {
+        return this._layout;
     }
 
     protected static _VM:any;
@@ -56,6 +73,10 @@ export class App {
     protected static _router:vuejs.VueRouter;
     public static get router():vuejs.VueRouter {
         return App._router;
+    }
+
+    public static $e(vel:string):JQuery {
+        return $(App.vm.$els[vel]);
     }
 
     public static defaults:Object = {
@@ -89,7 +110,7 @@ export class App {
 
     public static init(opts:Object = {}) {
         App._state = AppState.INITIALISING;
-
+        App.emit('INITIALISING');
         App.out.addDefaults();
         App.out.macro('title', 'Packadic');
         App.out.macro('alert', 'v1.0.0-alpha');
@@ -103,29 +124,34 @@ export class App {
                 return {
                     showPageLoader: true,
                     layout        : {
-                        footer: {fixed: true, text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
-                        header: {fixed: true, title: 'Codex'},
-                        page  : {edged: true, boxed: false}
+                        footer: {text: 'Copyright &copy; Codex ' + (new Date()).getFullYear()},
+                        header: {title: 'Codex'}
                     },
-                    sidebar       : {
-                        items: [],
-                    }
+                    sidebar       : {items: []}
+                }
+            },
+            computed: {
+                layoutStyle: {
+                    get: () => App.layout.style
                 }
             }
         }, opts));
 
 
         App._state = AppState.INITIALISED;
+        App.emit('INITIALISED');
         return this;
     }
 
-    public static start(opts:Object = {}):PromiseInterface<any> {
+    public static start(opts:any = {}):PromiseInterface<any> {
         var defer:DeferredInterface<any> = createPromise();
         App._state                       = AppState.STARTING;
+        App.emit('STARTING');
+        if (defined(opts.data)) opts.data = () => _.cloneDeep(opts.data);
 
         $(() => {
             if (App.config('router.enabled')) {
-                App.router.start(App._VM, App.config('router.mount'));
+                App.router.start(App._VM.extend(opts), App.config('router.mount'));
                 App._vm = App.router.app;
             } else {
                 App._vm = new App._VM(opts);
@@ -135,7 +161,9 @@ export class App {
             if (App.config('app.loader.enabled') && App.config('app.loader.autoHideOnStart')) {
                 App.vm.$set('showPageLoader', false);
             }
+
             App._state = AppState.STARTED;
+            App.emit('STARTED');
             defer.resolve();
         });
 
@@ -147,3 +175,8 @@ export class App {
 
 var config:ConfigObject = new ConfigObject(App.defaults);
 App.config              = ConfigObject.makeProperty(config);
+makeEventEmitter(App, {
+    assignMethods       : ['on', 'once', 'off', 'emit'],
+    assignPrivateMethods: []
+});
+App.on('**', function(){ console.log('event', this, arguments); })

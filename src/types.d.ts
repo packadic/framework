@@ -31,6 +31,23 @@ interface BrowserNodeGlobal {
     clearInterval: Function;
 }
 
+interface JQueryStatic {
+    material?:any;
+    cookie?:any;
+}
+interface JQuery {
+    //slimScroll(...args:any[]): JQuery;
+    size(...args:any[]): number;
+    removeAttributes(...args:any[]):JQuery ;
+    ensureClass(...args:any[]):JQuery ;
+    testWidget(...args:any[]):JQuery ;
+    testPlugin(...args:any[]):JQuery ;
+    slimScroll(...args:any[]):JQuery ;
+    onClick(...args:any[]):JQuery;
+    jcarousel(...args:any[]):JQuery;
+    prefixedData(prefix):any;
+}
+
 interface VueStrapModules {
     accordion: Object
     affix: Object

@@ -38,12 +38,12 @@ html(lang="en")
 
 
     block body
-        body.page-loading.page-header-fixed.page-footer-fixed.page-edged(v-page-loader="showPageLoader", v-el:body)
+        body.page-loading(v-page-loader="showPageLoader", v-el:body)
             #page-loader(v-if="showPageLoader", transition="fade")
                 .loader.loader-page
 
             block page-header
-                .page-header.navbar(v-if="!showPageLoader", transition="fade", class=pageHeaderClass, v-el:header)
+                .page-header.navbar(v-if="!showPageLoader", transition="fade", v-bind:class="{ 'navbar-fixed-top': layoutStyle.header.fixed }", v-el:header)
                     block page-header-inner
                         .page-header-inner(v-el:header-inner)
                             block header-logo
@@ -80,7 +80,7 @@ html(lang="en")
                                     item(title="First child")
 
                     .page-content-wrapper(v-el:content-wrapper)
-                        .page-content(v-el:content)
+                        .page-content(v-page-height-resizer, v-el:content)
                             block page-content
                                 .page-head(class=pageHeadClass)
                                     .page-title
