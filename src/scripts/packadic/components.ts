@@ -7,3 +7,4 @@ export * from './components/app/page';
 export * from './components/bootstrap/dropdown';
 export * from './components/bootstrap/tabset';
 export * from './components/bootstrap/tab';
+export * from './components/bootstrap/tooltip';

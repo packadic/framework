@@ -242,4 +242,6 @@ declare module "observe-js" {
     export interface Observable extends observejs.Observable {}
     export interface IPathObserver extends observejs.PathObserver_instance {}
     export interface IObjectObserver extends observejs.ObjectObserver_instance {}
+    export interface ICompoundObserver extends observejs.CompoundObserver_instance {}
+
 }

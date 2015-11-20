@@ -38,14 +38,14 @@ html(lang="en")
 
 
     block body
-        body.page-loading.page-header-fixed.page-footer-fixed.page-edged(v-page-loader="showPageLoader")
+        body.page-loading.page-header-fixed.page-footer-fixed.page-edged(v-page-loader="showPageLoader", v-el:body)
             #page-loader(v-if="showPageLoader", transition="fade")
                 .loader.loader-page
 
             block page-header
-                .page-header.navbar(v-if="!showPageLoader", transition="fade", class=pageHeaderClass)
+                .page-header.navbar(v-if="!showPageLoader", transition="fade", class=pageHeaderClass, v-el:header)
                     block page-header-inner
-                        .page-header-inner
+                        .page-header-inner(v-el:header-inner)
                             block header-logo
                                 .page-logo
                                     .logo-packadic.pull-left(v-html="layout.header.title")
@@ -70,17 +70,17 @@ html(lang="en")
 
 
             block page-container
-                .page-container(v-if="!showPageLoader", transition="fade")
-                    .page-sidebar-wrapper
+                .page-container(v-if="!showPageLoader", transition="fade", v-el:container)
+                    .page-sidebar-wrapper(v-el:sidebar-wrapper)
                         block page-sidebar
-                            sidebar(:items="sidebar.items", v-ref:sidebar)
+                            sidebar(:items="sidebar.items", v-ref:sidebar, v-el:sidebar)
 
                             //sidebar(v-ref:sidebar)
                                 item(title="Hello", icon="fa fa-github", children=true)
                                     item(title="First child")
 
-                    .page-content-wrapper
-                        .page-content
+                    .page-content-wrapper(v-el:content-wrapper)
+                        .page-content(v-el:content)
                             block page-content
                                 .page-head(class=pageHeadClass)
                                     .page-title
@@ -94,8 +94,8 @@ html(lang="en")
 
 
             block page-footer
-                .page-footer(v-if="!showPageLoader", transition="fade")
-                    .page-footer-inner(v-html="layout.footer.text")
+                .page-footer(v-if="!showPageLoader", transition="fade", v-el:footer)
+                    .page-footer-inner(v-html="layout.footer.text", v-el:footer-inner)
                         - var year = (new Date()).getFullYear()
                         | Copyright &copy; Codex #{year}
                     block scroll-to-top

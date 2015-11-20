@@ -38,6 +38,7 @@
       "reflect-metadata": "npm:reflect-metadata@^0.1.2",
       "sass-material-colors": "npm:sass-material-colors@^0.0.5",
       "scss": "github:mobilexag/plugin-sass@^0.0.10",
+      "tether": "npm:tether@^1.1.1",
       "text": "github:systemjs/plugin-text@^0.0.2",
       "tgdev/animate-sass": "github:tgdev/animate-sass@^0.6.4",
       "tweenjs": "github:CreateJS/TweenJS@^0.6.1",
@@ -57,14 +58,6 @@
       "typescript": "npm:typescript@^1.6.2"
     },
     "overrides": {
-      "github:twbs/bootstrap@v4-dev": {
-        "files": [
-          "css",
-          "fonts",
-          "js",
-          "scss"
-        ]
-      },
       "github:vuejs/vue-router@0.7.5": {
         "main": "dist/vue-router.js"
       },
@@ -79,6 +72,14 @@
       },
       "github:vuejs/vue-resource@0.1.17": {
         "main": "dist/vue-resource"
+      },
+      "github:twbs/bootstrap@v4-dev": {
+        "files": [
+          "lib/../scss/**/*.scss",
+          "js",
+          "css",
+          "dist"
+        ]
       }
     }
   },

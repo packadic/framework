@@ -34,6 +34,15 @@
         },
         "createjs-lib/createjs-lib.d.ts": {
             "commit": "4f7b7e01d3a9622bfab0bef469e169529e60c66b"
+        },
+        "tether/tether.d.ts": {
+            "commit": "16134c168d021351acb1673ee9659644fc58c424"
+        },
+        "bootstrap/bootstrap.d.ts": {
+            "commit": "16134c168d021351acb1673ee9659644fc58c424"
+        },
+        "jquery/jquery.d.ts": {
+            "commit": "16134c168d021351acb1673ee9659644fc58c424"
         }
     }
 }

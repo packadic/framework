@@ -12,7 +12,7 @@ import {
     ConfigObject,IConfigProperty, IConfigObserver,
     log, out, BrowserPrettyConsole
 } from './../lib';
-
+//import {layout} from './layout';
 
 Vue.use(VueRouter);
 Vue.use(VueResource);
@@ -63,22 +63,22 @@ export class App {
         logging: {
             level: log.levels.DEBUG
         },
-        router: {
+        router : {
             enabled: true,
-            mount: '<%= app.mount %>',
+            mount  : '<%= app.mount %>',
             options: {
-                hashbang: true,
-                history: false,
-                abstract: false,
-                root: null,
-                linkActiveClass: 'v-link-active',
+                hashbang          : true,
+                history           : false,
+                abstract          : false,
+                root              : null,
+                linkActiveClass   : 'v-link-active',
                 saveScrollPosition: false,
-                transitionOnLoad: true
+                transitionOnLoad  : true
             }
         },
         app    : {
-            mount    : 'html',
-            loader   : {
+            mount : 'html',
+            loader: {
                 enabled        : true,
                 autoHideOnStart: true
             }
@@ -94,11 +94,11 @@ export class App {
         App.out.macro('title', 'Packadic');
         App.out.macro('alert', 'v1.0.0-alpha');
 
-        if(App.config('router.enabled')) {
+        if (App.config('router.enabled')) {
             App._router = new VueRouter(App.config('router.options'));
         }
 
-        this._VM    = Vue.extend(_.merge({
+        this._VM = Vue.extend(_.merge({
             data: () => {
                 return {
                     showPageLoader: true,
@@ -124,7 +124,7 @@ export class App {
         App._state                       = AppState.STARTING;
 
         $(() => {
-            if(App.config('router.enabled')){
+            if (App.config('router.enabled')) {
                 App.router.start(App._VM, App.config('router.mount'));
                 App._vm = App.router.app;
             } else {

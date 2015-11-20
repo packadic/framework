@@ -9,3 +9,6 @@
 /// <reference path="loglevel/loglevel.d.ts" />
 /// <reference path="createjs-lib/createjs-lib.d.ts" />
 /// <reference path="tweenjs/tweenjs.d.ts" />
+/// <reference path="tether/tether.d.ts" />
+/// <reference path="bootstrap/bootstrap.d.ts" />
+/// <reference path="jquery/jquery.d.ts" />

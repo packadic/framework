@@ -9,10 +9,12 @@
 @import "mixins";
 
 @import "../../jspm_packages/npm/font-awesome@4.4.0/scss/variables";
-@import "../../jspm_packages/github/twbs/bootstrap@v4-dev/scss/variables";      // the local bootstrap-variables is just for quick reference. its not used
+// @import "../../jspm_packages/github/twbs/bootstrap@v4-dev/scss
+@import "bootstrap/variables";                                                  // the local bootstrap-variables is just for quick reference. its not used
 @import "../../jspm_packages/github/tgdev/animate-sass@0.6.4/helpers/settings";
 @import "variables/extending-variables";                                        // extending variables that depends on other variables (like bootstrap)
-@import "../../jspm_packages/github/twbs/bootstrap@v4-dev/scss/mixins";
+//@import "../../jspm_packages/github/twbs/bootstrap@v4-dev/scss/mixins";
+@import "bootstrap/mixins";
 @import "../../jspm_packages/npm/font-awesome@4.4.0/scss/mixins";
 @import "../../jspm_packages/github/tgdev/animate-sass@0.6.4/helpers/mixins";
 

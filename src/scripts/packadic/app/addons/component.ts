@@ -5,7 +5,7 @@ import {defined,kindOf,MetaStore} from './../../lib';
 
 
 export class BaseComponent {
-    public static COMPONENT:boolean=true;
+    public static COMPONENT:boolean = true;
     // public properties: http://vuejs.org/api/instance-properties.html
     $:any;
     $$:any;
@@ -92,7 +92,8 @@ export class BaseComponent {
            options?:{ deep?: boolean; immediate?: boolean }):void {
     }
 
-    _digest(){}
+    _digest() {
+    }
 
 }
 
@@ -131,77 +132,87 @@ export function Prop(options) {
     }
 }
 
-export function componentOptions(cls:any){
+export function componentOptions(cls:any) {
 
 
-        let options:any = {
-            data    : (():any => {
-                return new cls();
-            }),
-            methods : {},
-            computed: {}
-        };
+    let options:any = {
+        data    : (():any => {
+            return new cls();
+        }),
+        methods : {},
+        computed: {}
+    };
 
-        // check for replace and template
-        if (cls.hasOwnProperty('replace'))
-            options.replace = cls.replace;
+    // check for replace and template
+    if (cls.hasOwnProperty('replace'))
+        options.replace = cls.replace;
 
-        if (cls.hasOwnProperty('template'))
-            options.template = cls.template;
+    if (cls.hasOwnProperty('template'))
+        options.template = cls.template;
+    if (cls.hasOwnProperty('components'))
+        options.components = cls.components;
+    if (cls.hasOwnProperty('mixins'))
+        options.mixins = cls.mixins;
 
-        // create object and get prototype
-        let obj:any   = new cls();
-        let proto:any = Object.getPrototypeOf(obj);
+    // create object and get prototype
+    let obj:any   = new cls();
+    let proto:any = Object.getPrototypeOf(obj);
 
-        if (proto.hasOwnProperty('__props__'))
-            options.props = proto.__props__;
+    if (proto.hasOwnProperty('__props__'))
+        options.props = proto.__props__;
 
-        if (proto.hasOwnProperty('__events__'))
-            options.events = proto.__events__;
+    if (proto.hasOwnProperty('__events__'))
+        options.events = proto.__events__;
 
-        if (proto.hasOwnProperty('__hooks__'))
-            Vue['util'].extend(options, proto.__hooks__);
+    if (proto.hasOwnProperty('__hooks__'))
+        Vue['util'].extend(options, proto.__hooks__);
 
-        // get methods
-        Object.getOwnPropertyNames(proto).forEach((method:string):void => {
+    // get methods
+    Object.getOwnPropertyNames(proto).forEach((method:string):void => {
 
-            // skip the constructor and the internal option keeper
-            if (['constructor'].indexOf(method) > -1)
-                return;
+        // skip the constructor and the internal option keeper
+        if (['constructor'].indexOf(method) > -1)
+            return;
 
-            let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
+        let desc:PropertyDescriptor = Object.getOwnPropertyDescriptor(proto, method);
 
-            // normal methods
-            if (typeof desc.value === 'function')
-                options.methods[method] = proto[method];
+        // normal methods
+        if (typeof desc.value === 'function')
+            options.methods[method] = proto[method];
 
-            // if getter and setter are defied, pass the function as computed property
-            else if (typeof desc.set === 'function')
-                options.computed[method] = {
-                    get: desc.get,
-                    set: desc.set
-                };
+        // if getter and setter are defied, pass the function as computed property
+        else if (typeof desc.set === 'function')
+            options.computed[method] = {
+                get: desc.get,
+                set: desc.set
+            };
 
-            // if the method only has a getter, just put the getter to the component
-            else if (typeof desc.get === 'function')
-                options.computed[method] = desc.get;
-        });
+        // if the method only has a getter, just put the getter to the component
+        else if (typeof desc.get === 'function')
+            options.computed[method] = desc.get;
+    });
 
-        return options;
+    return options;
 }
 
 // register a class as component in vue
 export function Component(name:string, children?:any):(cls:any)=>void {
     return (cls:any):void => {
         var options:any = componentOptions(cls);
+        console.groupCollapsed('Component: ' + name);
+        console.log('cls', cls);
 
-        if(defined(children)){
+        if (defined(children)) {
             options.components = options.components || {};
             Object.keys(children).forEach((key:string) => {
-                options.components[key] = componentOptions(children[key]);
+                options.components[key]      = componentOptions(children[key]);
                 options.components[key].name = key;
             })
         }
+        console.log('options', options);
+        console.log('children', children);
+        console.groupEnd();
+
         Vue.component(name, options);
     };
 }
