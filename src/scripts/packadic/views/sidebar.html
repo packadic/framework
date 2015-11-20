@@ -1,0 +1,10 @@
+<div class="page-sidebar navbar-collapse collapse" v-el="sidebar">
+    <ul class="page-sidebar-menu" v-bind:class="{ 'page-sidebar-menu-closed': closed }" v-el="menu">
+        <slot>
+            <item v-for="item in items"
+                  :item="item"
+                  :index="$index"
+            ></item>
+        </slot>
+    </ul>
+</div>

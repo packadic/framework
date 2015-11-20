@@ -1,8 +1,8 @@
 import {View,IBreadcrumbLink, App, LifecycleHook} from "./../../../packadic/index";
-import template from './users.jade!'
+import template from './users.html!text'
 
 export default class UsersView extends View {
-    static template = template();
+    static template = template;
 
     breadcrumbs:IBreadcrumbLink = [
         View.breadcrumb('Home', 'route', 'home'),
@@ -10,7 +10,7 @@ export default class UsersView extends View {
     ];
 
     searchQuery:string   = '';
-    gridColumns:string[] = ['first_name', 'email'];
+    gridColumns:string[] = ['first_name', 'email', 'ip_address'];
     users:any[]          = [];
 
     @LifecycleHook('created') created() {

@@ -45,7 +45,7 @@ var layoutStyle:any = {};
                 if(!defined(getKey(className))) return;
                 objectSet(layoutStyle, getPropString(getKey(className)), added);
             });
-            if(defined(App.vm._digest)) App.vm._digest();
+            if(defined(App.vm)) App.vm._digest();
         })
     });
     bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true });

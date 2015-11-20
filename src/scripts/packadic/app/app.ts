@@ -207,5 +207,5 @@ makeEventEmitter(App, {
     assignPrivateMethods: []
 });
 App.on('**', function () {
-    console.log('event', this, arguments);
+    console.log('event', this.event, arguments);
 })

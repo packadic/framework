@@ -1,0 +1,15 @@
+<ul class="pagination">
+    <li>
+        <a href="#" aria-label="Previous" v-on:click="prev($event)">
+            <slot name="previous"><span aria-hidden="true">&laquo;</span></slot>
+        </a>
+    </li>
+    <li v-for="c in pager.range" v-bind:class="{ 'active': isCurrent(c) }">
+        <a href="#" v-on:click="goto(c,$event)">{{c}}</a>
+    </li>
+    <li>
+        <a href="#" aria-label="Next" v-on:click="next($event)">
+            <slot name="next"><span aria-hidden="true">&raquo;</span></slot>
+        </a>
+    </li>
+</ul>

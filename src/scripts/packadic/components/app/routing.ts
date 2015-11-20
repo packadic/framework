@@ -4,6 +4,7 @@ import {App,Component,BaseComponent,componentOptions,Prop,LifecycleHook} from '.
 import {defined,kindOf,MetaStore} from './../../lib';
 import {view} from './view';
 
+import alinkTemplate from './../../views/alink.html!text'
 
 export interface ILink {
     type?:string;
@@ -37,7 +38,7 @@ route.link = (type:string, typeValue:string, target?:string):ILink => {
 
 @Component('alink')
 export class LinkComponent extends BaseComponent implements ILink {
-    static template = `<a v-bind="attrs" v-link="vlink"><slot></slot></a>`;
+    static template = alinkTemplate;
 
     @Prop({type: Object, required: false}) link:ILink;
 

@@ -1,0 +1,10 @@
+<div class="page-head" v-if="title">
+    <div class="page-title">
+        <h1>{{title}} <small v-if="subtitle">{{subtitle}}</small></h1>
+    </div>
+</div>
+<slot name="breadcrumb"></slot>
+<div v-if="seperator" class="page-content-seperator"></div>
+<div class="page-content-inner">
+    <slot></slot>
+</div>

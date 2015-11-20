@@ -7,7 +7,8 @@ import {
     Transition,ITransition,BaseJqueryTransition, log,
 } from './../../app';
 import {BaseJqueryTransition} from "../../app/addons/transition";
-
+import sidebarItemTemplate from './../../views/sidebar-item.html!text'
+import sidebarTemplate from './../../views/sidebar.html!text'
 
 export interface ISidebarItem {
     title?: string;
@@ -21,25 +22,7 @@ export interface ISidebarItem {
 }
 
 export class SidebarItemComponent extends BaseComponent {
-    static template:string = `
-    <li v-bind:class="{ 'open': isOpen && hasSubmenu, 'active': isActive, 'heading': isType('heading') }">
-
-        <h3 v-if="isType('heading')">{{title}}</h3>
-
-        <a v-if="isType('folder')" href="javascript:;" v-on:click="toggle()">
-            <i v-if="icon" class="{{icon}}"></i>
-            <span class="title">{{title}}</span>
-            <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
-        </a>
-
-        <alink v-if="isType('href', 'route', 'path')" v-bind:link="link"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></alink>
-
-
-
-        <ul v-if="hasSubmenu && isType('folder', 'href')" v-show="isOpen" class="sub-menu" transition="sidebar-submenu">
-            <slot> <item v-for="subitem in children" :item="subitem" :index="$index"></item> </slot>
-        </ul>
-    </li>`;
+    static template:string = sidebarItemTemplate;
 
 
     @Prop({type: Object, required: false}) item:ISidebarItem;
@@ -110,17 +93,7 @@ export class SidebarItemComponent extends BaseComponent {
 @Component('sidebar', { 'item': SidebarItemComponent })
 export class SidebarComponent extends BaseComponent {
 
-    static template:string = `
-    <div class="page-sidebar navbar-collapse collapse" v-el="sidebar">
-        <ul class="page-sidebar-menu" v-bind:class="{ 'page-sidebar-menu-closed': closed }" v-el="menu">
-        <slot>
-            <item v-for="item in items"
-            :item="item"
-            :index="$index"
-            ></item>
-        </slot>
-        </ul>
-    </div>`;
+    static template:string = sidebarTemplate;
 
     @Prop({type: Array, required: false}) items:ISidebarItem[];
 

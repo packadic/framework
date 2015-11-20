@@ -1,9 +1,0 @@
-div
-    page(title='Overview', subtitle="User management")
-        page-breadcrumbs(slot='breadcrumb', :items="breadcrumbs")
-
-        nav
-            pagination(share-id="my-table").pagination-sm
-        grid.table.table-packadic(share-id="my-table", v-bind:rows="users", v-bind:columns="gridColumns", v-bind="{ filterKey: searchQuery, perPage: 5 }")
-
-

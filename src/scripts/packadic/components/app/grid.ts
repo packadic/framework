@@ -9,31 +9,15 @@ import {
 import {BaseJqueryTransition} from "../../app/addons/transition";
 import {ILink,LinkComponent} from './routing';
 import pagination from 'pagination';
+import gridTemplate from './../../views/grid.html!text'
+import paginationTemplate from './../../views/pagination.html!text'
 
 App.share('paginator', () => pagination.create('search', {prelink: '/', current: 1, rowsPerPage: 10, totalResult: 0}));
 
 
 @Component('grid')
 export class GridComponent extends BaseComponent {
-    static template = `
-    <table class="table">
-        <thead>
-            <tr>
-                <th v-for="column in columns" v-on:click="sortBy(column)" v-bind:class="{ 'dropup': reversed[column] }">
-                    {{column | capitalize}}
-                    <span v-bind:class="{ 'caret': sortColumn == column }"></span>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="row in currentPage | orderBy sortColumn reversed[sortColumn]">
-                <td v-for="column in columns">
-                {{row[column]}}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    `;
+    static template = gridTemplate;
 
     @Prop({type: Array}) rows:any[];
     @Prop({type: Array}) columns:any[];
@@ -41,12 +25,12 @@ export class GridComponent extends BaseComponent {
     @Prop({type: Number, 'default': 10}) perPage:number;
     @Prop({type: String}) shareId:string;
 
-    sortColumn:string;
+    sortColumn:string       = '';
     reversed:any            = {};
     paginator:NpmPagination = Object.create({});
 
     get pager():NpmPaginationData {
-        return this.paginator.getPaginationData();
+        return this.$data.paginator.getPaginationData();
     }
 
     get filteredRows() {
@@ -61,8 +45,8 @@ export class GridComponent extends BaseComponent {
     }
 
     sortBy(column) {
-        this.sortColumn       = column;
-        this.reversed[column] = !this.reversed[column];
+        this.$set('sortColumn', column);
+        this.$data.reversed[column] = !this.$data.reversed[column];
     }
 
     @LifecycleHook('beforeCompile') beforeCompile() {
@@ -80,23 +64,7 @@ export class GridComponent extends BaseComponent {
 
 @Component('pagination')
 export class PaginationComponent extends BaseComponent {
-    static template = `
-    <ul class="pagination">
-        <li>
-            <a href="#" aria-label="Previous" v-on:click="prev($event)">
-                <slot name="previous"><span aria-hidden="true">&laquo;</span></slot>
-            </a>
-        </li>
-        <li v-for="c in pager.range" v-bind:class="{ 'active': isCurrent(c) }">
-            <a href="#" v-on:click="goto(c,$event)">{{c}}</a>
-        </li>
-        <li>
-            <a href="#" aria-label="Next" v-on:click="next($event)">
-                <slot name="next"><span aria-hidden="true">&raquo;</span></slot>
-            </a>
-        </li>
-    </ul>
-    `;
+    static template = paginationTemplate;
 
     @Prop({type: String}) shareId:string;
     @Prop({type: Number, default: 10}) maxLinks:number;
@@ -116,20 +84,20 @@ export class PaginationComponent extends BaseComponent {
         return this.paginator.getPaginationData().current === index;
     }
 
-    goto(index:number,event:MouseEvent){
+    goto(index:number, event:MouseEvent) {
         event.preventDefault();
         this.paginator.set('current', index);
     }
 
     next(event:MouseEvent) {
         event.preventDefault();
-        if(!this.pager.next) return;
+        if (!this.pager.next) return;
         this.paginator.set('current', this.pager.next);
     }
 
     prev(event:MouseEvent) {
         event.preventDefault();
-        if(!this.pager.previous) return;
+        if (!this.pager.previous) return;
         this.paginator.set('current', this.pager.previous);
     }
 

@@ -1,0 +1,15 @@
+<div>
+    <page title="Overview" subtitle="User management">
+        <page-breadcrumbs slot="breadcrumb" :items="breadcrumbs"></page-breadcrumbs>
+        <nav>
+            <pagination share-id="user-grid" class="pagination-sm"></pagination>
+        </nav>
+        <grid class="table table-packadic"
+              share-id="user-grid"
+              v-bind:rows="users"
+              v-bind:columns="gridColumns"
+              v-bind:filter-key="searchQuery"
+              v-bind:per-page="5"
+        ></grid>
+    </page>
+</div>

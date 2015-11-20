@@ -8,6 +8,9 @@ import {
 } from './../../app';
 import {BaseJqueryTransition} from "../../app/addons/transition";
 import {ILink,LinkComponent} from './routing';
+import pageBreadcrumbTemplate from './../../views/page-breadcrumb.html!text'
+import pageBreadcrumbsTemplate from './../../views/page-breadcrumbs.html!text'
+import pageTemplate from './../../views/page.html!text'
 
 export interface IBreadcrumbLink extends ILink {
     title?:string;
@@ -18,11 +21,7 @@ export interface IBreadcrumbLink extends ILink {
 @Component('page-breadcrumb')
 export class PageBreadcrumbItemComponent extends BaseComponent {
 
-    static template:string = `
-    <li>
-        <alink v-bind:link="link"><slot>{{title}}</slot></alink>
-        <i class="fa fa-arrow-right" v-if="arrow"></i>
-    </li>`;
+    static template:string = pageBreadcrumbTemplate;
 
 
     @Prop({type: Object, required: false}) item:IBreadcrumbLink;
@@ -53,16 +52,7 @@ export class PageBreadcrumbItemComponent extends BaseComponent {
 
 @Component('page-breadcrumbs')
 export class PageBreadcrumbsComponent extends BaseComponent {
-    static template = `
-    <ul class="page-breadcrumb breadcrumb" v-el:page-breadcrumbs>
-        <slot>
-            <page-breadcrumb v-for="item in items"
-            :item="item"
-            :index="$index"
-            ></page-breadcrumb>
-        </slot>
-    </ul>
-    `;
+    static template = pageBreadcrumbsTemplate;
 
     @Prop({type: Array, required: false}) items:IBreadcrumbLink[];
     @Prop({type: Boolean, required: false, 'default': () => true}) autofix:boolean;
@@ -92,18 +82,7 @@ export class PageBreadcrumbsComponent extends BaseComponent {
 
 @Component('page')
 export class PageComponent extends BaseComponent {
-    static template:string = `
-    <div class="page-head" v-if="title">
-        <div class="page-title">
-            <h1>{{title}} <small v-if="subtitle">{{subtitle}}</small></h1>
-        </div>
-    </div>
-    <slot name="breadcrumb"></slot>
-    <div v-if="seperator" class="page-content-seperator"></div>
-    <div class="page-content-inner">
-        <slot></slot>
-    </div>
-    `;
+    static template:string = pageTemplate;
 
     @Prop({type: String, required: false}) title:string;
     @Prop({type: String, required: false}) subtitle:string;

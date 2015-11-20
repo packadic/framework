@@ -57,7 +57,7 @@ export = function (grunt) {
             images        : {files: [{cwd: 'src/images', src: ['**'], dest: '<%= target.dest %>/assets/images/', expand: true}]},
             systemConfig  : {files: [{cwd: '', src: ['system.config.js'], dest: '<%= target.dest %>/assets', expand: true}]},
             jspm          : {files: [{cwd: '', src: ['jspm_packages/**/*', 'system.config.js'], dest: '<%= target.dest %>/', expand: true}]},
-            ts_jade       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts', src: ['**/*.jade'], dest: '<%= target.dest %>/assets/scripts', expand: true}]},
+            script_views       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts', src: ['**/*.{jade,html}'], dest: '<%= target.dest %>/assets/scripts', expand: true}]},
             ts_demo       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts/demo', src: ['**/*.ts'], dest: '<%= target.dest %>/assets/scripts/demo', expand: true}]},
             htaccess      : {src: 'src/.htaccess', dest: '<%= target.dest %>/.htaccess'},
             packadic_ts_js: {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts/packadic', src: ['**/*.{ts,js,js.map}'], dest: '<%= target.dest %>/assets/scripts/packadic', expand: true}]},
@@ -135,7 +135,7 @@ export = function (grunt) {
         watch: {
             options    : {livereload: true},
             jade_index : {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
-            jadescripts: {files: ['src/scripts/**/*.jade'], tasks: ['copy:ts_jade']},
+            script_views: {files: ['src/scripts/**/*.{jade,html}'], tasks: ['copy:script_views']},
             sass       : {files: ['src/styles/**/*.{sass,scss}'], tasks: ['sass:styles']},
             //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
             scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
