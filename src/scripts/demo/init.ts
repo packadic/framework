@@ -7,6 +7,7 @@ import {App, view, route} from './../packadic/index';
 
 
 window['App'] = App;
+window['_l'] = _;
 
 App.config.merge('router.options', {hashbang: false, history: false });
 App.init();

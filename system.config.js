@@ -34,12 +34,16 @@ System.config({
         },
         "packadic": {
             "defaultExtension": "ts"
+        },
+        "tether":{
+            'format': 'global'
         }
     },
 
     meta: {
-        "bootstrap": {
-            deps: ["tether", "jquery"]
+        "bootstrap/*": {
+            deps: ["tether", "jquery"],
+            globals: ["tether"]
         }
     },
 

@@ -52,7 +52,7 @@ html(lang="en")
                                         block header-logo-inner
                                             | Codex
                                     block header-sidebar-toggler
-                                        .menu-toggler.sidebar-toggler(v-sidebar, s-action="toggle", s-on="click", data-toggle='tooltip', title='Toggle the sidebar menu', data-layout-api='sidebar-toggle', data-placement='right')
+                                        .menu-toggler.sidebar-toggler(v-sidebar, s-action="toggle", s-on="click", v-tooltip, title='Toggle the sidebar menu', t-placement='left')
 
                             block header-actions
                                 .page-actions
@@ -63,7 +63,7 @@ html(lang="en")
 
                             block header-right
                                 .pull-right
-                                    .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', data-toggle='tooltip', title='Toggle the quick sidebar menu', data-placement='left', data-offset='0 10px')
+                                    .nav-link.quick-sidebar-toggler(data-layout-api='qs-toggle', v-tooltip, title='Toggle the quick sidebar menu', t-placement='left', t-offset='0 10px')
 
                 .clearfix
 
