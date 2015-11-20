@@ -150,6 +150,9 @@ a[ui-sref]{
 [v-cloak] {
     display: none;
 }
+.fake-link {
+    cursor: pointer;
+}
 $sidebar-animation-collapse-speed: 400ms;
 @media (min-width: 992px) {
     .page-sidebar {

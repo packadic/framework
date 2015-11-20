@@ -122,8 +122,8 @@ export class PageContentSizerDirective extends BaseDirective {
     };
 
     bind() {
-        App.on('layout:resize', () => this.listener());
-        $(()=> this.listener());
+
+        $(()=> App.on('layout:resize', () => this.listener()) && this.listener());
     }
 
     unbind() {

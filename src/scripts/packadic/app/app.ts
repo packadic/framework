@@ -120,7 +120,7 @@ export class App {
         }
 
         this._VM = Vue.extend(_.merge({
-            data: () => {
+            data    : () => {
                 return {
                     showPageLoader: true,
                     layout        : {
@@ -147,8 +147,14 @@ export class App {
         var defer:DeferredInterface<any> = createPromise();
         App._state                       = AppState.STARTING;
         App.emit('STARTING');
-        if (defined(opts.data)) opts.data = () => _.cloneDeep(opts.data);
+        if (defined(opts.data)) {
+            var data:any = _.cloneDeep(opts.data);
+            opts.data    = () => {
+                return data
+            };
+        }
 
+        console.warn('opts data', opts);
         $(() => {
             if (App.config('router.enabled')) {
                 App.router.start(App._VM.extend(opts), App.config('router.mount'));
@@ -162,6 +168,12 @@ export class App {
                 App.vm.$set('showPageLoader', false);
             }
 
+            $('a.nogo').on('click', function (e:JQueryEventObject) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+
             App._state = AppState.STARTED;
             App.emit('STARTED');
             defer.resolve();
@@ -170,7 +182,22 @@ export class App {
         return defer.promise;
     }
 
+    public static dataRequest(name:string, fn:Function):Promise {
+        return App.vm.$http.get('/data/' + name + '.json', fn);
+    }
 
+    protected static _sharedConstructors:{[name:string]:any} = {};
+    protected static _sharedInstances:{[shareId:string]:any} = {};
+    public static share(name:string, creator:Function){
+        if(defined(App._sharedConstructors[name])) return;
+        App._sharedConstructors[name] = creator;
+    }
+    public static shared(shareId:string, name:string){
+        if(!defined(App._sharedInstances[shareId])){
+            App._sharedInstances[shareId] = App._sharedConstructors[name]();
+        }
+        return App._sharedInstances[shareId];
+    }
 }
 
 var config:ConfigObject = new ConfigObject(App.defaults);
@@ -179,4 +206,6 @@ makeEventEmitter(App, {
     assignMethods       : ['on', 'once', 'off', 'emit'],
     assignPrivateMethods: []
 });
-App.on('**', function(){ console.log('event', this, arguments); })
+App.on('**', function () {
+    console.log('event', this, arguments);
+})

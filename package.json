@@ -33,6 +33,7 @@
       "object-assign": "npm:object-assign@^4.0.1",
       "object.observe": "npm:object.observe@^0.2.6",
       "observe-js": "github:Polymer/observe-js@^0.5.7",
+      "pagination": "npm:pagination@^0.4.4",
       "parse5": "npm:parse5@^1.5.0",
       "raw": "github:matthewbauer/plugin-raw@^1.0.0",
       "reflect-metadata": "npm:reflect-metadata@^0.1.2",

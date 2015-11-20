@@ -91,3 +91,33 @@ declare module 'loglevel'{
 declare module 'createjs'{
     export = createjs;
 }
+
+interface NpmPaginationData {
+    [name:string]:any;
+    prelink?:string;
+    current?:number;
+    previous?:number;
+    next?:number;
+    first?:number;
+    last?:number;
+    range:number[];
+    fromResult?:number;
+    toResult?:number;
+    totalResult?:number;
+    pageCount?:number;
+}
+interface NpmPagination {
+    [name:string]:any;
+    render();
+    getPaginationData():NpmPaginationData;
+    set(option, value);
+    preparePreLink(prelink)
+}
+interface NpmPaginationFactory {
+    create(...args:any[]):NpmPagination;
+    SearchPaginator(...args:any[]):NpmPagination;
+}
+declare module 'pagination' {
+    var v:NpmPaginationFactory;
+    export default v;
+}

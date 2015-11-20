@@ -2,8 +2,16 @@
     "menus": {
         "sidebar": [
             {"title": "Home", "icon": "fa fa-home", "type": "route", "route": "home"},
-            {"title": "Foo", "icon": "fa fa-github", "type": "path", "path": "/foo"},
-            {"title": "Bar", "icon": "fa fa-bitcoin", "type": "route", "route": "bar"},
+            {"title": "User management", "icon": "fa fa-users", "type": "folder", "children": [
+                {"title": "Users", "type": "route", "route": "users.index"},
+                {"title": "Roles", "type": "route", "route": "users.roles"},
+                {"title": "Permissions", "type": "route", "route": "users.permissions"}
+            ]},
+            {"title": "Settings", "icon": "fa fa-cog", "type": "folder", "children": [
+                {"title": "Users", "type": "href", "href": "/sidebar.html"},
+                {"title": "Roles", "type": "href", "href": "/sidebar.html"},
+                {"title": "Permissions", "type": "href", "href": "/sidebar.html"}
+            ]},
             {"title": "Sidebar", "icon": "fa fa-list", "type": "folder", "children": [
                 {"title": "Normal", "type": "href", "href": "/sidebar.html"}
             ]}

@@ -1,0 +1,18 @@
+{
+    "id": 1,
+    "first_name": "Virginia",
+    "last_name": "Arnold",
+    "email": "varnold0@last.fm",
+    "country": "Mexico",
+    "ip_address": "78.79.84.70",
+    "permissions": {
+        "super_admin": false,
+        "post_news": true,
+        "dashboard": false,
+        "users": {
+            "index": true,
+            "roles": true,
+            "permissions": false
+        }
+    }
+}

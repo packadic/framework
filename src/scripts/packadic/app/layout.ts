@@ -21,7 +21,7 @@ var layoutStyle:any = {};
 
         var pathObserver = new PathObserver(layoutStyle, getPropString(key), def);
         pathObserver.open(function(newValue:any, oldValue:any) {
-            console.log('path obs.open', arguments);
+            //console.log('path obs.open', arguments);
             var list:DOMTokenList = document.body.classList;
             if(newValue === true && !list.contains(className)){
                 list.add(className);
@@ -35,7 +35,7 @@ var layoutStyle:any = {};
 
     var bodyObserver:MutationObserver = new MutationObserver((mutations:any) => {
         mutations.forEach((mutation:MutationRecord) => {
-            console.log('mutation', mutation);
+            //console.log('mutation', mutation);
             var list:DOMTokenList = document.body.classList;
             var current:string[] = document.body.className.split(' ');
             var old:string[] = mutation.oldValue.split(' ');
@@ -45,7 +45,7 @@ var layoutStyle:any = {};
                 if(!defined(getKey(className))) return;
                 objectSet(layoutStyle, getPropString(getKey(className)), added);
             });
-            App.vm._digest();
+            if(defined(App.vm._digest)) App.vm._digest();
         })
     });
     bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true });
