@@ -8,12 +8,9 @@ import {App, view, route} from './../packadic/index';
 
 window['App'] = App;
 
-App.config.set('router.options.hashbang', false);
-App.config.set('router.options.history', false);
+App.config.merge('router.options', {hashbang: false, history: false });
 App.init();
-App.router.map({
-    '/foo': { component: view('demo/views/foo') }
-});
+App.router.map({ '/foo': { component: view('demo/views/foo') }});
 route('home', '/', 'demo/views/home');
 route('bar', '/bar', 'demo/views/bar');
 

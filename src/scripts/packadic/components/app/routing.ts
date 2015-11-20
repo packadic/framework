@@ -17,11 +17,11 @@ export interface IRoute {
     (name:string, path:string, viewPath:string): any;
     link?:(type:string, typeValue:string, target?:string)=>ILink;
 }
-export var route:IRoute = function route(name:string, path:string, viewPath:string) {
-    App.router.on(path, {
+export var route:IRoute = function route(name:string, path:string, viewPath:string, config:any={}) {
+    App.router.on(path, _.merge({
         name     : name,
         component: view(viewPath)
-    })
+    }, config))
 };
 route.link = (type:string, typeValue:string, target?:string):ILink => {
     var link:ILink = {};

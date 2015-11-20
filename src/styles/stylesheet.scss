@@ -147,7 +147,9 @@
 a[ui-sref]{
     &:hover, &:hover * { cursor: hand }
 }
-
+[v-cloak] {
+    display: none;
+}
 $sidebar-animation-collapse-speed: 400ms;
 @media (min-width: 992px) {
     .page-sidebar {

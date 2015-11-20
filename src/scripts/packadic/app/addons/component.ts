@@ -14,7 +14,7 @@ export class BaseComponent {
     $el:HTMLElement;
     $els:{[name:string]:HTMLElement};
     $options:any;
-    $parent:vuejs.Vue;
+    $parent:vuejs.Vue|BaseComponent;
     $root:vuejs.Vue;
     //$http:vuejs.VueResourceHttp;
 

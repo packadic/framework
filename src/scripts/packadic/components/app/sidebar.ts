@@ -32,11 +32,9 @@ export class SidebarItemComponent extends BaseComponent {
             <span v-if="hasSubmenu" class="arrow" v-bind:class="{ 'open': isOpen && hasSubmenu }"></span>
         </a>
 
-        <a v-if="isType('href')" href="{{href}}"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
+        <alink v-if="isType('href', 'route', 'path')" v-bind:link="link"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></alink>
 
-        <a v-if="isType('route')" v-link="{ 'name': route }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
 
-        <a v-if="isType('path')" v-link="{ 'path': path }"><i v-if="icon" class="{{icon}}"></i><span class="title">{{title}}</span></a>
 
         <ul v-if="hasSubmenu && isType('folder', 'href')" v-show="isOpen" class="sub-menu" transition="sidebar-submenu">
             <slot> <item v-for="subitem in children" :item="subitem" :index="$index"></item> </slot>
@@ -59,6 +57,15 @@ export class SidebarItemComponent extends BaseComponent {
 
     get hasSubmenu() {
         return (this.hasChildren === true || this.children.length > 0) && this.type === 'folder';
+    }
+
+
+    get link(){
+        var link:any = {
+            type: this.type
+        };
+        link[this.type] = this[this.type];
+        return link;
     }
 
     toggle() {

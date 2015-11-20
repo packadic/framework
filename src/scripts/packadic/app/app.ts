@@ -19,7 +19,6 @@ Vue.use(VueResource);
 Vue.config.async = true;
 Vue.config.debug = true;
 
-var VueApp:typeof Vue = Vue.extend({});
 
 export {Vue, log, out}
 
@@ -42,7 +41,7 @@ export class App {
         return out;
     }
 
-    protected static _VM:any = VueApp;
+    protected static _VM:any;
 
     protected static _vm:vuejs.Vue;
     static get vm():vuejs.Vue {
@@ -74,7 +73,7 @@ export class App {
                 root: null,
                 linkActiveClass: 'v-link-active',
                 saveScrollPosition: false,
-                transitionOnLoad: false
+                transitionOnLoad: true
             }
         },
         app    : {

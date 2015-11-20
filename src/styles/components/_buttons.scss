@@ -5,3 +5,7 @@
 .btn-md {
     @include btn-md;
 }
+
+.btn {
+    @include box-shadow(none);
+}

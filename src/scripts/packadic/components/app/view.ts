@@ -23,6 +23,7 @@ export function view(viewPath:string){
 }
 export abstract class View extends BaseComponent {
     static VIEW:boolean = true;
+
     static breadcrumb(title:string, type:string, typeValue:string, target?:string){
         var breadcrumb:IBreadcrumbLink = <IBreadcrumbLink> route.link(type, typeValue, target);
         breadcrumb.title = title;

@@ -7,5 +7,5 @@ extends views/layouts/default
     +breadcrumb('index.html', true) Home
 
 block page-content
-    router-view
+    router-view(transition="view-fade", transition-mode="out-in" transition-speed="300")
 
