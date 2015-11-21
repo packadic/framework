@@ -10,12 +10,14 @@ export default class UsersView extends View {
     ];
 
     searchQuery:string   = '';
+    maxRows:number       = 10;
     gridColumns:string[] = ['first_name', 'email', 'ip_address'];
     users:any[]          = [];
 
     @LifecycleHook('created') created() {
+        this.$data.users = [];
         App.dataRequest('users', (data:any) => {
-            this.users = data;
+            this.$data.users = data;
         })
     }
 

@@ -8,7 +8,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="row in currentPage | orderBy sortColumn reversed[sortColumn]">
+    <tr v-for="row in currentPage | orderBy sortColumn reversed[sortColumn]" transition="fadein">
         <td v-for="column in columns">
             {{row[column]}}
         </td>

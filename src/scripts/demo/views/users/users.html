@@ -1,15 +1,43 @@
 <div>
     <page title="Overview" subtitle="User management">
         <page-breadcrumbs slot="breadcrumb" :items="breadcrumbs"></page-breadcrumbs>
-        <nav>
-            <pagination share-id="user-grid" class="pagination-sm"></pagination>
-        </nav>
-        <grid class="table table-packadic"
-              share-id="user-grid"
-              v-bind:rows="users"
-              v-bind:columns="gridColumns"
-              v-bind:filter-key="searchQuery"
-              v-bind:per-page="5"
-        ></grid>
+
+        <div class="datagrid">
+
+            <div class="datagrid-heading">
+                <h2 class="datagrid-title">User table</h2>
+                <div class="datagrid-controls">
+                    <select v-model="maxRows" number>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <input  placeholder="Search.." v-model="searchQuery" type="text">
+                </div>
+            </div>
+
+            <div class="datagrid-body">
+                <grid class=""
+                      share-id="user-grid"
+                      v-bind:rows="users"
+                      v-bind:columns="gridColumns"
+                      v-bind:filter-key="searchQuery"
+                      :per-page="maxRows"
+                ></grid>
+            </div>
+
+            <div class="datagrid-footer">
+                <div class="datagrid-records">
+                    <span v-grid share-id="user-grid" v-text="'Showing 1 to 10 of ' + (users.length || 0) + ' entries'"></span>
+                </div>
+                <nav>
+                    <pagination share-id="user-grid"></pagination>
+                </nav>
+            </div>
+
+        </div>
+
+
     </page>
 </div>

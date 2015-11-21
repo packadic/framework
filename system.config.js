@@ -33,6 +33,7 @@ System.config({
       "defaultExtension": "ts"
     },
     "packadic": {
+
       "defaultExtension": "ts"
     },
     "tether": {

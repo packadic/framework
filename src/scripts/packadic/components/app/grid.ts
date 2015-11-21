@@ -12,6 +12,26 @@ import pagination from 'pagination';
 import gridTemplate from './../../views/grid.html!text'
 import paginationTemplate from './../../views/pagination.html!text'
 
+
+
+class SharedGridData {
+    protected _paginator:NpmPagination;
+    public get paginator():NpmPagination {return this._paginator};
+
+    protected _grid:GridComponent;
+    public get grid():GridComponent {return this._grid };
+
+    rows:any[];
+    columns:any[];
+
+
+    constructor(grid:GridComponent){
+        this._grid = grid;
+        this._paginator = pagination.create('search', {prelink: '/', current: 1, rowsPerPage: 10, totalResult: 0});
+    }
+}
+//App.share('grid-data', (grid:GridComponent) => new SharedGridData(grid));
+
 App.share('paginator', () => pagination.create('search', {prelink: '/', current: 1, rowsPerPage: 10, totalResult: 0}));
 
 
@@ -28,6 +48,7 @@ export class GridComponent extends BaseComponent {
     sortColumn:string       = '';
     reversed:any            = {};
     paginator:NpmPagination = Object.create({});
+
 
     get pager():NpmPaginationData {
         return this.$data.paginator.getPaginationData();
@@ -49,16 +70,18 @@ export class GridComponent extends BaseComponent {
         this.$data.reversed[column] = !this.$data.reversed[column];
     }
 
-    @LifecycleHook('beforeCompile') beforeCompile() {
+    @LifecycleHook('created') beforeCompile() {
         this.$data.paginator = App.shared(this.shareId, 'paginator');
+        //this.$data.shared = App.shared(this.shareId, 'grid-data', this);
     }
 
     @LifecycleHook('compiled') compiled() {
-        this.$watch('rows', ()=> {
+        this.$watch('rows + perPage', ()=> {
             this.paginator.set('rowsPerPage', this.perPage);
             this.paginator.set('totalResult', this.filteredRows.length);
         });
-        this.columns.forEach((column) => this.$set('reversed.' + column, false))
+        this.$watch('sortColumn + reversed', () => this.columns.forEach((column) => this.$set('reversed.' + column, false)));
+
     }
 }
 
@@ -67,13 +90,14 @@ export class PaginationComponent extends BaseComponent {
     static template = paginationTemplate;
 
     @Prop({type: String}) shareId:string;
-    @Prop({type: Number, default: 10}) maxLinks:number;
+    @Prop({type: Number, default: 5}) maxLinks:number;
 
     paginator:NpmPagination = Object.create({});
 
     @LifecycleHook('beforeCompile') beforeCompile() {
         this.$data.paginator = App.shared(this.shareId, 'paginator');
         this.$data.paginator.set('pageLinks', this.maxLinks);
+
     }
 
     get pager():NpmPaginationData {
@@ -103,3 +127,21 @@ export class PaginationComponent extends BaseComponent {
 
 }
 
+@Directive('grid')
+export class GridDirective extends BaseDirective {
+    static params:any[] = ['share-id'];
+    get paginator():NpmPagination {
+        return App.shared(this.params.shareId, 'paginator');
+    }
+
+    get pager():NpmPaginationData {
+        return this.paginator.getPaginationData();
+    }
+
+
+    bind(){
+
+    }
+
+    update(value:any){}
+}

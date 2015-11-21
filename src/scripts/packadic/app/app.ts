@@ -192,9 +192,9 @@ export class App {
         if(defined(App._sharedConstructors[name])) return;
         App._sharedConstructors[name] = creator;
     }
-    public static shared(shareId:string, name:string){
+    public static shared(shareId:string, name:string, ...args:any[]){
         if(!defined(App._sharedInstances[shareId])){
-            App._sharedInstances[shareId] = App._sharedConstructors[name]();
+            App._sharedInstances[shareId] = App._sharedConstructors[name].apply(App, args);
         }
         return App._sharedInstances[shareId];
     }

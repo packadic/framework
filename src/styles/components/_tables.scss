@@ -170,3 +170,70 @@
         }
     }
 }
+
+
+.datagrid {
+    background-color: #fff;
+    border: 1px solid #ddd;
+
+    .datagrid-heading {
+        @include make-row(0);
+        color: #607d8b;
+        background-color: #fafafa;
+        border-bottom: 1px solid #ddd;
+        //padding: 10px 15px;
+        padding: 5px 10px;
+
+        > .datagrid-title, > .datagrid-controls {
+            @include make-col();
+            @include make-col-span(6, 12);
+        }
+
+        > .datagrid-title {
+            padding: 0;
+            margin: 7px 0;
+            font-size: 15px;
+        }
+
+        > .datagrid-controls {
+            text-align: right;
+            > input, > select {
+                @extend .form-control;
+                @extend .form-control-sm;
+
+                display: inline-block;
+                width: initial;
+            }
+        }
+    }
+    .datagrid-body {
+        @include make-row(0);
+        > .table {
+            font-size: 0.9rem;
+        }
+    }
+    .datagrid-footer {
+        @include make-row(0);
+
+        background-color: #fafafa;
+        padding: 10px;
+
+        > .datagrid-records,  > nav {
+            @include make-col();
+            @include make-col-span(6, 12);
+        }
+
+        > .datagrid-records {
+
+        }
+        > nav {
+            text-align: right;
+            > .pagination {
+                @extend .pagination-sm;
+                margin: 0;
+
+            }
+        }
+    }
+
+}
