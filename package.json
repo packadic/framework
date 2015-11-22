@@ -20,7 +20,17 @@
         },
         "shim": {
             "js/packadic": {
-                "depds": ["eventemitter2", "jquery", "lodash", "loglevel", "underscore.string", "vue", "vue-resource", "vue-router", "tether", "bootstrap", "observe-js", "pagination"]
+                "deps": ["jquery", "vue-router", "tether", "bootstrap", "pagination"],
+                "globals": {
+                    "EventEmitter2": "eventemitter2",
+                    "_s": "underscore.string",
+                    "_": "lodash",
+                    "loglevel": "loglevel",
+                    "Vue": "vue",
+                    "VueResource": "vue-resource",
+                    "//VueRouter": "vue-router",
+                    "observejs": "observe-js"
+                }
             }
         },
         "configFile": "system.config.js",
