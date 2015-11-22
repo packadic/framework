@@ -15,6 +15,11 @@
         "directories": {
             "lib": "dist"
         },
+        "shim": {
+            "js/packadic": {
+                "depds": ["eventemitter2", "jquery", "lodash", "loglevel", "underscore.string", "vue", "vue-resource", "vue-router", "tether", "bootstrap", "observe-js", "pagination"]
+            }
+        },
         "configFile": "system.config.js",
         "dependencies": {
             "eventemitter2": "github:asyncly/EventEmitter2@^0.4.14",
