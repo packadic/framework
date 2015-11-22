@@ -42,6 +42,7 @@
       "tether": "npm:tether@^1.1.1",
       "text": "github:systemjs/plugin-text@^0.0.2",
       "tgdev/animate-sass": "github:tgdev/animate-sass@^0.6.4",
+      "ts": "github:frankwallis/plugin-typescript@^2.2.2",
       "tweenjs": "github:CreateJS/TweenJS@^0.6.1",
       "underscore.string": "npm:underscore.string@^3.2.2",
       "vue": "github:vuejs/vue@^1.0.8",
@@ -87,16 +88,23 @@
   "dependencies": {
     "async": "^1.4.2",
     "chalk": "^1.1.1",
+    "file-loader": "^0.8.4",
     "fs-extra": "^0.24.0",
     "globule": "^0.2.0",
     "http-server": "^0.8.5",
     "inquirer": "^0.11.0",
+    "json-loader": "^0.5.3",
     "lodash": "^3.10.1",
+    "raw-loader": "^0.5.1",
     "static-server": "^2.0.0",
+    "systemjs-builder": "^0.14.11",
+    "ts-loader": "^0.7.1",
     "ts-node": "^0.2.4",
     "tsd": "^0.6.4",
     "typescript": "~1.6.2",
-    "underscore.string": "^3.2.2"
+    "underscore.string": "^3.2.2",
+    "url-loader": "^0.5.6",
+    "vue-resource": "^0.1.17"
   },
   "devDependencies": {
     "animate.css": "^3.4.0",

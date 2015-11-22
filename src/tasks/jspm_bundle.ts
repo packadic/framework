@@ -18,19 +18,19 @@ export = function (grunt:IGrunt){
         });
 
         var data:any = _.merge({
-            action: 'bundle', // bundle|unbundle|bundleSFX
-            fileName: null,
+            action    : 'bundle', // bundle|unbundle|bundleSFX
+            outFile   : null,
             moduleName: null,
             expression: null
         }, this.data);
 
         var promise:Promise<any>;
         if(data.action === 'bundle'){
-            promise = jspm.bundle(data.expression, data.fileName, options);
+            promise = jspm.bundle(data.expression, data.outFile, options);
         } else if(data.action === 'unbundle') {
             promise = jspm.unbundle();
         } else if(data.action === 'bundleSFX') {
-            promise = jspm.bundleSFX(data.moduleName, data.fileName, options);
+            promise = jspm.bundleSFX(data.moduleName, data.outFile, options);
         } else {
             grunt.fail.fatal('Task did not define a valid action. allowed: bundle, unbundle or bundleSFX');
         }

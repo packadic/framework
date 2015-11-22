@@ -121,3 +121,17 @@ declare module 'pagination' {
     var v:NpmPaginationFactory;
     export default v;
 }
+
+declare module "systemjs-builder" {
+    export class Builder {
+        constructor(...args:any[]);
+        config(...args:any[]);
+        bundle(...args:any[]):Promise<any>;
+        loadConfig(...args:any[]):Promise<any>;
+        //config(...args:any[]);
+        //config(...args:any[]);
+        //config(...args:any[]);
+        //config(...args:any[]);
+    }
+    export default Builder;
+}

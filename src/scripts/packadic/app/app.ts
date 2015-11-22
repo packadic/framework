@@ -186,14 +186,18 @@ export class App {
         return App.vm.$http.get('/data/' + name + '.json', fn);
     }
 
+    public static currentView:string;
+
     protected static _sharedConstructors:{[name:string]:any} = {};
     protected static _sharedInstances:{[shareId:string]:any} = {};
-    public static share(name:string, creator:Function){
-        if(defined(App._sharedConstructors[name])) return;
+
+    public static share(name:string, creator:Function) {
+        if (defined(App._sharedConstructors[name])) return;
         App._sharedConstructors[name] = creator;
     }
-    public static shared(shareId:string, name:string, ...args:any[]){
-        if(!defined(App._sharedInstances[shareId])){
+
+    public static shared(shareId:string, name:string, ...args:any[]) {
+        if (!defined(App._sharedInstances[shareId])) {
             App._sharedInstances[shareId] = App._sharedConstructors[name].apply(App, args);
         }
         return App._sharedInstances[shareId];

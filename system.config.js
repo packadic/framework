@@ -14,7 +14,7 @@ System.config({
     ]
   },
   typescriptOptions: {
-    "module": "commonjs",
+    "module": "amd",
     "emitDecoratorMetadata": true,
     "sourceMap": true,
     "experimentalDecorators": true,
@@ -33,7 +33,7 @@ System.config({
       "defaultExtension": "ts"
     },
     "packadic": {
-
+        "main": "index",
       "defaultExtension": "ts"
     },
     "tether": {
@@ -91,6 +91,7 @@ System.config({
     "tgdev/animate-sass": "github:tgdev/animate-sass@0.6.4",
     "traceur": "github:jmcriffey/bower-traceur@0.0.92",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.92",
+    "ts": "github:frankwallis/plugin-typescript@2.2.2",
     "tweenjs": "github:CreateJS/TweenJS@0.6.1",
     "typescript": "npm:typescript@1.6.2",
     "underscore.string": "npm:underscore.string@3.2.2",
@@ -99,6 +100,9 @@ System.config({
     "vue-router": "github:vuejs/vue-router@0.7.6",
     "vue-strap": "github:amanpatel/vue-strap@master",
     "zone.js": "npm:zone.js@0.5.8",
+    "github:frankwallis/plugin-typescript@2.2.2": {
+      "typescript": "npm:typescript@1.6.2"
+    },
     "github:johnsoftek/plugin-jade@0.5.1": {
       "jade-compiler": "npm:jade@1.11.0"
     },

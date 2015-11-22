@@ -82,7 +82,7 @@ export = function (grunt) {
             options : {
                 compiler              : 'node_modules/typescript/bin/tsc',
                 target                : 'ES5',
-                module                : 'umd',
+                module                : 'commonjs',
                 sourceMap             : ifTarget('dev', true),
                 experimentalDecorators: true,
                 emitDecoratorMetadata : true,
@@ -99,19 +99,11 @@ export = function (grunt) {
             }
         },
 
-        jspm_bundle: {
-            demo: {
-                options: {minify: true},
-                action : 'bundle', expression: 'demo', fileName: '<%= target.dest %>/assets/scripts/demo.js',
+        bundle: {
+            options: { minify: ifTarget('dist', true) },
+            packadic: {
+                outFile: '<%= target.dest %>/assets/scripts/packadic.js'
             }
-        },
-
-        systemjs: {
-            options: {
-                baseURL: "./<%= target.dest %>", configFile: "./<%= target.dest %>/system.config.js",
-                sfx    : true, minify: true, build: {mangle: false}
-            },
-            app    : {files: [{"src": "./<%= target.dest %>/app/init.js", "dest": "./<%= target.dest %>/app/init.js"}]}
         },
 
         injector  : { // removed space as jade does that aswell.
@@ -120,7 +112,6 @@ export = function (grunt) {
                 files: {
                     './<%= target.dest %>/index.html': ['<%= target.dest %>/jspm_packages/system.src.js', '<%= target.dest %>/system.config.js'].concat([
                         '<%= target.dest %>/assets/styles/stylesheet.css',
-                        '<%= target.dest %>/assets/styles/animate.css',
                         '<%= target.dest %>/assets/styles/themes/theme-dark-sidebar.css'
                     ])
                 }
@@ -148,27 +139,46 @@ export = function (grunt) {
     require('load-grunt-tasks')(grunt);
     require('time-grunt')(grunt);
     //grunt.loadTasks('src/tasks');
-    log(require('./src/tasks/jspm_bundle')(grunt)); //(grunt);
+    //log(require('./src/tasks/jspm_bundle')(grunt)); //(grunt);
+    log(require('./src/tasks/bundle')(grunt)); //(grunt);
 
-    config.ts['app_watch']       = _.clone(config.ts.packadic);
-    config.ts['app_watch'].watch = 'src/scripts';
+    //config.ts['app_watch']       = _.clone(config.ts.packadic);
+    //config.ts['app_watch'].watch = 'src/scripts';
 
 
     grunt.initConfig(config);
 
     [
         ['default', 'Default task', ['build']],
-        ['scripts', 'Build scripts', ['ts:packadic', 'copy:packadic_ts_js', 'copy:ts_demo', 'clean:nosrc', 'clean:basedir']],
-        ['demo', 'Build dev demo', ['clean:all', 'copy:ts_jade', 'copy:ts_demo', 'jspm', 'sass:styles', 'jade:index', 'injector:index', 'scripts']],
+        ['scripts', 'Build scripts', [
+            'ts:packadic',
+            'copy:script_views',
+            'copy:packadic_ts_js',
+            'clean:nosrc',
+            'clean:basedir'
+        ]],
+        ['demo', 'Build dev demo', [
+            'clean:all',
+            'scripts',
+            'copy:ts_demo',
+            'jspm',
+            'sass:styles',
+            'jade:index', 'injector:index'
+        ]],
 
+        ['build', 'Build dev', [
+            'demo',
+            'jade',
+            'copy:data',
+            'bundle:packadic'
+        ]],
 
-        ['ts_app', 'Compile ts', ['ts:app', 'copy:ts_app', 'clean:ts_app_tmp', 'clean:basedir']],
-        ['build', 'Build dev', ['clean:all', 'jade', 'sass:styles', 'copy:ts', 'copy:data', 'copy:jade', 'copy:htaccess', 'jspm', 'injector:index']],
-        ['dist', 'Build dist', ['target:dist', 'clean:all', 'jade', 'jspm', 'sass:app', 'ts_app', 'injector:index', 'systemjs:app', 'bytesize:app']],
+        ['dist', 'Build dist', ['target:dist', 'clean:all', 'jade', 'jspm', 'sass:app',  'injector:index', 'bytesize:app']],
+
         ['serve', 'Dont use this', ['connect:dev', 'watch']],
-        ['target', 'Set target trough task', function (targ) {
-            setTarget(targ);
-        }],
+
+
+        ['target', 'Set target trough task', (targ) => setTarget(targ)],
         ['jspm', 'Link or copy the jspm_packages folder to the target destination', () => {
             var target = grunt.config('target');
             grunt.log.ok('JSPM for target:' + JSON.stringify(target));
@@ -207,7 +217,7 @@ export = function (grunt) {
         grunt.registerTask(simpleTask[0], simpleTask[1], simpleTask[2]);
     }.bind(this));
 
-    fs.existsSync('tmp') && fs.removeSync('tmp');
+    //fs.existsSync('tmp') && fs.removeSync('tmp');
 
 
     //console.log(util.inspect(grunt.config.get('ts'), { colors: true }))
