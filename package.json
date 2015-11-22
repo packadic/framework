@@ -31,6 +31,15 @@
                     "//VueRouter": "vue-router",
                     "observejs": "observe-js"
                 }
+            },
+            "bootstrap/*": {
+                "deps": [
+                    "tether",
+                    "jquery"
+                ],
+                "globals": [
+                    "tether"
+                ]
             }
         },
         "configFile": "system.config.js",
