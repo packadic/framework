@@ -1,136 +1,135 @@
 {
-  "name": "packadic-core",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "grunt": "./node_modules/.bin/"
-  },
-  "author": "",
-  "license": "ISC",
-  "jspm": {
-    "configFile": "system.config.js",
+    "name": "packadic-core",
+    "version": "1.0.0",
+    "description": "asdf",
+    "main": "Gruntfile.ts",
+    "files": ["dist"],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "grunt": "./node_modules/.bin/"
+    },
+    "author": "Robin RAdic",
+    "license": "MIT",
+    "jspm": {
+        "main": "js/packadic",
+        "directories": {
+            "lib": "dist"
+        },
+        "configFile": "system.config.js",
+        "dependencies": {
+            "eventemitter2": "github:asyncly/EventEmitter2@^0.4.14",
+            "jquery": "github:components/jquery@^2.1.4",
+            "lodash": "npm:lodash@^3.10.1",
+            "loglevel": "npm:loglevel@^1.4.0",
+            "underscore.string": "npm:underscore.string@^3.2.2",
+            "vue": "github:vuejs/vue@^1.0.8",
+            "vue-resource": "github:vuejs/vue-resource@^0.1.17",
+            "vue-router": "github:vuejs/vue-router@^0.7.5",
+            "tether": "npm:tether@^1.1.1",
+            "bootstrap": "github:twbs/bootstrap@v4-dev",
+            "observe-js": "github:Polymer/observe-js@^0.5.7",
+            "pagination": "npm:pagination@^0.4.4",
+            "font-awesome": "npm:font-awesome@^4.4.0"
+        },
+        "devDependencies": {
+            "babel": "npm:babel-core@^5.8.24",
+            "babel-runtime": "npm:babel-runtime@^5.8.24",
+            "core-js": "npm:core-js@^1.1.4",
+            "traceur": "github:jmcriffey/bower-traceur@0.0.92",
+            "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.92",
+            "typescript": "npm:typescript@^1.6.2",
+
+            "ModuleLoader/es6-module-loader": "github:ModuleLoader/es6-module-loader@^0.17.8",
+            "async": "npm:async@^1.5.0",
+            "bourbon": "npm:bourbon@^4.2.6",
+            "css": "github:systemjs/plugin-css@^0.1.19",
+            "es6-shim": "github:es-shims/es6-shim@^0.33.6",
+            "jade": "github:johnsoftek/plugin-jade@^0.5.1",
+            "json": "github:systemjs/plugin-json@^0.1.0",
+            "object-assign": "npm:object-assign@^4.0.1",
+            "object.observe": "npm:object.observe@^0.2.6",
+            "raw": "github:matthewbauer/plugin-raw@^1.0.0",
+            "reflect-metadata": "npm:reflect-metadata@^0.1.2",
+            "sass-material-colors": "npm:sass-material-colors@^0.0.5",
+            "scss": "github:mobilexag/plugin-sass@^0.0.10",
+            "text": "github:systemjs/plugin-text@^0.0.2",
+            "tgdev/animate-sass": "github:tgdev/animate-sass@^0.6.4",
+            "ts": "github:frankwallis/plugin-typescript@^2.2.2",
+            "vue-strap": "github:amanpatel/vue-strap@master",
+            "zone.js": "npm:zone.js@^0.5.8"
+        },
+        "overrides": {
+            "github:vuejs/vue-router@0.7.5": {
+                "main": "dist/vue-router.js"
+            },
+            "github:vuejs/vue@1.0.8": {
+                "main": "dist/vue.js"
+            },
+            "npm:object.observe@0.2.6": {
+                "main": "dist/object-observe.js"
+            },
+            "github:amanpatel/vue-strap@master": {
+                "main": "dist/vue-strap.js"
+            },
+            "github:vuejs/vue-resource@0.1.17": {
+                "main": "dist/vue-resource"
+            },
+            "github:twbs/bootstrap@v4-dev": {
+                "files": [
+                    "lib/../scss/**/*.scss",
+                    "js",
+                    "css",
+                    "dist"
+                ]
+            }
+        }
+    },
     "dependencies": {
-      "ModuleLoader/es6-module-loader": "github:ModuleLoader/es6-module-loader@^0.17.8",
-      "async": "npm:async@^1.5.0",
-      "autoprefixer": "npm:autoprefixer@^6.1.0",
-      "babylon": "github:BabylonJS/Babylon.js@^2.2.0",
-      "bootstrap": "github:twbs/bootstrap@v4-dev",
-      "bourbon": "npm:bourbon@^4.2.6",
-      "createjs": "github:CreateJS/TweenJS@^0.6.1",
-      "css": "github:systemjs/plugin-css@^0.1.19",
-      "es6-shim": "github:es-shims/es6-shim@^0.33.6",
-      "eventemitter2": "github:asyncly/EventEmitter2@^0.4.14",
-      "font-awesome": "npm:font-awesome@^4.4.0",
-      "hash-sum": "npm:hash-sum@^1.0.2",
-      "jade": "github:johnsoftek/plugin-jade@^0.5.1",
-      "jquery": "github:components/jquery@^2.1.4",
-      "json": "github:systemjs/plugin-json@^0.1.0",
-      "loader-utils": "npm:loader-utils@^0.2.11",
-      "lodash": "npm:lodash@^3.10.1",
-      "loglevel": "npm:loglevel@^1.4.0",
-      "object-assign": "npm:object-assign@^4.0.1",
-      "object.observe": "npm:object.observe@^0.2.6",
-      "observe-js": "github:Polymer/observe-js@^0.5.7",
-      "pagination": "npm:pagination@^0.4.4",
-      "parse5": "npm:parse5@^1.5.0",
-      "raw": "github:matthewbauer/plugin-raw@^1.0.0",
-      "reflect-metadata": "npm:reflect-metadata@^0.1.2",
-      "sass-material-colors": "npm:sass-material-colors@^0.0.5",
-      "scss": "github:mobilexag/plugin-sass@^0.0.10",
-      "tether": "npm:tether@^1.1.1",
-      "text": "github:systemjs/plugin-text@^0.0.2",
-      "tgdev/animate-sass": "github:tgdev/animate-sass@^0.6.4",
-      "ts": "github:frankwallis/plugin-typescript@^2.2.2",
-      "tweenjs": "github:CreateJS/TweenJS@^0.6.1",
-      "underscore.string": "npm:underscore.string@^3.2.2",
-      "vue": "github:vuejs/vue@^1.0.8",
-      "vue-resource": "github:vuejs/vue-resource@^0.1.17",
-      "vue-router": "github:vuejs/vue-router@^0.7.5",
-      "vue-strap": "github:amanpatel/vue-strap@master",
-      "zone.js": "npm:zone.js@^0.5.8"
+        "async": "^1.4.2",
+        "chalk": "^1.1.1",
+        "file-loader": "^0.8.4",
+        "fs-extra": "^0.24.0",
+        "globule": "^0.2.0",
+        "http-server": "^0.8.5",
+        "inquirer": "^0.11.0",
+        "json-loader": "^0.5.3",
+        "jspm-resolve": "^1.0.6",
+        "lodash": "^3.10.1",
+        "raw-loader": "^0.5.1",
+        "static-server": "^2.0.0",
+        "systemjs-builder": "^0.14.11",
+        "ts-loader": "^0.7.1",
+        "ts-node": "^0.2.4",
+        "tsd": "^0.6.4",
+        "typescript": "~1.6.2",
+        "underscore.string": "^3.2.2",
+        "url-loader": "^0.5.6",
+        "vue-resource": "^0.1.17"
     },
     "devDependencies": {
-      "babel": "npm:babel-core@^5.8.24",
-      "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4",
-      "traceur": "github:jmcriffey/bower-traceur@0.0.92",
-      "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.92",
-      "typescript": "npm:typescript@^1.6.2"
-    },
-    "overrides": {
-      "github:vuejs/vue-router@0.7.5": {
-        "main": "dist/vue-router.js"
-      },
-      "github:vuejs/vue@1.0.8": {
-        "main": "dist/vue.js"
-      },
-      "npm:object.observe@0.2.6": {
-        "main": "dist/object-observe.js"
-      },
-      "github:amanpatel/vue-strap@master": {
-        "main": "dist/vue-strap.js"
-      },
-      "github:vuejs/vue-resource@0.1.17": {
-        "main": "dist/vue-resource"
-      },
-      "github:twbs/bootstrap@v4-dev": {
-        "files": [
-          "lib/../scss/**/*.scss",
-          "js",
-          "css",
-          "dist"
-        ]
-      }
+        "animate.css": "^3.4.0",
+        "grunt": "^0.4.5",
+        "grunt-bytesize": "^0.1.1",
+        "grunt-cli": "git://github.com/RobinRadic/grunt-cli#master",
+        "grunt-concurrent": "^2.0.4",
+        "grunt-contrib-clean": "^0.6.0",
+        "grunt-contrib-concat": "^0.5.1",
+        "grunt-contrib-connect": "^0.11.2",
+        "grunt-contrib-copy": "git://github.com/MeoMix/grunt-contrib-copy#master",
+        "grunt-contrib-jade": "^0.15.0",
+        "grunt-contrib-uglify": "^0.11.0",
+        "grunt-contrib-watch": "^0.6.1",
+        "grunt-injector": "^0.6.1",
+        "grunt-newer": "^1.1.1",
+        "grunt-sass": "^1.0.0",
+        "grunt-subgrunt": "^1.1.0",
+        "grunt-systemjs-builder": "^0.2.2",
+        "grunt-ts": "^5.1.1",
+        "grunt-umd": "^2.3.5",
+        "grunt-usemin": "^3.1.1",
+        "jspm": "^0.16.14",
+        "load-grunt-tasks": "^3.3.0",
+        "reflect-metadata": "^0.1.2",
+        "time-grunt": "^1.2.2"
     }
-  },
-  "dependencies": {
-    "async": "^1.4.2",
-    "chalk": "^1.1.1",
-    "file-loader": "^0.8.4",
-    "fs-extra": "^0.24.0",
-    "globule": "^0.2.0",
-    "http-server": "^0.8.5",
-    "inquirer": "^0.11.0",
-    "json-loader": "^0.5.3",
-    "jspm-resolve": "^1.0.6",
-    "lodash": "^3.10.1",
-    "raw-loader": "^0.5.1",
-    "static-server": "^2.0.0",
-    "systemjs-builder": "^0.14.11",
-    "ts-loader": "^0.7.1",
-    "ts-node": "^0.2.4",
-    "tsd": "^0.6.4",
-    "typescript": "~1.6.2",
-    "underscore.string": "^3.2.2",
-    "url-loader": "^0.5.6",
-    "vue-resource": "^0.1.17"
-  },
-  "devDependencies": {
-    "animate.css": "^3.4.0",
-    "grunt": "^0.4.5",
-    "grunt-bytesize": "^0.1.1",
-    "grunt-cli": "git://github.com/RobinRadic/grunt-cli#master",
-    "grunt-concurrent": "^2.0.4",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-connect": "^0.11.2",
-    "grunt-contrib-copy": "git://github.com/MeoMix/grunt-contrib-copy#master",
-    "grunt-contrib-jade": "^0.15.0",
-    "grunt-contrib-uglify": "^0.11.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-injector": "^0.6.1",
-    "grunt-newer": "^1.1.1",
-    "grunt-sass": "^1.0.0",
-    "grunt-subgrunt": "^1.1.0",
-    "grunt-systemjs-builder": "^0.2.2",
-    "grunt-ts": "^5.1.1",
-    "grunt-umd": "^2.3.5",
-    "grunt-usemin": "^3.1.1",
-    "jspm": "^0.16.14",
-    "load-grunt-tasks": "^3.3.0",
-    "reflect-metadata": "^0.1.2",
-    "time-grunt": "^1.2.2"
-  }
 }
