@@ -11,7 +11,10 @@
     "author": "Robin RAdic",
     "license": "MIT",
     "jspm": {
+        "jspmNodeConversion": false,
+        "format": "global",
         "main": "js/packadic",
+        "registry": "jspm",
         "directories": {
             "lib": "dist"
         },
