@@ -1,4 +1,4 @@
-///<reference path='../types.d.ts'/>
+///<reference path='../scripts/types.d.ts'/>
 import * as jspm from 'jspm';
 import * as _ from 'lodash';
 import * as fs from 'fs-extra';
@@ -24,7 +24,7 @@ export = function (grunt:IGrunt) {
             sourceMaps      : true
         });
         var data:any    = _.merge({
-            action    : 'bundle', // bundle|unbundle|bundleSFX
+            action    : 'bundle', // bundle|buildStatic|bundleSFX
             outFile   : null, //'_packadic.js',
             expression: 'packadic',
             configFile: 'system.config.js',
@@ -52,7 +52,7 @@ export = function (grunt:IGrunt) {
                     }
                 }
             });
-            builder.bundle(data.expression, data.outFile, options).then(function () {
+            builder[data.action](data.expression, data.outFile, options).then(function () {
                     grunt.log.ok('Bundle build complete for ' + data.expression + '. File written to: ' + data.outFile);
                     if (fs.existsSync(data.tmpdir)) {
                         fs.removeSync(data.tmpdir);

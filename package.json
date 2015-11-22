@@ -94,6 +94,7 @@
     "http-server": "^0.8.5",
     "inquirer": "^0.11.0",
     "json-loader": "^0.5.3",
+    "jspm-resolve": "^1.0.6",
     "lodash": "^3.10.1",
     "raw-loader": "^0.5.1",
     "static-server": "^2.0.0",

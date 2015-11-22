@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
+import $ from 'jquery';
 import { defined, objectSet, objectGet, getViewPort } from './../lib';
 import {IObjectObserver,ObjectObserver,PathObserver,Observable,CompoundObserver,ICompoundObserver} from 'observe-js';
 import {App} from "./app";
 
 var layoutStyle:any = {};
-(function () {
+$(function () {
     var class2key:any = {};
     function getKey(className:string) {
         return class2key[className];
@@ -51,13 +52,13 @@ var layoutStyle:any = {};
     bodyObserver.observe(document.body, { attributes: true, attributeFilter: ['class'], attributeOldValue: true });
 
     layoutStyle._add = add;
+    layoutStyle._add('footer.fixed', 'page-footer-fixed')
+        ._add('header.fixed', 'page-header-fixed')
+        ._add('page.edged', 'page-edged')
+        ._add('page.boxed', 'page-boxed');
 
-}.call(this));
 
-layoutStyle._add('footer.fixed', 'page-footer-fixed')
-    ._add('header.fixed', 'page-header-fixed')
-    ._add('page.edged', 'page-edged')
-    ._add('page.boxed', 'page-boxed');
+});
 
 
 

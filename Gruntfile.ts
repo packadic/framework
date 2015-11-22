@@ -1,4 +1,4 @@
-///<reference path='src/types.d.ts'/>
+///<reference path='src/scripts/types.d.ts'/>
 import * as fs from 'fs-extra';
 import * as globule from 'globule';
 import * as path from 'path'
@@ -29,7 +29,8 @@ export = function (grunt) {
     }
 
     function ifTarget(name:string, then:any, els:any = false) {
-        return () => grunt.config('target').name == name ? then : els;
+        var s = JSON.stringify;
+        return '<%= target.name == ' + s(name) + ' ? ' + s(then) + ' : '  + s(els) + ' %>';
     }
 
     function tsp(...filePath:any[]) {
@@ -49,15 +50,15 @@ export = function (grunt) {
             basedir   : {src: '{dev,dist,src}/**/.baseDir.*'},
             ts_app_tmp: {src: '<%= target.dest %>/.tmp'},
             ts        : {src: '<%= target.dest %>/assets/scripts/**/*.{ts,d.ts}'},
-            nosrc     : {src: 'src/scripts/**/*.{js,js.map}'},
+            nosrc     : {src: 'src/scripts/**/*.{js,js.map,d.ts}'},
         },
 
         copy: {
-            data        : {files: [{cwd: 'src/data', src: ['**'], dest: '<%= target.dest %>/data/', expand: true}]},
+            data          : {files: [{cwd: 'src/data', src: ['**'], dest: '<%= target.dest %>/data/', expand: true}]},
             images        : {files: [{cwd: 'src/images', src: ['**'], dest: '<%= target.dest %>/assets/images/', expand: true}]},
             systemConfig  : {files: [{cwd: '', src: ['system.config.js'], dest: '<%= target.dest %>/assets', expand: true}]},
             jspm          : {files: [{cwd: '', src: ['jspm_packages/**/*', 'system.config.js'], dest: '<%= target.dest %>/', expand: true}]},
-            script_views       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts', src: ['**/*.{jade,html}'], dest: '<%= target.dest %>/assets/scripts', expand: true}]},
+            script_views  : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts', src: ['**/*.{jade,html}'], dest: '<%= target.dest %>/assets/scripts', expand: true}]},
             ts_demo       : {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts/demo', src: ['**/*.ts'], dest: '<%= target.dest %>/assets/scripts/demo', expand: true}]},
             htaccess      : {src: 'src/.htaccess', dest: '<%= target.dest %>/.htaccess'},
             packadic_ts_js: {options: {mtimeUpdate: true}, files: [{cwd: 'src/scripts/packadic', src: ['**/*.{ts,js,js.map}'], dest: '<%= target.dest %>/assets/scripts/packadic', expand: true}]},
@@ -82,8 +83,10 @@ export = function (grunt) {
             options : {
                 compiler              : 'node_modules/typescript/bin/tsc',
                 target                : 'ES5',
-                module                : 'commonjs',
-                sourceMap             : ifTarget('dev', true),
+                module: 'commonjs',
+                sourceMap             : false,
+                inlineSources         : true,
+                inlineSourceMap       : true,
                 experimentalDecorators: true,
                 emitDecoratorMetadata : true,
                 removeComments        : ifTarget('dev', true),
@@ -93,6 +96,10 @@ export = function (grunt) {
                 options: {declaration: true}, outDir: '<%= target.dest %>/assets/scripts/packadic',
                 src    : [tsp('packadic', 'types.d.ts'), tsp('packadic', '**/*.ts')] //, tsp('packadic', 'util/*.ts'), tsp('packadic', 'app/*.ts'), tsp('packadic', '~bootstrap.ts')]
             },
+            one: {
+                options: {declaration: true}, out: '<%= target.dest %>/assets/scripts/packadic.js',
+                src    : [tsp('packadic', 'types.d.ts'), tsp('packadic', '**/*.ts')] //, tsp('packadic', 'util/*.ts'), tsp('packadic', 'app/*.ts'), tsp('packadic', '~bootstrap.ts')]
+            },
             demo    : {
                 outDir: '<%= target.dest %>/assets/scripts/demo',
                 src   : ['src/types.d.ts', tsp('demo', '**', '*.ts')]
@@ -100,7 +107,7 @@ export = function (grunt) {
         },
 
         bundle: {
-            options: { minify: ifTarget('dist', true) },
+            options : {minify: ifTarget('dist', true) },
             packadic: {
                 outFile: '<%= target.dest %>/assets/scripts/packadic.js'
             }
@@ -117,21 +124,21 @@ export = function (grunt) {
                 }
             }
         },
-        animatecss: { full: {dest: '<%= target.dest %>/assets/styles/animate.css'} },
+        animatecss: {full: {dest: '<%= target.dest %>/assets/styles/animate.css'}},
 
-        bytesize: {app: {src: ['<%= targets.dist.dest %>/app/init.js']}},
+        bytesize: {packadic: {src: ['<%= targets.dist.dest %>/assets/scripts/packadic.js']}},
 
         connect: {dev: {options: {port: 8000, livereload: false, base: 'dev'}}},
 
         watch: {
-            options    : {livereload: true},
-            jade_index : {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
+            options     : {livereload: true},
+            jade_index  : {files: ['src/index.jade', 'src/views/layouts/default.jade'], tasks: ['jade:index', 'injector:index']},
             script_views: {files: ['src/scripts/**/*.{jade,html}'], tasks: ['copy:script_views']},
-            sass       : {files: ['src/styles/**/*.{sass,scss}'], tasks: ['sass:styles']},
+            sass        : {files: ['src/styles/**/*.{sass,scss}'], tasks: ['sass:styles']},
             //scripts   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['scripts']},
-            scriptsc   : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
-            demoscripts: {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},
-            data: {files: 'src/data/**/*.*', tasks: ['copy:data']},
+            scriptsc    : {files: 'src/scripts/packadic/**/*.ts', tasks: ['copy:packadic_ts_js']},
+            demoscripts : {files: 'src/scripts/demo/**/*.ts', tasks: ['copy:ts_demo']},
+            data        : {files: 'src/data/**/*.*', tasks: ['copy:data']},
             //ts_copy   : {files: 'src/{scripts,typings}/**/*.{ts,d.ts}', tasks: ['clean:ts', 'copy:ts']}
         }
     };
@@ -173,7 +180,15 @@ export = function (grunt) {
             'bundle:packadic'
         ]],
 
-        ['dist', 'Build dist', ['target:dist', 'clean:all', 'jade', 'jspm', 'sass:app',  'injector:index', 'bytesize:app']],
+        ['dist', 'Build dist', [
+            'target:dist',
+            'clean:all',
+            'jade',
+            'jspm',
+            'sass:app',
+            'injector:index',
+            'bytesize:packadic'
+        ]],
 
         ['serve', 'Dont use this', ['connect:dev', 'watch']],
 
