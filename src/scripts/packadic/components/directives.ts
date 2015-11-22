@@ -1,39 +1,35 @@
-import * as _ from 'lodash';
-import {
-    App,
-    Directive,ParamWatcher,BaseDirective, LifecycleHook
-} from './../app';
-import {EventListener} from './../lib';
+namespace packadic {
 
-/* */
+    /* */
 // D     page-loader
-/* */
-@Directive('page-loader')
-export class PageLoaderDirective extends BaseDirective {
-    //static params:any[] = ['loader'];
-    //
-    //@ParamWatcher('show')
-    //watchShow(val:any, oldVal:any) {
-    //    console.log('watch show');
-    //}
+    /* */
+    @Directive('page-loader')
+    export class PageLoaderDirective extends BaseDirective {
+        //static params:any[] = ['loader'];
+        //
+        //@ParamWatcher('show')
+        //watchShow(val:any, oldVal:any) {
+        //    console.log('watch show');
+        //}
 
-    update(showLoader:any, odlval:any) {          // console.log('page-laode update', showLoader);
-        var hasClass:boolean = this.el.classList.contains('page-loading');
-        showLoader === true && hasClass === false && this.el.classList.add('page-loading');
-        showLoader === false && hasClass === true && this.el.classList.remove('page-loading');
+        update(showLoader:any, odlval:any) {          // console.log('page-laode update', showLoader);
+            var hasClass:boolean = this.el.classList.contains('page-loading');
+            showLoader === true && hasClass === false && this.el.classList.add('page-loading');
+            showLoader === false && hasClass === true && this.el.classList.remove('page-loading');
+        }
     }
-}
 
 
-/* */
+    /* */
 // D     test-directive
-/* */
-@Directive('test-directive')
-export class TestDirective extends BaseDirective {
-    static params:any[] = ['a'];
+    /* */
+    @Directive('test-directive')
+    export class TestDirective extends BaseDirective {
+        static params:any[] = ['a'];
 
-    @ParamWatcher('a')
-    watchA(val:any, oldVal:any) {
-        console.log('watch a')
+        @ParamWatcher('a')
+        watchA(val:any, oldVal:any) {
+            console.log('watch a')
+        }
     }
 }

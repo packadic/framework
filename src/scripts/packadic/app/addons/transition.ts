@@ -1,60 +1,59 @@
-import * as _ from 'lodash';
-import {App, Vue} from './../../index';
-import {defined,kindOf,MetaStore} from './../../lib';
+namespace packadic {
 
-export function Transition(id:string, css:boolean = true):ClassDecorator {
+    export function Transition(id:string, css:boolean = true):ClassDecorator {
 
-    return (target:any) => {
-        console.groupCollapsed('Transition: ' + id);
-        console.log(id, target.prototype);
+        return (target:any) => {
+            console.groupCollapsed('Transition: ' + id);
+            console.log(id, target.prototype);
 
-        var options:any = {css: css};
+            var options:any = {css: css};
 
-        // copy static options
-        Object.keys(target).forEach(function (key) {
-            options[key] = target[key]
-        });
+            // copy static options
+            Object.keys(target).forEach(function (key) {
+                options[key] = target[key]
+            });
 
-        // copy prototype options
-        Object.getOwnPropertyNames(target.prototype).forEach(function (key) {
-            if (key === 'constructor') return;
-            var descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
-            if (typeof descriptor.value === 'function') {
-                options[key] = descriptor.value
-            }
-        });
+            // copy prototype options
+            Object.getOwnPropertyNames(target.prototype).forEach(function (key) {
+                if (key === 'constructor') return;
+                var descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
+                if (typeof descriptor.value === 'function') {
+                    options[key] = descriptor.value
+                }
+            });
 
-        Vue.transition(id, options);
-        console.log('options', options);
-        console.groupEnd();
-        return target;
+            Vue.transition(id, options);
+            console.log('options', options);
+            console.groupEnd();
+            return target;
+        }
+
     }
 
-}
 
-
-export interface ITransition {
-    css?:boolean;
-    enter ?: (el:HTMLElement, done:Function) => void;
-    enterCancelled ?: (el:HTMLElement) => void ;
-    leave ?: (el:HTMLElement, done:Function) => void;
-    leaveCancelled ?: (el:HTMLElement) => void;
-    stagger ?: (index:number) => number;
-    enterStagger ?: (index:number) =>number;
-    leaveStagger ?: (index:number) =>number;
-}
-
-export abstract class BaseTransition implements ITransition {
-    abstract enter(el:HTMLElement, done);
-}
-
-export abstract class BaseJqueryTransition extends BaseTransition {
-
-    enterCancelled(el) {
-        $(el).stop()
+    export interface ITransition {
+        css?:boolean;
+        enter ?: (el:HTMLElement, done:Function) => void;
+        enterCancelled ?: (el:HTMLElement) => void ;
+        leave ?: (el:HTMLElement, done:Function) => void;
+        leaveCancelled ?: (el:HTMLElement) => void;
+        stagger ?: (index:number) => number;
+        enterStagger ?: (index:number) =>number;
+        leaveStagger ?: (index:number) =>number;
     }
 
-    leaveCancelled(el) {
-        $(el).stop()
+    export abstract class BaseTransition implements ITransition {
+        enter(el:HTMLElement, done){};
+    }
+
+    export abstract class BaseJqueryTransition extends BaseTransition {
+
+        enterCancelled(el) {
+            $(el).stop()
+        }
+
+        leaveCancelled(el) {
+            $(el).stop()
+        }
     }
 }

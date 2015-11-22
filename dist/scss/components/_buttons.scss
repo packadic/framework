@@ -1,0 +1,11 @@
+.btn-xs {
+    @include btn-xs;
+}
+
+.btn-md {
+    @include btn-md;
+}
+
+.btn {
+    @include box-shadow(none);
+}

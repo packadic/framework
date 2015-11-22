@@ -1,13 +1,7 @@
-import * as _ from 'lodash';
-import {defined,EventListener} from './../../lib';
-import {
-    App,
-    Component, LifecycleHook, BaseComponent, Prop
-} from './../../app';
-
-@Component('tabs')
-export class TabsetComponent extends BaseComponent {
-    public static template:string = `
+namespace packadic {
+    @Component('tabs')
+    export class TabsetComponent extends BaseComponent {
+        public static template:string = `
     <div>
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item"
@@ -25,13 +19,14 @@ export class TabsetComponent extends BaseComponent {
     </div>
     `;
 
-    @Prop({type:String,'default': ()=>'fadein'}) effect:string;
+        @Prop({type: String, 'default': ()=>'fadein'}) effect:string;
 
-    renderData:any[] = [];
-    activeIndex:number = 0;
+        renderData:any[]   = [];
+        activeIndex:number = 0;
 
-    handleTabListClick(index, el) {
-        if (!el.disabled) this.activeIndex = index
+        handleTabListClick(index, el) {
+            if (!el.disabled) this.activeIndex = index
+        }
     }
-}
 
+}

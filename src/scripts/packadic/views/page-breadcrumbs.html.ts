@@ -1,0 +1,1 @@
+namespace packadic { templates['page-breadcrumbs'] = '<ul class="page-breadcrumb breadcrumb" v-el:page-breadcrumbs>    <slot>        <page-breadcrumb v-for="item in items"                         :item="item"                         :index="$index"        ></page-breadcrumb>    </slot></ul>'; }

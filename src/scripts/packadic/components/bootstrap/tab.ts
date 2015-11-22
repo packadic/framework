@@ -1,14 +1,7 @@
-import * as _ from 'lodash';
-import {defined,EventListener} from './../../lib';
-import {
-    App,
-    Component, LifecycleHook, BaseComponent, Prop
-} from './../../app';
-import {TabsetComponent} from "./tabset";
-
-@Component('tab')
-export class TabComponent extends BaseComponent {
-    public static template:string = `
+namespace packadic {
+    @Component('tab')
+    export class TabComponent extends BaseComponent {
+        public static template:string = `
     <div role="tabpanel" class="tab-pane"
         v-bind:class="{hide:!show}"
         v-show="show"
@@ -26,39 +19,38 @@ export class TabComponent extends BaseComponent {
     </style>
     `;
 
-    $parent:TabsetComponent;
+        $parent:TabsetComponent;
 
-    @Prop({type:String}) header:string;
-    @Prop({type:Boolean,'default': ()=>false}) disabled:string;
-
-
-    show:boolean = false;
-    index:number = 0;
-
-    get show():boolean {
-        return (this.$parent.activeIndex == this.index);
-
-    }
+        @Prop({type: String}) header:string;
+        @Prop({type: Boolean, 'default': ()=>false}) disabled:string;
 
 
-    get transition():string {
-        return this.$parent.effect;
-    }
+        show:boolean = false;
+        index:number = 0;
 
-    @LifecycleHook('created') created() {
-        this.$parent.renderData.push({
-            header: this.header,
-            disabled: this.disabled
-        })
-    }
+        get show():boolean {
+            return (this.$parent.activeIndex == this.index);
 
-    @LifecycleHook('ready') ready() {
-        for (var c in this.$parent.$children)
-        {
-            if (this.$parent.$children[c].$el == this.$el)
-            {
-                this.index= c;
-                break;
+        }
+
+
+        get transition():string {
+            return this.$parent.effect;
+        }
+
+        @LifecycleHook('created') created() {
+            this.$parent.renderData.push({
+                header  : this.header,
+                disabled: this.disabled
+            })
+        }
+
+        @LifecycleHook('ready') ready() {
+            for (var c in this.$parent.$children) {
+                if (this.$parent.$children[c].$el == this.$el) {
+                    this.index = c;
+                    break;
+                }
             }
         }
     }

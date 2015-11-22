@@ -1,105 +1,111 @@
+namespace packadic {
 
-import * as _ from 'lodash';
-import {App,Vue,AppState} from './../../index';
-import {defined,kindOf,MetaStore} from './../../lib';
+    MetaStore.template('directive', {
+        params         : [],
+        paramWatchers  : {},
+        deep           : false,
+        twoWay         : false,
+        acceptStatement: false,
 
-MetaStore.template('directive', {
-    params: [],
-    paramWatchers: {},
-    deep: false,
-    twoWay: false,
-    acceptStatement: false,
+        bind  : () => {
+        },
+        update: () => {
+        },
+        unbind: () => {
+        },
+    });
 
-    bind: () => {},
-    update: () => {},
-    unbind: () => {},
-});
+    export function Directive(id:string, elementDirective:boolean = false):ClassDecorator {
 
-export function Directive(id:string, elementDirective:boolean=false):ClassDecorator {
+        return (target:any) => {
 
-    return (target:any) => {
+            console.groupCollapsed('Directive: ' + id);
+            console.log('prototype', target.prototype);
 
-        console.groupCollapsed('Directive: ' + id);
-        console.log('prototype', target.prototype);
+            var options:any = MetaStore.for(target.prototype, 'directive').store.get();
 
-        var options:any = MetaStore.for(target.prototype, 'directive').store.get();
+            Object.getOwnPropertyNames(target.prototype).forEach(function (key) {
+                if (key === 'constructor') return
 
-        Object.getOwnPropertyNames(target.prototype).forEach(function (key) {
-            if (key === 'constructor') return
+                //var allowedFns = ['bind', 'update', 'unbind'];
+                var descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
+                if (typeof descriptor.value === 'function') {
+                    options[key] = descriptor.value
+                }// else if (descriptor.get || descriptor.set) {}
+            });
 
-            //var allowedFns = ['bind', 'update', 'unbind'];
-            var descriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
-            if (typeof descriptor.value === 'function') {
-                options[key] = descriptor.value
-            }// else if (descriptor.get || descriptor.set) {}
-        });
+            // copy static options
+            Object.keys(target).forEach(function (key) {
+                options[key] = target[key]
+            });
 
-        // copy static options
-        Object.keys(target).forEach(function (key) {
-            options[key] = target[key]
-        });
+            if (elementDirective) {
+                Vue.elementDirective(id, options);
+            } else {
+                Vue.directive(id, options);
+            }
+            console.log('Directive', id, options);
 
-        if(elementDirective) {
-            Vue.elementDirective(id, options);
-        } else {
-            Vue.directive(id, options);
+            MetaStore.for(target.prototype).cleanTarget();
+            console.groupEnd();
+            return target;
         }
-        console.log('Directive', id, options);
 
-        MetaStore.for(target.prototype).cleanTarget();
-        console.groupEnd();
-        return target;
     }
 
-}
+    export function ParamWatcher(id?:string):MethodDecorator {
 
-export function ParamWatcher(id?:string):MethodDecorator {
-
-    return (target:any, key:any) => {
-        id = id || key;
-        console.log('ParamWatcher', id);
-        MetaStore.for(target, 'directive').store.set('paramWatchers.' + id,  target[key]);
-        return target;
-    }
-}
-
-export class BaseDirective {
-    el:HTMLElement;
-    vm:vuejs.Vue;
-    expression:string;
-    arg:any;
-    raw:string;
-    name:string;
-    params:any;
-
-    constructor() {
-        // remove all members, they are only needed at compile time.
-        var myPrototype = (<Function>BaseDirective).prototype;
-
-        _.each(myPrototype, (propertyName:string, value:any) => {
-            delete myPrototype[propertyName];
-        });
+        return (target:any, key:any) => {
+            id = id || key;
+            console.log('ParamWatcher', id);
+            MetaStore.for(target, 'directive').store.set('paramWatchers.' + id, target[key]);
+            return target;
+        }
     }
 
+    export class BaseDirective {
+        el:HTMLElement;
+        vm:vuejs.Vue;
+        expression:string;
+        arg:any;
+        raw:string;
+        name:string;
+        params:any;
 
-    get $el():JQuery {
-        return $(this.el);
-    }
+        constructor() {
+            // remove all members, they are only needed at compile time.
+            var myPrototype = (<Function>BaseDirective).prototype;
 
-    // methods: http://vuejs.org/api/instance-methods.html
-    $set(exp:string, val:any):void {
-    }
-    $delete(key:string):void {}
+            _.each(myPrototype, (propertyName:string, value:any) => {
+                delete myPrototype[propertyName];
+            });
+        }
 
-    set(value:any):void {}
-    on(event:string, handler:Function):void {}
 
-    bind():void {
-    }
+        get $el():JQuery {
+            return $(this.el);
+        }
 
-    unbind():void {
-    }
+        // methods: http://vuejs.org/api/instance-methods.html
+        $set(exp:string, val:any):void {
+        }
 
-    update(newValue:any, oldValue:any):void {
+        $delete(key:string):void {
+        }
+
+        set(value:any):void {
+        }
+
+        on(event:string, handler:Function):void {
+        }
+
+        bind():void {
+        }
+
+        unbind():void {
+        }
+
+        update(newValue:any, oldValue:any):void {
+        }
     }
 }

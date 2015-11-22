@@ -1,0 +1,92 @@
+<!DOCTYPE html><!--[if IE 8]><html class="ie8" lang="en"><![endif]-->
+<!--[if IE 9]><html lang="en" class="ie9"><![endif]-->
+<!--[if !IE]><!-->
+<html lang="en"><!--<![endif]-->
+  <head>
+    <title> Default</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <base href="/">
+    <!-- injector:css-->
+    <!-- endinjector-->
+    <script src="jspm_packages/github/vuejs/vue-router@0.7.6/dist/vue-router.js"></script>
+    <!-- injector:js-->
+    <!-- endinjector-->
+    <script>
+      System.import('demo').catch(function (e) {
+          console.error(e);
+      });
+      
+    </script>
+  </head>
+  <body v-page-loader="showPageLoader" v-el:body class="page-loading">
+    <div id="page-loader" v-if="showPageLoader" transition="fade">
+      <div class="loader loader-page"></div>
+    </div>
+    <div v-if="!showPageLoader" transition="fade" v-bind:class="{ 'navbar-fixed-top': layoutStyle.header.fixed }" v-el:header class="page-header navbar">
+      <div v-el:header-inner class="page-header-inner">
+        <div class="page-logo">
+          <div v-html="layout.header.title" class="logo-packadic pull-left">Codex</div>
+          <div v-sidebar s-action="toggle" s-on="click" v-tooltip title="Toggle the sidebar menu" t-placement="left" class="menu-toggler sidebar-toggler"></div>
+        </div>
+        <div class="page-actions">
+          <div class="btn-group">
+            <div class="btn-group"><a href="#" type="button" data-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-primary btn-sm">Actions</a>
+              <div class="dropdown-menu"><a href="#" class="dropdown-item">First</a>
+                <div class="dropdown-divider bg-color-grey-300"></div><a href="#" class="dropdown-item">Second</a><a href="#" class="dropdown-item">Third</a><a href="#" class="dropdown-item">Fourth</a>
+                <div class="dropdown-footer"><a href="#">Left</a><a href="#">Right</a>
+                </div>
+              </div>
+            </div>
+            <div class="btn-group"><a href="#" type="button" data-toggle="dropdown" aria-expanded="false" class="dropdown-toggle btn btn-primary btn-sm">Options</a>
+              <div class="dropdown-menu"><a href="#" class="dropdown-item">First</a><a href="#" class="dropdown-item">Second</a>
+                <div class="dropdown-submenu"><a href="#" class="dropdown-item">Submenu</a>
+                  <div class="dropdown-menu"><a href="#" class="dropdown-item">First</a><a href="#" class="dropdown-item">Second</a>
+                    <div class="dropdown-footer"><a href="#">Left</a><a href="#">Right</a>
+                    </div>
+                  </div>
+                </div><a href="#" class="dropdown-item">Third</a>
+                <div class="dropdown-divider bg-color-grey-300"></div><a href="#" class="dropdown-item">Fourth</a><a href="#" class="dropdown-item">Second 3
+                  <div class="dropdown-submenu"><a href="#" class="dropdown-item">Submenu</a>
+                    <div class="dropdown-menu"><a href="#" class="dropdown-item">First</a><a href="#" class="dropdown-item">Second</a><a href="#" class="dropdown-item">First</a><a href="#" class="dropdown-item">Second</a>
+                      <div class="dropdown-footer"><a href="#">Left</a><a href="#">Right</a>
+                      </div>
+                    </div>
+                  </div><a href="#" class="dropdown-item">Third</a></a>
+                <div class="dropdown-footer"><a href="#">Left</a><a href="#">Right</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="btn-group"><a data-layout-api="demo-tour-start" class="btn btn-success btn-sm">Check all features in 30 Seconds</a></div>
+        </div><a href="javascript:;" data-toggle="collapse" data-target=".navbar-collapse" class="menu-toggler responsive-toggler"></a>
+        <div class="pull-right">
+          <div data-layout-api="qs-toggle" v-tooltip title="Toggle the quick sidebar menu" t-placement="left" t-offset="0 10px" class="nav-link quick-sidebar-toggler"></div>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+    <div v-if="!showPageLoader" transition="fade" v-el:container class="page-container">
+      <div v-el:sidebar-wrapper class="page-sidebar-wrapper">
+        <sidebar :items="sidebar.items" v-ref:sidebar v-el:sidebar></sidebar>
+        <!--sidebar(v-ref:sidebar)
+        item(title="Hello", icon="fa fa-github", children=true)
+            item(title="First child")
+        
+        -->
+      </div>
+      <div v-el:content-wrapper class="page-content-wrapper">
+        <div v-page-height-resizer v-el:content class="page-content">
+          <router-view transition="view-fade" transition-mode="out-in" transition-speed="300" keep-alive></router-view>
+        </div>
+      </div>
+    </div>
+    <div v-if="!showPageLoader" transition="fade" v-el:footer class="page-footer">
+      <div v-html="layout.footer.text" v-el:footer-inner class="page-footer-inner">Copyright &copy; Codex 2015
+      </div>
+      <div class="scroll-to-top"><i class="fa fa-level-up"></i></div>
+    </div>
+    <aside></aside>
+  </body>
+</html>

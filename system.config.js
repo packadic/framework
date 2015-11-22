@@ -32,16 +32,34 @@ System.config({
       "main": "init",
       "defaultExtension": "ts"
     },
-    "packadic": {
-        "main": "index",
-      "defaultExtension": "ts"
-    },
     "tether": {
       "format": "global"
-    }
+    },
+      packadic: {
+          format: 'global',
+          modules: {
+              //'vue-router': { format: 'global', exports: 'VueRouter' },
+              lodash: { format: 'global', exports: '_'  }
+          }
+      }
   },
 
   meta: {
+      packadic: {
+          exports: 'packadic',
+          deps: ['jquery', 'bootstrap/tooltip', 'bootstrap/popover'],
+          globals: {
+              EventEmitter2: 'eventemitter2',
+              _s: 'underscore.string',
+              _: 'lodash',
+              loglevel: 'loglevel',
+              Vue: 'vue',
+              VueResource: 'vue-resource',
+              //VueRouter: 'vue-router',
+              observejs: 'observe-js'
+          }
+      },
+      ///'vue-router': { format: 'esm' },
     "bootstrap/*": {
       "deps": [
         "tether",

@@ -1,0 +1,1 @@
+namespace packadic { templates['page-breadcrumb'] = '<li>    <alink v-bind:link="link"><slot>{{title}}</slot></alink>    <i class="fa fa-arrow-right" v-if="arrow"></i></li>'; }

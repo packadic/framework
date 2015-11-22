@@ -1,9 +1,11 @@
+/// <reference path="../types.d.ts" />
+/// <reference path="../packadic.d.ts" />
 import 'zone.js';
 import 'reflect-metadata';
 import 'es6-shim';
 
 import * as _ from 'lodash';
-import {App, view, route} from './../packadic/index';
+import {App, view, route} from 'packadic';
 
 
 window['App'] = App;
