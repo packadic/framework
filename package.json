@@ -22,21 +22,16 @@
       "shim": {
           "js/packadic": {
               "exports": "packadic",
-              "deps": [
-                  "jquery",
-                  "pagination",
-                  "bootstrap/tooltip",
-                  "bootstrap/popover"
-              ],
+              "deps"   : [ "jquery", "eventemitter2", "underscore.string", "lodash", "loglevel", "vue", "vue-resource", "vue-router", "observe-js", "pagination", "bootstrap/tooltip", "bootstrap/popover" ],
               "globals": {
                   "EventEmitter2": "eventemitter2",
-                  "_s": "underscore.string",
-                  "_": "lodash",
-                  "loglevel": "loglevel",
-                  "Vue": "vue",
-                  "VueResource": "vue-resource",
-                  "VueRouter": "vue-router",
-                  "observejs": "observe-js"
+                  "_s"           : "underscore.string",
+                  "_"            : "lodash",
+                  "loglevel"     : "loglevel",
+                  "Vue"          : "vue",
+                  "VueResource"  : "vue-resource",
+                  "VueRouter"    : "vue-router",
+                  "observejs"    : "observe-js"
               }
           },
           "vue-router": {
